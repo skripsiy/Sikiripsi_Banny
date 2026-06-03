@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Subject;
 use App\Models\Jurusan;
+use App\Models\Guru;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
 
@@ -11,9 +12,10 @@ class SubjectManagementController extends Controller
 {
     public function index()
     {
-        $subjects = Subject::with('jurusan')->latest()->get();
+        $subjects = Subject::with(['jurusan', 'gurus.user'])->latest()->get();
         $jurusans = Jurusan::where('is_active', true)->orderBy('nama_jurusan')->get();
-        return view('admin.manage.subjects.index', compact('subjects', 'jurusans'));
+        $gurus = Guru::with('user')->get()->sortBy(fn($g) => $g->user?->name ?? '')->values();
+        return view('admin.manage.subjects.index', compact('subjects', 'jurusans', 'gurus'));
     }
 
     public function create()
@@ -103,5 +105,20 @@ class SubjectManagementController extends Controller
 
         return redirect()->route('admin.manage.subjects.index')
             ->with('status', 'Mata pelajaran berhasil dihapus.');
+    }
+
+    public function assignTeachers(Request $request, Subject $subject)
+    {
+        $request->validate([
+            'guru_ids' => ['nullable', 'array'],
+            'guru_ids.*' => ['exists:gurus,id'],
+        ], [
+            'guru_ids.*.exists' => 'Guru yang dipilih tidak valid.',
+        ]);
+
+        $subject->gurus()->sync($request->input('guru_ids', []));
+
+        return redirect()->route('admin.manage.subjects.index')
+            ->with('status', 'Guru pengampu berhasil diperbarui.');
     }
 }

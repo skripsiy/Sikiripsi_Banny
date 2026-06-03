@@ -6,6 +6,7 @@
     <div class="max-w-7xl mx-auto font-sans" x-data="{
         showCreateModal: {{ $errors->any() && !old('_method') ? 'true' : 'false' }},
         showEditModal: {{ $errors->any() && old('_method') === 'PUT' ? 'true' : 'false' }},
+        showAssignModal: false,
         editData: {
             id: '{{ old('id') ?? '' }}',
             kode_pelajaran: {{ json_encode(old('kode_pelajaran') ?? '') }},
@@ -13,7 +14,14 @@
             jurusan_id: '{{ old('jurusan_id') ?? '' }}',
             is_active: '{{ old('is_active') !== null ? (old('is_active') ? '1' : '0') : '' }}'
         },
-        editUrl: '{{ old('id') ? route('admin.manage.subjects.update', old('id')) : '' }}'
+        editUrl: '{{ old('id') ? route('admin.manage.subjects.update', old('id')) : '' }}',
+        assignData: {
+            id: '',
+            kode_pelajaran: '',
+            nama_pelajaran: '',
+            guru_ids: []
+        },
+        assignUrl: ''
     }">
         <!-- Header Actions -->
         <div class="flex justify-between items-center mb-6">
@@ -49,6 +57,7 @@
                                     <th class="px-6 py-4 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">Kode</th>
                                     <th class="px-6 py-4 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">Nama Mata Pelajaran</th>
                                     <th class="px-6 py-4 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">Jurusan</th>
+                                    <th class="px-6 py-4 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">Guru Pengampu</th>
                                     <th class="px-6 py-4 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">Status</th>
                                     <th class="px-6 py-4 text-center text-xs font-bold text-gray-500 uppercase tracking-wider w-36">Aksi</th>
                                 </tr>
@@ -69,6 +78,19 @@
                                                 </span>
                                             @endif
                                         </td>
+                                        <td class="px-6 py-4 text-sm text-gray-500">
+                                            @if($subject->gurus->isNotEmpty())
+                                                <div class="flex flex-wrap gap-1.5 max-w-xs">
+                                                    @foreach($subject->gurus as $guru)
+                                                        <span class="inline-flex items-center px-2 py-0.5 rounded-md text-xs font-medium bg-emerald-50 text-emerald-800 border border-emerald-100">
+                                                            {{ $guru->user->name }}
+                                                        </span>
+                                                    @endforeach
+                                                </div>
+                                            @else
+                                                <span class="text-xs text-gray-400 italic">Belum ditentukan</span>
+                                            @endif
+                                        </td>
                                         <td class="px-6 py-4 whitespace-nowrap text-sm">
                                             @if ($subject->is_active)
                                                 <span class="inline-flex items-center gap-1.5 px-3 py-1 text-xs font-bold rounded-full bg-green-50 text-green-700 border border-green-200 shadow-sm">
@@ -84,6 +106,20 @@
                                         </td>
                                         <td class="px-6 py-4 whitespace-nowrap text-sm text-center font-medium">
                                             <div class="flex items-center justify-center gap-3">
+                                                <button @click="
+                                                    showAssignModal = true;
+                                                    assignData = {
+                                                        id: '{{ $subject->id }}',
+                                                        kode_pelajaran: {{ json_encode($subject->kode_pelajaran) }},
+                                                        nama_pelajaran: {{ json_encode($subject->nama_pelajaran) }},
+                                                        guru_ids: {{ json_encode($subject->gurus->pluck('id')->toArray()) }}
+                                                    };
+                                                    assignUrl = '{{ route('admin.manage.subjects.assign-teachers', $subject->id) }}';
+                                                 " 
+                                                 class="text-emerald-600 hover:text-emerald-900 bg-emerald-50 hover:bg-emerald-100 px-3 py-1.5 rounded-lg text-xs font-bold transition-all duration-150 cursor-pointer select-none">
+                                                    Atur Guru
+                                                </button>
+
                                                 <button @click="
                                                     showEditModal = true;
                                                     editData = {
@@ -157,6 +193,20 @@
                 <div class="h-1.5 bg-gradient-to-r from-[#0c2b4d] to-[#1a4a7d]"></div>
                 <div class="p-8">
                     @include('admin.manage.subjects.edit')
+                </div>
+            </div>
+        </div>
+
+        <!-- Assign Modal -->
+        <div x-show="showAssignModal" class="fixed inset-0 overflow-y-auto px-4 py-6 sm:px-0 z-50 flex items-center justify-center shadow-2xl" style="display: none;">
+            <div x-show="showAssignModal" x-transition:enter="ease-out duration-300" x-transition:enter-start="opacity-0" x-transition:enter-end="opacity-100" x-transition:leave="ease-in duration-200" x-transition:leave-start="opacity-100" x-transition:leave-end="opacity-0" class="fixed inset-0 transform transition-all" @click="showAssignModal = false">
+                <div class="absolute inset-0 bg-gray-900/60 backdrop-blur-sm"></div>
+            </div>
+
+            <div x-show="showAssignModal" x-transition:enter="ease-out duration-300" x-transition:enter-start="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95" x-transition:enter-end="opacity-100 translate-y-0 sm:scale-100" x-transition:leave="ease-in duration-200" x-transition:leave-start="opacity-100 translate-y-0 sm:scale-100" x-transition:leave-end="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95" class="bg-white rounded-2xl overflow-hidden shadow-2xl transform transition-all w-full max-w-xl mx-auto z-10 border border-gray-100">
+                <div class="h-1.5 bg-gradient-to-r from-emerald-600 to-emerald-700"></div>
+                <div class="p-8">
+                    @include('admin.manage.subjects.assign_teachers')
                 </div>
             </div>
         </div>

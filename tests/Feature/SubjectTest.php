@@ -152,4 +152,73 @@ describe('Subject CRUD Management', function () {
         $response->assertSessionHasNoErrors();
         $this->assertDatabaseCount('subjects', 2);
     });
+
+    it('denies teacher assignment access to non-admin users', function () {
+        $user = User::factory()->create(['role' => 'guru']);
+        $subject = Subject::create([
+            'kode_pelajaran' => 'MP001',
+            'nama_pelajaran' => 'Matematika',
+            'is_active' => true,
+        ]);
+
+        $response = $this->actingAs($user)->post(route('admin.manage.subjects.assign-teachers', $subject->id), [
+            'guru_ids' => []
+        ]);
+        $response->assertStatus(403);
+    });
+
+    it('assigns teachers to a subject successfully', function () {
+        $subject = Subject::create([
+            'kode_pelajaran' => 'MP001',
+            'nama_pelajaran' => 'Matematika',
+            'is_active' => true,
+        ]);
+
+        // Create a teacher user and Guru model
+        $guruUser1 = User::factory()->create(['role' => 'guru']);
+        $guru1 = \App\Models\Guru::create([
+            'user_id' => $guruUser1->id,
+            'nuptk' => '1234567890123456',
+            'subject_specialty' => 'Matematika',
+        ]);
+
+        $guruUser2 = User::factory()->create(['role' => 'guru']);
+        $guru2 = \App\Models\Guru::create([
+            'user_id' => $guruUser2->id,
+            'nuptk' => '6543210987654321',
+            'subject_specialty' => 'Fisika',
+        ]);
+
+        $response = $this->actingAs($this->admin)->post(route('admin.manage.subjects.assign-teachers', $subject->id), [
+            'guru_ids' => [$guru1->id, $guru2->id]
+        ]);
+
+        $response->assertSessionHasNoErrors();
+        $response->assertRedirect(route('admin.manage.subjects.index'));
+        $response->assertSessionHas('status', 'Guru pengampu berhasil diperbarui.');
+
+        $this->assertDatabaseHas('subject_guru', [
+            'subject_id' => $subject->id,
+            'guru_id' => $guru1->id,
+        ]);
+
+        $this->assertDatabaseHas('subject_guru', [
+            'subject_id' => $subject->id,
+            'guru_id' => $guru2->id,
+        ]);
+    });
+
+    it('fails when assigning invalid teacher ids', function () {
+        $subject = Subject::create([
+            'kode_pelajaran' => 'MP001',
+            'nama_pelajaran' => 'Matematika',
+            'is_active' => true,
+        ]);
+
+        $response = $this->actingAs($this->admin)->post(route('admin.manage.subjects.assign-teachers', $subject->id), [
+            'guru_ids' => [9999, 8888]
+        ]);
+
+        $response->assertSessionHasErrors(['guru_ids.0', 'guru_ids.1']);
+    });
 });

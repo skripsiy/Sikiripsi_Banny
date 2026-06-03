@@ -50,6 +50,7 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin/manage')->name('admin.m
 
     // Subject
     Route::resource('subjects', SubjectManagementController::class);
+    Route::post('subjects/{subject}/assign-teachers', [SubjectManagementController::class, 'assignTeachers'])->name('subjects.assign-teachers');
 
     Route::resource('admins', AdminManagementController::class);
 });

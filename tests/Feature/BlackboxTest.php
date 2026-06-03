@@ -221,3 +221,167 @@ describe('Decision Table Testing - Login Combinations & Access', function () {
         $response->assertSessionHasErrors('email');
     });
 });
+
+/*
+|--------------------------------------------------------------------------
+| 4. TAHUN AJARAN - BLACK BOX TESTING
+|--------------------------------------------------------------------------
+*/
+
+describe('Tahun Ajaran - Black Box Testing (EP, BVA, Decision Table)', function () {
+    beforeEach(function () {
+        $this->admin = User::factory()->create(['role' => 'admin']);
+    });
+
+    // 4.1 Equivalence Partitioning (EP)
+    describe('Equivalence Partitioning (EP)', function () {
+        it('accepts valid tahun ajaran format and sequence (2025/2026)', function () {
+            $response = $this->actingAs($this->admin)->post(route('admin.manage.tahun-ajarans.store'), [
+                'tahun_ajaran' => '2025/2026',
+                'semester' => 'ganjil',
+                'is_active' => '1',
+            ]);
+
+            $response->assertSessionHasNoErrors();
+            $this->assertDatabaseHas('tahun_ajarans', [
+                'tahun_ajaran' => '2025/2026',
+                'semester' => 'ganjil',
+                'is_active' => true,
+            ]);
+        });
+
+        it('rejects invalid format (wrong separator, e.g., 2025-2026)', function () {
+            $response = $this->actingAs($this->admin)->post(route('admin.manage.tahun-ajarans.store'), [
+                'tahun_ajaran' => '2025-2026',
+                'semester' => 'ganjil',
+                'is_active' => '1',
+            ]);
+
+            $response->assertSessionHasErrors('tahun_ajaran');
+        });
+
+        it('rejects invalid sequence (not +1 year, e.g., 2025/2027)', function () {
+            $response = $this->actingAs($this->admin)->post(route('admin.manage.tahun-ajarans.store'), [
+                'tahun_ajaran' => '2025/2027',
+                'semester' => 'ganjil',
+                'is_active' => '1',
+            ]);
+
+            $response->assertSessionHasErrors('tahun_ajaran');
+        });
+    });
+
+    // 4.2 Boundary Value Analysis (BVA)
+    describe('Boundary Value Analysis (BVA)', function () {
+        it('rejects tahun ajaran with 8 characters (below boundary)', function () {
+            $response = $this->actingAs($this->admin)->post(route('admin.manage.tahun-ajarans.store'), [
+                'tahun_ajaran' => '2025/202', // 8 characters
+                'semester' => 'ganjil',
+                'is_active' => '1',
+            ]);
+
+            $response->assertSessionHasErrors('tahun_ajaran');
+        });
+
+        it('accepts tahun ajaran with 9 characters (on boundary)', function () {
+            $response = $this->actingAs($this->admin)->post(route('admin.manage.tahun-ajarans.store'), [
+                'tahun_ajaran' => '2025/2026', // 9 characters
+                'semester' => 'ganjil',
+                'is_active' => '1',
+            ]);
+
+            $response->assertSessionHasNoErrors();
+        });
+
+        it('rejects tahun ajaran with 10 characters (above boundary)', function () {
+            $response = $this->actingAs($this->admin)->post(route('admin.manage.tahun-ajarans.store'), [
+                'tahun_ajaran' => '2025/20267', // 10 characters
+                'semester' => 'ganjil',
+                'is_active' => '1',
+            ]);
+
+            $response->assertSessionHasErrors('tahun_ajaran');
+        });
+    });
+
+    // 4.3 Decision Table Testing
+    describe('Decision Table Testing', function () {
+        it('Rule 1: keeps existing active record active when new record is inactive', function () {
+            // Setup: create active record
+            $activeTa = \App\Models\TahunAjaran::create([
+                'tahun_ajaran' => '2024/2025',
+                'semester' => 'ganjil',
+                'is_active' => true,
+            ]);
+
+            // Action: create inactive record
+            $response = $this->actingAs($this->admin)->post(route('admin.manage.tahun-ajarans.store'), [
+                'tahun_ajaran' => '2025/2026',
+                'semester' => 'ganjil',
+                'is_active' => '0',
+            ]);
+
+            $response->assertSessionHasNoErrors();
+            $this->assertTrue($activeTa->fresh()->is_active);
+        });
+
+        it('Rule 2: auto-deactivates other active record when new record is active', function () {
+            // Setup: create active record
+            $activeTa = \App\Models\TahunAjaran::create([
+                'tahun_ajaran' => '2024/2025',
+                'semester' => 'ganjil',
+                'is_active' => true,
+            ]);
+
+            // Action: create active record
+            $response = $this->actingAs($this->admin)->post(route('admin.manage.tahun-ajarans.store'), [
+                'tahun_ajaran' => '2025/2026',
+                'semester' => 'ganjil',
+                'is_active' => '1',
+            ]);
+
+            $response->assertSessionHasNoErrors();
+            // Assert old record is now inactive
+            $this->assertFalse($activeTa->fresh()->is_active);
+        });
+
+        it('Rule 3: rejects creating duplicate active [tahun_ajaran, semester] combination', function () {
+            // Setup: create active record
+            \App\Models\TahunAjaran::create([
+                'tahun_ajaran' => '2024/2025',
+                'semester' => 'ganjil',
+                'is_active' => true,
+            ]);
+
+            // Action: create duplicate combination
+            $response = $this->actingAs($this->admin)->post(route('admin.manage.tahun-ajarans.store'), [
+                'tahun_ajaran' => '2024/2025',
+                'semester' => 'ganjil',
+                'is_active' => '0',
+            ]);
+
+            $response->assertSessionHasErrors('tahun_ajaran');
+        });
+
+        it('Rule 4: allows creating duplicate combination if the existing one is soft-deleted', function () {
+            // Setup: create active record and soft delete it
+            $ta = \App\Models\TahunAjaran::create([
+                'tahun_ajaran' => '2024/2025',
+                'semester' => 'ganjil',
+                'is_active' => true,
+            ]);
+            $ta->delete();
+
+            // Action: create duplicate combination
+            $response = $this->actingAs($this->admin)->post(route('admin.manage.tahun-ajarans.store'), [
+                'tahun_ajaran' => '2024/2025',
+                'semester' => 'ganjil',
+                'is_active' => '1',
+            ]);
+
+            $response->assertSessionHasNoErrors();
+            $this->assertDatabaseCount('tahun_ajarans', 2);
+        });
+    });
+});
+

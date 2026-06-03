@@ -6,6 +6,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AdminManagementController;
 use App\Http\Controllers\GuruManagementController;
 use App\Http\Controllers\MuridManagementController;
+use App\Http\Controllers\TahunAjaranManagementController;
 
 Route::get('/', function () {
     return redirect()->route('login');
@@ -34,6 +35,9 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin/manage')->name('admin.m
     Route::get('murids/template', [MuridManagementController::class, 'downloadTemplate'])->name('murids.template');
     Route::post('murids/import', [MuridManagementController::class, 'import'])->name('murids.import');
     Route::resource('murids', MuridManagementController::class);
+
+    // Tahun Ajaran
+    Route::resource('tahun-ajarans', TahunAjaranManagementController::class);
 
     Route::resource('admins', AdminManagementController::class);
 });

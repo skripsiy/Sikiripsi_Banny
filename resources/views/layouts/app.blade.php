@@ -13,6 +13,7 @@
 
         <!-- Scripts -->
         @vite(['resources/css/app.css', 'resources/js/app.js'])
+        <script src="https://cdn.jsdelivr.net/npm/@hotwired/turbo@8.0.4/dist/turbo.es2015-umd.js" defer></script>
     </head>
     <body class="font-sans antialiased bg-gray-50 text-gray-900" x-data="{ sidebarOpen: true }">
         <div class="min-h-screen flex flex-row overflow-hidden">

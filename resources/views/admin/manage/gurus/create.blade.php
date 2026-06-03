@@ -1,13 +1,16 @@
 <x-app-layout>
     <x-slot name="header">
-        <div class="flex justify-between items-center w-full">
+        <div class="flex items-center gap-3">
+            <a href="{{ route('admin.manage.gurus.index') }}" 
+               class="text-gray-500 hover:text-[#0c2b4d] hover:bg-gray-100 p-1.5 rounded-lg transition-colors flex items-center justify-center"
+               title="Kembali">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
+                </svg>
+            </a>
             <h2 class="font-semibold text-xl text-gray-800 leading-tight">
                 {{ __('Tambah Guru') }}
             </h2>
-            <a href="{{ route('admin.manage.gurus.index') }}" 
-               class="bg-gray-200 hover:bg-gray-300 text-gray-700 px-4 py-2 rounded-lg text-sm font-medium transition-colors">
-                Kembali
-            </a>
         </div>
     </x-slot>
 

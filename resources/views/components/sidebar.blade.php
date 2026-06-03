@@ -35,6 +35,16 @@
                     Admin Menu
                 </div>
                 <div x-show="!sidebarOpen" class="h-px bg-blue-900/30 my-4 mx-2"></div>
+
+                <!-- Kelola Tahun Ajaran -->
+                <a href="{{ route('admin.manage.tahun-ajarans.index') }}" 
+                   class="flex items-center rounded-lg text-sm font-medium transition-all duration-300 {{ request()->routeIs('admin.manage.tahun-ajarans.*') ? 'bg-white/10 text-white font-semibold' : 'text-blue-100/70 hover:bg-white/5 hover:text-white' }}"
+                   :class="sidebarOpen ? 'px-4 py-3 justify-start gap-3' : 'px-0 py-3 justify-center gap-0 w-12 mx-auto'">
+                    <svg class="w-5 h-5 text-current flex-shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+                    </svg>
+                    <span x-show="sidebarOpen" class="whitespace-nowrap">Kelola Tahun Ajaran</span>
+                </a>
                 
                 <div x-data="{ kelolaOpen: false }" class="flex flex-col">
                     <button @click="kelolaOpen = !kelolaOpen" 

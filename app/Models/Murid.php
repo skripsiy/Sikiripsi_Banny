@@ -5,11 +5,12 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 #[Fillable(['user_id', 'nisn', 'class_room'])]
 class Murid extends Model
 {
-    use HasFactory;
+    use HasFactory, SoftDeletes;
 
     public function user()
     {

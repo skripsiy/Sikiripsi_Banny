@@ -2,7 +2,7 @@
     <!-- Left Side: Toggle Button + Page Title -->
     <div class="flex items-center gap-4">
         <!-- Toggle Button -->
-        <button @click="sidebarOpen = !sidebarOpen" 
+        <button @click.stop="sidebarOpen = !sidebarOpen" 
                 class="text-gray-500 hover:text-gray-700 hover:bg-gray-100 p-2 rounded-lg transition-colors focus:outline-none"
                 aria-label="Toggle Sidebar">
             <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">

@@ -17,6 +17,7 @@ return new class extends Migration
             $table->string('nisn')->nullable();
             $table->string('class_room')->nullable();
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 

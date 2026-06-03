@@ -17,6 +17,7 @@ return new class extends Migration
             $table->string('nip')->nullable();
             $table->string('department')->nullable();
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 

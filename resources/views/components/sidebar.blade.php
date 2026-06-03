@@ -1,4 +1,6 @@
-<aside :class="sidebarOpen ? 'w-64' : 'w-20'" 
+<aside x-data 
+       @click.outside="sidebarOpen = false"
+       :class="sidebarOpen ? 'w-64' : 'w-20'" 
        class="bg-[#0c2b4d] text-white flex-shrink-0 flex flex-col justify-between shadow-xl select-none transition-all duration-300 ease-in-out z-30">
     
     <div class="flex flex-col h-full overflow-y-auto overflow-x-hidden">
@@ -57,13 +59,13 @@
                          x-transition:enter-start="opacity-0 transform -translate-y-2"
                          x-transition:enter-end="opacity-100 transform translate-y-0"
                          class="pl-12 mt-1 space-y-1 overflow-hidden flex flex-col text-left">
-                        <a href="#" class="block py-2 text-xs text-blue-100/60 hover:text-white transition-colors">
+                        <a href="{{ route('admin.manage.admins.index') }}" class="block py-2 text-xs text-blue-100/60 hover:text-white transition-colors {{ request()->routeIs('admin.manage.admins.*') ? 'text-white font-semibold' : '' }}">
                             Kelola Admin
                         </a>
-                        <a href="#" class="block py-2 text-xs text-blue-100/60 hover:text-white transition-colors">
+                        <a href="{{ route('admin.manage.gurus.index') }}" class="block py-2 text-xs text-blue-100/60 hover:text-white transition-colors {{ request()->routeIs('admin.manage.gurus.*') ? 'text-white font-semibold' : '' }}">
                             Kelola Guru
                         </a>
-                        <a href="#" class="block py-2 text-xs text-blue-100/60 hover:text-white transition-colors">
+                        <a href="{{ route('admin.manage.murids.index') }}" class="block py-2 text-xs text-blue-100/60 hover:text-white transition-colors {{ request()->routeIs('admin.manage.murids.*') ? 'text-white font-semibold' : '' }}">
                             Kelola Murid
                         </a>
                     </div>

@@ -44,11 +44,18 @@
         </div>
 
         <div>
-            <label for="edit_class_room" class="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-1.5">Kelas</label>
-            <input type="text" name="class_room" id="edit_class_room" x-model="editData.class_room" required
-                   class="w-full px-4 py-2.5 bg-white border border-gray-200 rounded-xl focus:outline-none focus:border-[#0c2b4d] focus:ring-1 focus:ring-[#0c2b4d] text-sm text-gray-800 transition-all shadow-sm">
+            <label for="edit_classroom_id" class="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-1.5">Kelas</label>
+            <select name="classroom_id" id="edit_classroom_id" x-model="editData.classroom_id" required
+                    class="w-full px-4 py-2.5 bg-white border border-gray-200 rounded-xl focus:outline-none focus:border-[#0c2b4d] focus:ring-1 focus:ring-[#0c2b4d] text-sm text-gray-800 transition-all shadow-sm">
+                <option value="" disabled>Pilih Kelas</option>
+                @foreach($classrooms as $classroom)
+                    <option value="{{ $classroom->id }}">
+                        {{ $classroom->nama_kelas }} ({{ $classroom->tahunAjaran->tahun_ajaran ?? '-' }})
+                    </option>
+                @endforeach
+            </select>
             @if(old('_method') === 'PUT')
-                @error('class_room') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
+                @error('classroom_id') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
             @endif
         </div>
     </div>

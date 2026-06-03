@@ -8,6 +8,8 @@ use App\Http\Controllers\GuruManagementController;
 use App\Http\Controllers\MuridManagementController;
 use App\Http\Controllers\TahunAjaranManagementController;
 use App\Http\Controllers\JurusanManagementController;
+use App\Http\Controllers\ClassroomManagementController;
+use App\Http\Controllers\SubjectManagementController;
 
 Route::get('/', function () {
     return redirect()->route('login');
@@ -42,6 +44,12 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin/manage')->name('admin.m
 
     // Jurusan
     Route::resource('jurusans', JurusanManagementController::class);
+
+    // Classroom
+    Route::resource('classrooms', ClassroomManagementController::class);
+
+    // Subject
+    Route::resource('subjects', SubjectManagementController::class);
 
     Route::resource('admins', AdminManagementController::class);
 });

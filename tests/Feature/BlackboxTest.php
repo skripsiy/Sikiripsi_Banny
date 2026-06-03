@@ -17,6 +17,25 @@ describe('Equivalence Partitioning (EP) - Email & Required Fields Validation', f
     beforeEach(function () {
         // Create an admin to bypass role middleware for managing murids
         $this->admin = User::factory()->create(['role' => 'admin']);
+
+        $this->tahunAjaran = \App\Models\TahunAjaran::create([
+            'tahun_ajaran' => '2025/2026',
+            'semester' => 'ganjil',
+            'is_active' => true,
+        ]);
+
+        $this->jurusan = \App\Models\Jurusan::create([
+            'kode_jurusan' => 'RPL',
+            'nama_jurusan' => 'Rekayasa Perangkat Lunak',
+            'is_active' => true,
+        ]);
+
+        $this->classroom = \App\Models\Classroom::create([
+            'nama_kelas' => 'XII RPL 1',
+            'jurusan_id' => $this->jurusan->id,
+            'tahun_ajaran_id' => $this->tahunAjaran->id,
+            'is_active' => true,
+        ]);
     });
 
     it('accepts valid email partition', function () {
@@ -26,7 +45,7 @@ describe('Equivalence Partitioning (EP) - Email & Required Fields Validation', f
             'password' => 'password123',
             'password_confirmation' => 'password123',
             'nisn' => '1234567890',
-            'class_room' => 'XII RPL 1',
+            'classroom_id' => $this->classroom->id,
         ]);
 
         $response->assertSessionHasNoErrors();
@@ -40,7 +59,7 @@ describe('Equivalence Partitioning (EP) - Email & Required Fields Validation', f
             'password' => 'password123',
             'password_confirmation' => 'password123',
             'nisn' => '1234567890',
-            'class_room' => 'XII RPL 1',
+            'classroom_id' => $this->classroom->id,
         ]);
 
         $response->assertSessionHasErrors('email');
@@ -53,7 +72,7 @@ describe('Equivalence Partitioning (EP) - Email & Required Fields Validation', f
             'password' => 'password123',
             'password_confirmation' => 'password123',
             'nisn' => '1234567890',
-            'class_room' => 'XII RPL 1',
+            'classroom_id' => $this->classroom->id,
         ]);
 
         $response->assertSessionHasErrors('name');
@@ -69,6 +88,25 @@ describe('Equivalence Partitioning (EP) - Email & Required Fields Validation', f
 describe('Boundary Value Analysis (BVA) - NISN Length & Password Length', function () {
     beforeEach(function () {
         $this->admin = User::factory()->create(['role' => 'admin']);
+
+        $this->tahunAjaran = \App\Models\TahunAjaran::create([
+            'tahun_ajaran' => '2025/2026',
+            'semester' => 'ganjil',
+            'is_active' => true,
+        ]);
+
+        $this->jurusan = \App\Models\Jurusan::create([
+            'kode_jurusan' => 'RPL',
+            'nama_jurusan' => 'Rekayasa Perangkat Lunak',
+            'is_active' => true,
+        ]);
+
+        $this->classroom = \App\Models\Classroom::create([
+            'nama_kelas' => 'XII RPL 1',
+            'jurusan_id' => $this->jurusan->id,
+            'tahun_ajaran_id' => $this->tahunAjaran->id,
+            'is_active' => true,
+        ]);
     });
 
     // NISN Boundary: exactly 10 digits
@@ -79,7 +117,7 @@ describe('Boundary Value Analysis (BVA) - NISN Length & Password Length', functi
             'password' => 'password123',
             'password_confirmation' => 'password123',
             'nisn' => '123456789', // 9 digits (invalid)
-            'class_room' => 'XII RPL 1',
+            'classroom_id' => $this->classroom->id,
         ]);
 
         $response->assertSessionHasErrors('nisn');
@@ -92,7 +130,7 @@ describe('Boundary Value Analysis (BVA) - NISN Length & Password Length', functi
             'password' => 'password123',
             'password_confirmation' => 'password123',
             'nisn' => '1234567890', // 10 digits (valid)
-            'class_room' => 'XII RPL 1',
+            'classroom_id' => $this->classroom->id,
         ]);
 
         $response->assertSessionHasNoErrors();
@@ -105,7 +143,7 @@ describe('Boundary Value Analysis (BVA) - NISN Length & Password Length', functi
             'password' => 'password123',
             'password_confirmation' => 'password123',
             'nisn' => '12345678901', // 11 digits (invalid)
-            'class_room' => 'XII RPL 1',
+            'classroom_id' => $this->classroom->id,
         ]);
 
         $response->assertSessionHasErrors('nisn');

@@ -1,6 +1,6 @@
 <x-app-layout>
     <x-slot name="header">
-        {{ __('Kelola Murid') }}
+        {{ __('Kelola Kelas') }}
     </x-slot>
 
     <div class="max-w-7xl mx-auto font-sans" x-data="{
@@ -8,64 +8,30 @@
         showEditModal: {{ $errors->any() && old('_method') === 'PUT' ? 'true' : 'false' }},
         editData: {
             id: '{{ old('id') ?? '' }}',
-            name: {{ json_encode(old('name') ?? '') }},
-            email: {{ json_encode(old('email') ?? '') }},
-            nisn: {{ json_encode(old('nisn') ?? '') }},
-            classroom_id: '{{ old('classroom_id') ?? '' }}'
+            nama_kelas: {{ json_encode(old('nama_kelas') ?? '') }},
+            jurusan_id: '{{ old('jurusan_id') ?? '' }}',
+            tahun_ajaran_id: '{{ old('tahun_ajaran_id') ?? '' }}',
+            is_active: '{{ old('is_active') !== null ? (old('is_active') ? '1' : '0') : '' }}'
         },
-        editUrl: '{{ old('id') ? route('admin.manage.murids.update', old('id')) : '' }}'
+        editUrl: '{{ old('id') ? route('admin.manage.classrooms.update', old('id')) : '' }}'
     }">
         <!-- Header Actions -->
-        <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-4 mb-6">
-            <h3 class="text-base font-bold text-gray-800">Daftar Akun Murid</h3>
-            
-            <div class="flex flex-wrap items-center gap-3">
-                <!-- Import Form -->
-                <form action="{{ route('admin.manage.murids.import') }}" method="POST" enctype="multipart/form-data" class="flex items-center gap-2 bg-white px-4 py-2 border border-gray-100 rounded-xl shadow-sm">
-                    @csrf
-                    <input type="file" name="file" accept=".xlsx,.xls,.csv" required 
-                           class="text-xs text-gray-500 file:mr-3 file:py-1 file:px-2.5 file:rounded-lg file:border-0 file:text-xs file:font-bold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100 cursor-pointer">
-                    <button type="submit" class="bg-emerald-600 hover:bg-emerald-700 text-white px-3.5 py-1.5 rounded-lg text-xs font-bold shadow-sm transition-all duration-150 cursor-pointer select-none">
-                        Import Excel
-                    </button>
-                </form>
-
-                <!-- Download Template -->
-                <a href="{{ route('admin.manage.murids.template') }}" 
-                   class="bg-white hover:bg-gray-50 text-gray-700 px-4 py-2.5 border border-gray-200 rounded-xl text-xs font-bold transition-all duration-150 shadow-sm flex items-center gap-1.5">
-                    <svg class="w-4 h-4 text-gray-500" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path>
-                    </svg>
-                    Download Template
-                </a>
-
-                <!-- Add Button -->
-                <button @click="showCreateModal = true" 
-                        class="bg-[#0c2b4d] hover:bg-[#07192d] text-white px-4 py-2.5 rounded-xl text-xs font-bold transition-all duration-150 shadow-sm cursor-pointer select-none">
-                    + Tambah Murid
-                </button>
-            </div>
+        <div class="flex justify-between items-center mb-6">
+            <h3 class="text-base font-bold text-gray-800">Daftar Kelas</h3>
+            <button @click="showCreateModal = true" 
+                    class="bg-[#0c2b4d] hover:bg-[#07192d] text-white px-4 py-2.5 rounded-lg text-sm font-semibold transition-colors shadow-sm cursor-pointer select-none">
+                + Tambah Kelas
+            </button>
         </div>
 
-        <!-- Import Validation Errors -->
-        @if (session('import_errors'))
-            <div class="mb-6 p-4 bg-red-50 border border-red-200 text-red-700 rounded-xl shadow-sm">
-                <p class="font-semibold text-sm mb-2">Gagal mengimpor data. Ditemukan beberapa kesalahan berikut:</p>
-                <ul class="list-disc pl-5 text-xs space-y-1">
-                    @foreach (session('import_errors') as $error)
-                        <li>{{ $error }}</li>
-                    @endforeach
-                </ul>
-            </div>
-        @endif
         <!-- Status Notification -->
         @if (session('status'))
-            <div class="mb-6 p-4 bg-green-50 border border-green-200 text-green-700 rounded-xl text-sm font-medium shadow-sm">
+            <div class="mb-6 p-4 bg-green-50 border border-green-200 text-green-700 rounded-lg text-sm font-medium shadow-sm">
                 {{ session('status') }}
             </div>
         @endif
         @if (session('error'))
-            <div class="mb-6 p-4 bg-red-50 border border-red-200 text-red-700 rounded-xl text-sm font-medium shadow-sm">
+            <div class="mb-6 p-4 bg-red-50 border border-red-200 text-red-700 rounded-lg text-sm font-medium shadow-sm">
                 {{ session('error') }}
             </div>
         @endif
@@ -76,42 +42,58 @@
 
             <div class="p-6">
                 <div class="overflow-x-auto font-sans">
-                    @if ($murids->isNotEmpty())
+                    @if ($classrooms->isNotEmpty())
                         <table class="min-w-full divide-y divide-gray-100">
                             <thead class="bg-gray-50/75">
                                 <tr>
-                                    <th class="px-6 py-4 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">Nama</th>
-                                    <th class="px-6 py-4 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">Email</th>
-                                    <th class="px-6 py-4 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">NISN</th>
-                                    <th class="px-6 py-4 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">Kelas</th>
+                                    <th class="px-6 py-4 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">Nama Kelas</th>
+                                    <th class="px-6 py-4 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">Jurusan</th>
+                                    <th class="px-6 py-4 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">Tahun Ajaran</th>
+                                    <th class="px-6 py-4 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">Status</th>
                                     <th class="px-6 py-4 text-center text-xs font-bold text-gray-500 uppercase tracking-wider w-36">Aksi</th>
                                 </tr>
                             </thead>
                             <tbody class="bg-white divide-y divide-gray-100">
-                                @foreach ($murids as $userObj)
+                                @foreach ($classrooms as $classroom)
                                     <tr class="hover:bg-gray-50/50 transition-all duration-150">
-                                        <td class="px-6 py-4 whitespace-nowrap text-sm font-semibold text-gray-900">{{ $userObj->name }}</td>
-                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ $userObj->email }}</td>
-                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ $userObj->murid->nisn ?? '-' }}</td>
-                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ $userObj->murid->classroom->nama_kelas ?? '-' }}</td>
+                                        <td class="px-6 py-4 whitespace-nowrap text-sm font-semibold text-gray-900">{{ $classroom->nama_kelas }}</td>
+                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700 font-medium">
+                                            {{ $classroom->jurusan->nama_jurusan ?? '-' }} ({{ $classroom->jurusan->kode_jurusan ?? '-' }})
+                                        </td>
+                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                                            {{ $classroom->tahunAjaran->tahun_ajaran ?? '-' }} - Semester {{ ucfirst($classroom->tahunAjaran->semester ?? '') }}
+                                        </td>
+                                        <td class="px-6 py-4 whitespace-nowrap text-sm">
+                                            @if ($classroom->is_active)
+                                                <span class="inline-flex items-center gap-1.5 px-3 py-1 text-xs font-bold rounded-full bg-green-50 text-green-700 border border-green-200 shadow-sm">
+                                                    <span class="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse"></span>
+                                                    Aktif
+                                                </span>
+                                            @else
+                                                <span class="inline-flex items-center gap-1.5 px-3 py-1 text-xs font-bold rounded-full bg-gray-50 text-gray-500 border border-gray-200">
+                                                    <span class="w-1.5 h-1.5 rounded-full bg-gray-400"></span>
+                                                    Tidak Aktif
+                                                </span>
+                                            @endif
+                                        </td>
                                         <td class="px-6 py-4 whitespace-nowrap text-sm text-center font-medium">
                                             <div class="flex items-center justify-center gap-3">
                                                 <button @click="
                                                     showEditModal = true;
                                                     editData = {
-                                                        id: '{{ $userObj->id }}',
-                                                        name: {{ json_encode($userObj->name) }},
-                                                        email: {{ json_encode($userObj->email) }},
-                                                        nisn: {{ json_encode($userObj->murid->nisn ?? '') }},
-                                                        classroom_id: '{{ $userObj->murid->classroom_id ?? '' }}'
+                                                        id: '{{ $classroom->id }}',
+                                                        nama_kelas: {{ json_encode($classroom->nama_kelas) }},
+                                                        jurusan_id: '{{ $classroom->jurusan_id }}',
+                                                        tahun_ajaran_id: '{{ $classroom->tahun_ajaran_id }}',
+                                                        is_active: '{{ $classroom->is_active ? '1' : '0' }}'
                                                     };
-                                                    editUrl = '{{ route('admin.manage.murids.update', $userObj->id) }}';
+                                                    editUrl = '{{ route('admin.manage.classrooms.update', $classroom->id) }}';
                                                  " 
                                                  class="text-blue-600 hover:text-blue-900 bg-blue-50 hover:bg-blue-100 px-3 py-1.5 rounded-lg text-xs font-bold transition-all duration-150 cursor-pointer select-none">
                                                     Edit
                                                 </button>
                                                 
-                                                <form action="{{ route('admin.manage.murids.destroy', $userObj->id) }}" method="POST" onsubmit="return confirm('Apakah Anda yakin ingin menghapus akun ini?');" class="inline">
+                                                <form action="{{ route('admin.manage.classrooms.destroy', $classroom->id) }}" method="POST" onsubmit="return confirm('Apakah Anda yakin ingin menghapus kelas ini?');" class="inline">
                                                     @csrf
                                                     @method('DELETE')
                                                     <button type="submit" 
@@ -126,18 +108,18 @@
                             </tbody>
                         </table>
                     @else
-                        <!-- Premium Empty State Placement -->
+                        <!-- Empty State -->
                         <div class="flex flex-col items-center justify-center py-12 text-center">
                             <div class="w-20 h-20 bg-blue-50 text-gray-300 rounded-3xl flex items-center justify-center mb-6 shadow-inner">
                                 <svg class="w-10 h-10 text-gray-400" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" d="M4.26 10.147a60.436 60.436 0 00-.491 6.347A48.62 48.62 0 0112 20.904a48.62 48.62 0 018.232-4.41 60.46 60.46 0 00-.491-6.347m-15.482 0a50.57 50.57 0 00-2.658-.813A59.905 59.905 0 0112 3.493a59.902 59.902 0 019.218 5.84 50.566 50.566 0 00-2.659.813m-13.9 0l2.428.51a59.868 59.868 0 009.99 0l2.429-.51m-12.419 0v3.462c0 2.224 1.346 4.255 3.42 5.018a18.066 18.066 0 007.96 0c2.073-.763 3.42-2.794 3.42-5.018V10.147M12 7v3.5"></path>
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path>
                                 </svg>
                             </div>
-                            <h4 class="text-lg font-bold text-gray-800 mb-1">Belum Ada Akun Murid</h4>
-                            <p class="text-sm text-gray-400 max-w-sm mb-6">Daftar siswa/murid sekolah yang Anda tambahkan atau import akan terdaftar di sini.</p>
+                            <h4 class="text-lg font-bold text-gray-800 mb-1">Belum Ada Kelas</h4>
+                            <p class="text-sm text-gray-400 max-w-sm mb-6">Data kelas yang Anda tambahkan untuk keperluan akademik sekolah akan muncul di sini.</p>
                             <button @click="showCreateModal = true" 
                                     class="inline-flex items-center gap-2 bg-[#0c2b4d] hover:bg-[#07192d] text-white px-4 py-2.5 rounded-xl text-sm font-semibold transition-colors shadow-sm cursor-pointer select-none">
-                                + Tambah Murid
+                                + Tambah Kelas
                             </button>
                         </div>
                     @endif
@@ -154,7 +136,7 @@
             <div x-show="showCreateModal" x-transition:enter="ease-out duration-300" x-transition:enter-start="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95" x-transition:enter-end="opacity-100 translate-y-0 sm:scale-100" x-transition:leave="ease-in duration-200" x-transition:leave-start="opacity-100 translate-y-0 sm:scale-100" x-transition:leave-end="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95" class="bg-white rounded-2xl overflow-hidden shadow-2xl transform transition-all w-full max-w-xl mx-auto z-10 border border-gray-100">
                 <div class="h-1.5 bg-gradient-to-r from-[#0c2b4d] to-[#1a4a7d]"></div>
                 <div class="p-8">
-                    @include('admin.manage.murids.create')
+                    @include('admin.manage.classrooms.create')
                 </div>
             </div>
         </div>
@@ -168,7 +150,7 @@
             <div x-show="showEditModal" x-transition:enter="ease-out duration-300" x-transition:enter-start="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95" x-transition:enter-end="opacity-100 translate-y-0 sm:scale-100" x-transition:leave="ease-in duration-200" x-transition:leave-start="opacity-100 translate-y-0 sm:scale-100" x-transition:leave-end="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95" class="bg-white rounded-2xl overflow-hidden shadow-2xl transform transition-all w-full max-w-xl mx-auto z-10 border border-gray-100">
                 <div class="h-1.5 bg-gradient-to-r from-[#0c2b4d] to-[#1a4a7d]"></div>
                 <div class="p-8">
-                    @include('admin.manage.murids.edit')
+                    @include('admin.manage.classrooms.edit')
                 </div>
             </div>
         </div>

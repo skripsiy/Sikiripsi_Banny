@@ -7,18 +7,17 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
-#[Fillable(['user_id', 'nisn', 'classroom_id'])]
-class Murid extends Model
+#[Fillable(['kode_pelajaran', 'nama_pelajaran', 'jurusan_id', 'is_active'])]
+class Subject extends Model
 {
     use HasFactory, SoftDeletes;
 
-    public function user()
-    {
-        return $this->belongsTo(User::class);
-    }
+    protected $casts = [
+        'is_active' => 'boolean',
+    ];
 
-    public function classroom()
+    public function jurusan()
     {
-        return $this->belongsTo(Classroom::class);
+        return $this->belongsTo(Jurusan::class);
     }
 }

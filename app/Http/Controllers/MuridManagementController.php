@@ -67,8 +67,9 @@ class MuridManagementController extends Controller
     }
     public function index()
     {
-        $murids = User::where('role', 'murid')->with('murid')->latest()->get();
-        return view('admin.manage.murids.index', compact('murids'));
+        $murids = User::where('role', 'murid')->with('murid.classroom.jurusan', 'murid.classroom.tahunAjaran')->latest()->get();
+        $classrooms = \App\Models\Classroom::where('is_active', true)->with('jurusan', 'tahunAjaran')->get();
+        return view('admin.manage.murids.index', compact('murids', 'classrooms'));
     }
 
     public function create()
@@ -83,7 +84,7 @@ class MuridManagementController extends Controller
             'email' => ['required', 'string', 'email', 'max:255', 'unique:'.User::class],
             'password' => ['required', 'confirmed', Rules\Password::defaults()],
             'nisn' => ['required', 'numeric', 'digits:10'],
-            'class_room' => ['required', 'string', 'max:255'],
+            'classroom_id' => ['required', 'exists:classrooms,id'],
         ]);
 
         $user = User::create([
@@ -96,7 +97,7 @@ class MuridManagementController extends Controller
         Murid::create([
             'user_id' => $user->id,
             'nisn' => $request->nisn,
-            'class_room' => $request->class_room,
+            'classroom_id' => $request->classroom_id,
         ]);
 
         return redirect()->route('admin.manage.murids.index')
@@ -116,7 +117,7 @@ class MuridManagementController extends Controller
             'email' => ['required', 'string', 'email', 'max:255', 'unique:users,email,'.$murid->id],
             'password' => ['nullable', 'confirmed', Rules\Password::defaults()],
             'nisn' => ['required', 'numeric', 'digits:10'],
-            'class_room' => ['required', 'string', 'max:255'],
+            'classroom_id' => ['required', 'exists:classrooms,id'],
         ]);
 
         $murid->update([
@@ -134,7 +135,7 @@ class MuridManagementController extends Controller
             ['user_id' => $murid->id],
             [
                 'nisn' => $request->nisn,
-                'class_room' => $request->class_room,
+                'classroom_id' => $request->classroom_id,
             ]
         );
 

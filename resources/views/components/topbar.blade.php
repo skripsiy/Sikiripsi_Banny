@@ -1,21 +1,4 @@
-<header class="h-16 bg-white border-b border-gray-100 flex items-center justify-between px-6 sticky top-0 z-20">
-    <!-- Left Side: Toggle Button + Page Title -->
-    <div class="flex items-center gap-4 flex-1 mr-8">
-        <!-- Toggle Button -->
-        <button @click.stop="sidebarOpen = !sidebarOpen" 
-                class="text-gray-500 hover:text-gray-700 hover:bg-gray-100 p-2 rounded-lg transition-colors focus:outline-none"
-                aria-label="Toggle Sidebar">
-            <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16M4 18h16"></path>
-            </svg>
-        </button>
-        
-        <!-- Title Slot -->
-        <div class="text-lg font-semibold text-gray-800 flex-1">
-            {{ $slot }}
-        </div>
-    </div>
-
+<header class="h-16 bg-white border-b border-gray-100 flex items-center justify-end px-6 sticky top-0 z-20">
     <!-- Right Side: User Dropdown -->
     <div class="flex items-center">
         <x-dropdown align="right" width="48">

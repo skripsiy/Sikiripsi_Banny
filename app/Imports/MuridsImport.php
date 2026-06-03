@@ -4,6 +4,8 @@ namespace App\Imports;
 
 use App\Models\User;
 use App\Models\Murid;
+use App\Models\Classroom;
+use App\Models\TahunAjaran;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\DB;
@@ -15,8 +17,14 @@ class MuridsImport implements ToCollection, WithHeadingRow, WithValidation
 {
     public function collection(Collection $rows)
     {
-        DB::transaction(function () use ($rows) {
+        $activeTa = TahunAjaran::where('is_active', true)->first();
+
+        DB::transaction(function () use ($rows, $activeTa) {
             foreach ($rows as $row) {
+                $classroom = Classroom::where('nama_kelas', $row['class_room'])
+                    ->where('tahun_ajaran_id', $activeTa->id)
+                    ->first();
+
                 $user = User::create([
                     'name'                 => $row['name'],
                     'email'                => $row['email'],
@@ -26,9 +34,9 @@ class MuridsImport implements ToCollection, WithHeadingRow, WithValidation
                 ]);
 
                 Murid::create([
-                    'user_id'    => $user->id,
-                    'nisn'       => $row['nisn'],
-                    'class_room' => $row['class_room'],
+                    'user_id'      => $user->id,
+                    'nisn'         => $row['nisn'],
+                    'classroom_id' => $classroom->id,
                 ]);
             }
         });
@@ -40,7 +48,24 @@ class MuridsImport implements ToCollection, WithHeadingRow, WithValidation
             'name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'string', 'email', 'max:255', 'unique:users,email'],
             'nisn' => ['required', 'string', 'max:50'],
-            'class_room' => ['required', 'string', 'max:255'],
+            'class_room' => [
+                'required',
+                'string',
+                function ($attribute, $value, $fail) {
+                    $activeTa = TahunAjaran::where('is_active', true)->first();
+                    if (!$activeTa) {
+                        $fail('Tidak ada Tahun Ajaran aktif saat ini.');
+                        return;
+                    }
+                    $exists = Classroom::where('nama_kelas', $value)
+                        ->where('tahun_ajaran_id', $activeTa->id)
+                        ->whereNull('deleted_at')
+                        ->exists();
+                    if (!$exists) {
+                        $fail("Kelas '{$value}' tidak terdaftar atau tidak aktif di Tahun Ajaran saat ini.");
+                    }
+                }
+            ],
         ];
     }
 }

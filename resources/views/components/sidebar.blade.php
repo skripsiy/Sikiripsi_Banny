@@ -45,11 +45,23 @@
                     </svg>
                     <span x-show="sidebarOpen" class="whitespace-nowrap">Kelola Tahun Ajaran</span>
                 </a>
+
+                <!-- Kelola Jurusan -->
+                <a href="{{ route('admin.manage.jurusans.index') }}" 
+                   class="flex items-center rounded-lg text-sm font-medium transition-all duration-300 {{ request()->routeIs('admin.manage.jurusans.*') ? 'bg-white/10 text-white font-semibold' : 'text-blue-100/70 hover:bg-white/5 hover:text-white' }}"
+                   :class="sidebarOpen ? 'px-4 py-3 justify-start gap-3' : 'px-0 py-3 justify-center gap-0 w-12 mx-auto'">
+                    <svg class="w-5 h-5 text-current flex-shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 21h16.5M4.5 3h15M5.25 3v18m13.5-18v18M9 6.75h1.5m-1.5 3h1.5m-1.5 3h1.5m3-6H15m-1.5 3H15m-1.5 3H15M9 21v-3.375c0-.621.504-1.125 1.125-1.125h3.75c.621 0 1.125.504 1.125 1.125V21"></path>
+                    </svg>
+                    <span x-show="sidebarOpen" class="whitespace-nowrap">Kelola Jurusan</span>
+                </a>
                 
                 <div x-data="{ kelolaOpen: false }" class="flex flex-col">
                     <button @click="kelolaOpen = !kelolaOpen" 
-                            class="w-full flex items-center justify-between rounded-lg text-sm font-medium text-blue-100/70 hover:bg-white/5 hover:text-white transition-all duration-300 focus:outline-none"
-                            :class="sidebarOpen ? 'px-4 py-3 gap-3' : 'px-0 py-3 justify-center gap-0 w-12 mx-auto'">
+                            class="rounded-lg text-sm font-medium text-blue-100/70 hover:bg-white/5 hover:text-white transition-all duration-300 focus:outline-none"
+                            :class="sidebarOpen 
+                                ? 'w-full flex items-center justify-between px-4 py-3 gap-3' 
+                                : 'w-12 mx-auto flex items-center justify-center py-3'">
                         <div class="flex items-center" :class="sidebarOpen ? 'gap-3' : 'gap-0'">
                             <svg class="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"></path>

@@ -7,6 +7,7 @@ use App\Http\Controllers\AdminManagementController;
 use App\Http\Controllers\GuruManagementController;
 use App\Http\Controllers\MuridManagementController;
 use App\Http\Controllers\TahunAjaranManagementController;
+use App\Http\Controllers\JurusanManagementController;
 
 Route::get('/', function () {
     return redirect()->route('login');
@@ -38,6 +39,9 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin/manage')->name('admin.m
 
     // Tahun Ajaran
     Route::resource('tahun-ajarans', TahunAjaranManagementController::class);
+
+    // Jurusan
+    Route::resource('jurusans', JurusanManagementController::class);
 
     Route::resource('admins', AdminManagementController::class);
 });

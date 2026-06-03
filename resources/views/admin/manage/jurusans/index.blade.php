@@ -1,6 +1,6 @@
 <x-app-layout>
     <x-slot name="header">
-        {{ __('Kelola Murid') }}
+        {{ __('Kelola Jurusan') }}
     </x-slot>
 
     <div class="max-w-7xl mx-auto font-sans" x-data="{
@@ -8,64 +8,29 @@
         showEditModal: {{ $errors->any() && old('_method') === 'PUT' ? 'true' : 'false' }},
         editData: {
             id: '{{ old('id') ?? '' }}',
-            name: {{ json_encode(old('name') ?? '') }},
-            email: {{ json_encode(old('email') ?? '') }},
-            nisn: {{ json_encode(old('nisn') ?? '') }},
-            class_room: {{ json_encode(old('class_room') ?? '') }}
+            kode_jurusan: {{ json_encode(old('kode_jurusan') ?? '') }},
+            nama_jurusan: {{ json_encode(old('nama_jurusan') ?? '') }},
+            deskripsi: {{ json_encode(old('deskripsi') ?? '') }},
+            is_active: '{{ old('is_active') !== null ? (old('is_active') ? '1' : '0') : '' }}'
         },
-        editUrl: '{{ old('id') ? route('admin.manage.murids.update', old('id')) : '' }}'
+        editUrl: '{{ old('id') ? route('admin.manage.jurusans.update', old('id')) : '' }}'
     }">
         <!-- Header Actions -->
-        <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-4 mb-6">
-            <h3 class="text-base font-bold text-gray-800">Daftar Akun Murid</h3>
-            
-            <div class="flex flex-wrap items-center gap-3">
-                <!-- Import Form -->
-                <form action="{{ route('admin.manage.murids.import') }}" method="POST" enctype="multipart/form-data" class="flex items-center gap-2 bg-white px-4 py-2 border border-gray-100 rounded-xl shadow-sm">
-                    @csrf
-                    <input type="file" name="file" accept=".xlsx,.xls,.csv" required 
-                           class="text-xs text-gray-500 file:mr-3 file:py-1 file:px-2.5 file:rounded-lg file:border-0 file:text-xs file:font-bold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100 cursor-pointer">
-                    <button type="submit" class="bg-emerald-600 hover:bg-emerald-700 text-white px-3.5 py-1.5 rounded-lg text-xs font-bold shadow-sm transition-all duration-150 cursor-pointer select-none">
-                        Import Excel
-                    </button>
-                </form>
-
-                <!-- Download Template -->
-                <a href="{{ route('admin.manage.murids.template') }}" 
-                   class="bg-white hover:bg-gray-50 text-gray-700 px-4 py-2.5 border border-gray-200 rounded-xl text-xs font-bold transition-all duration-150 shadow-sm flex items-center gap-1.5">
-                    <svg class="w-4 h-4 text-gray-500" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path>
-                    </svg>
-                    Download Template
-                </a>
-
-                <!-- Add Button -->
-                <button @click="showCreateModal = true" 
-                        class="bg-[#0c2b4d] hover:bg-[#07192d] text-white px-4 py-2.5 rounded-xl text-xs font-bold transition-all duration-150 shadow-sm cursor-pointer select-none">
-                    + Tambah Murid
-                </button>
-            </div>
+        <div class="flex justify-between items-center mb-6">
+            <h3 class="text-base font-bold text-gray-800">Daftar Jurusan</h3>
+            <button @click="showCreateModal = true" 
+                    class="bg-[#0c2b4d] hover:bg-[#07192d] text-white px-4 py-2.5 rounded-lg text-sm font-semibold transition-colors shadow-sm cursor-pointer select-none">
+                + Tambah Jurusan
+            </button>
         </div>
-
-        <!-- Import Validation Errors -->
-        @if (session('import_errors'))
-            <div class="mb-6 p-4 bg-red-50 border border-red-200 text-red-700 rounded-xl shadow-sm">
-                <p class="font-semibold text-sm mb-2">Gagal mengimpor data. Ditemukan beberapa kesalahan berikut:</p>
-                <ul class="list-disc pl-5 text-xs space-y-1">
-                    @foreach (session('import_errors') as $error)
-                        <li>{{ $error }}</li>
-                    @endforeach
-                </ul>
-            </div>
-        @endif
         <!-- Status Notification -->
         @if (session('status'))
-            <div class="mb-6 p-4 bg-green-50 border border-green-200 text-green-700 rounded-xl text-sm font-medium shadow-sm">
+            <div class="mb-6 p-4 bg-green-50 border border-green-200 text-green-700 rounded-lg text-sm font-medium shadow-sm">
                 {{ session('status') }}
             </div>
         @endif
         @if (session('error'))
-            <div class="mb-6 p-4 bg-red-50 border border-red-200 text-red-700 rounded-xl text-sm font-medium shadow-sm">
+            <div class="mb-6 p-4 bg-red-50 border border-red-200 text-red-700 rounded-lg text-sm font-medium shadow-sm">
                 {{ session('error') }}
             </div>
         @endif
@@ -76,42 +41,54 @@
 
             <div class="p-6">
                 <div class="overflow-x-auto font-sans">
-                    @if ($murids->isNotEmpty())
+                    @if ($jurusans->isNotEmpty())
                         <table class="min-w-full divide-y divide-gray-100">
                             <thead class="bg-gray-50/75">
                                 <tr>
-                                    <th class="px-6 py-4 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">Nama</th>
-                                    <th class="px-6 py-4 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">Email</th>
-                                    <th class="px-6 py-4 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">NISN</th>
-                                    <th class="px-6 py-4 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">Kelas</th>
+                                    <th class="px-6 py-4 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">Kode</th>
+                                    <th class="px-6 py-4 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">Nama Jurusan</th>
+                                    <th class="px-6 py-4 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">Deskripsi</th>
+                                    <th class="px-6 py-4 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">Status</th>
                                     <th class="px-6 py-4 text-center text-xs font-bold text-gray-500 uppercase tracking-wider w-36">Aksi</th>
                                 </tr>
                             </thead>
                             <tbody class="bg-white divide-y divide-gray-100">
-                                @foreach ($murids as $userObj)
+                                @foreach ($jurusans as $jurusan)
                                     <tr class="hover:bg-gray-50/50 transition-all duration-150">
-                                        <td class="px-6 py-4 whitespace-nowrap text-sm font-semibold text-gray-900">{{ $userObj->name }}</td>
-                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ $userObj->email }}</td>
-                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ $userObj->murid->nisn ?? '-' }}</td>
-                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ $userObj->murid->class_room ?? '-' }}</td>
+                                        <td class="px-6 py-4 whitespace-nowrap text-sm font-semibold text-gray-900">{{ $jurusan->kode_jurusan }}</td>
+                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700 font-medium">{{ $jurusan->nama_jurusan }}</td>
+                                        <td class="px-6 py-4 text-sm text-gray-500 max-w-xs truncate">{{ $jurusan->deskripsi ?? '-' }}</td>
+                                        <td class="px-6 py-4 whitespace-nowrap text-sm">
+                                            @if ($jurusan->is_active)
+                                                <span class="inline-flex items-center gap-1.5 px-3 py-1 text-xs font-bold rounded-full bg-green-50 text-green-700 border border-green-200 shadow-sm">
+                                                    <span class="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse"></span>
+                                                    Aktif
+                                                </span>
+                                            @else
+                                                <span class="inline-flex items-center gap-1.5 px-3 py-1 text-xs font-bold rounded-full bg-gray-50 text-gray-500 border border-gray-200">
+                                                    <span class="w-1.5 h-1.5 rounded-full bg-gray-400"></span>
+                                                    Tidak Aktif
+                                                </span>
+                                            @endif
+                                        </td>
                                         <td class="px-6 py-4 whitespace-nowrap text-sm text-center font-medium">
                                             <div class="flex items-center justify-center gap-3">
                                                 <button @click="
                                                     showEditModal = true;
                                                     editData = {
-                                                        id: '{{ $userObj->id }}',
-                                                        name: {{ json_encode($userObj->name) }},
-                                                        email: {{ json_encode($userObj->email) }},
-                                                        nisn: {{ json_encode($userObj->murid->nisn ?? '') }},
-                                                        class_room: {{ json_encode($userObj->murid->class_room ?? '') }}
+                                                        id: '{{ $jurusan->id }}',
+                                                        kode_jurusan: {{ json_encode($jurusan->kode_jurusan) }},
+                                                        nama_jurusan: {{ json_encode($jurusan->nama_jurusan) }},
+                                                        deskripsi: {{ json_encode($jurusan->deskripsi ?? '') }},
+                                                        is_active: '{{ $jurusan->is_active ? '1' : '0' }}'
                                                     };
-                                                    editUrl = '{{ route('admin.manage.murids.update', $userObj->id) }}';
+                                                    editUrl = '{{ route('admin.manage.jurusans.update', $jurusan->id) }}';
                                                  " 
                                                  class="text-blue-600 hover:text-blue-900 bg-blue-50 hover:bg-blue-100 px-3 py-1.5 rounded-lg text-xs font-bold transition-all duration-150 cursor-pointer select-none">
                                                     Edit
                                                 </button>
                                                 
-                                                <form action="{{ route('admin.manage.murids.destroy', $userObj->id) }}" method="POST" onsubmit="return confirm('Apakah Anda yakin ingin menghapus akun ini?');" class="inline">
+                                                <form action="{{ route('admin.manage.jurusans.destroy', $jurusan->id) }}" method="POST" onsubmit="return confirm('Apakah Anda yakin ingin menghapus jurusan ini?');" class="inline">
                                                     @csrf
                                                     @method('DELETE')
                                                     <button type="submit" 
@@ -130,14 +107,14 @@
                         <div class="flex flex-col items-center justify-center py-12 text-center">
                             <div class="w-20 h-20 bg-blue-50 text-gray-300 rounded-3xl flex items-center justify-center mb-6 shadow-inner">
                                 <svg class="w-10 h-10 text-gray-400" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" d="M4.26 10.147a60.436 60.436 0 00-.491 6.347A48.62 48.62 0 0112 20.904a48.62 48.62 0 018.232-4.41 60.46 60.46 0 00-.491-6.347m-15.482 0a50.57 50.57 0 00-2.658-.813A59.905 59.905 0 0112 3.493a59.902 59.902 0 019.218 5.84 50.566 50.566 0 00-2.659.813m-13.9 0l2.428.51a59.868 59.868 0 009.99 0l2.429-.51m-12.419 0v3.462c0 2.224 1.346 4.255 3.42 5.018a18.066 18.066 0 007.96 0c2.073-.763 3.42-2.794 3.42-5.018V10.147M12 7v3.5"></path>
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 21h16.5M4.5 3h15M5.25 3v18m13.5-18v18M9 6.75h1.5m-1.5 3h1.5m-1.5 3h1.5m3-6H15m-1.5 3H15m-1.5 3H15M9 21v-3.375c0-.621.504-1.125 1.125-1.125h3.75c.621 0 1.125.504 1.125 1.125V21"></path>
                                 </svg>
                             </div>
-                            <h4 class="text-lg font-bold text-gray-800 mb-1">Belum Ada Akun Murid</h4>
-                            <p class="text-sm text-gray-400 max-w-sm mb-6">Daftar siswa/murid sekolah yang Anda tambahkan atau import akan terdaftar di sini.</p>
+                            <h4 class="text-lg font-bold text-gray-800 mb-1">Belum Ada Jurusan</h4>
+                            <p class="text-sm text-gray-400 max-w-sm mb-6">Data jurusan yang Anda tambahkan untuk keperluan akademik sekolah akan muncul di sini.</p>
                             <button @click="showCreateModal = true" 
                                     class="inline-flex items-center gap-2 bg-[#0c2b4d] hover:bg-[#07192d] text-white px-4 py-2.5 rounded-xl text-sm font-semibold transition-colors shadow-sm cursor-pointer select-none">
-                                + Tambah Murid
+                                + Tambah Jurusan
                             </button>
                         </div>
                     @endif
@@ -154,7 +131,7 @@
             <div x-show="showCreateModal" x-transition:enter="ease-out duration-300" x-transition:enter-start="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95" x-transition:enter-end="opacity-100 translate-y-0 sm:scale-100" x-transition:leave="ease-in duration-200" x-transition:leave-start="opacity-100 translate-y-0 sm:scale-100" x-transition:leave-end="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95" class="bg-white rounded-2xl overflow-hidden shadow-2xl transform transition-all w-full max-w-xl mx-auto z-10 border border-gray-100">
                 <div class="h-1.5 bg-gradient-to-r from-[#0c2b4d] to-[#1a4a7d]"></div>
                 <div class="p-8">
-                    @include('admin.manage.murids.create')
+                    @include('admin.manage.jurusans.create')
                 </div>
             </div>
         </div>
@@ -168,7 +145,7 @@
             <div x-show="showEditModal" x-transition:enter="ease-out duration-300" x-transition:enter-start="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95" x-transition:enter-end="opacity-100 translate-y-0 sm:scale-100" x-transition:leave="ease-in duration-200" x-transition:leave-start="opacity-100 translate-y-0 sm:scale-100" x-transition:leave-end="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95" class="bg-white rounded-2xl overflow-hidden shadow-2xl transform transition-all w-full max-w-xl mx-auto z-10 border border-gray-100">
                 <div class="h-1.5 bg-gradient-to-r from-[#0c2b4d] to-[#1a4a7d]"></div>
                 <div class="p-8">
-                    @include('admin.manage.murids.edit')
+                    @include('admin.manage.jurusans.edit')
                 </div>
             </div>
         </div>

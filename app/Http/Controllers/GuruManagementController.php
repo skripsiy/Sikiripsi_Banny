@@ -24,13 +24,11 @@ class GuruManagementController extends Controller
         $sheet->setCellValue('A1', 'name');
         $sheet->setCellValue('B1', 'email');
         $sheet->setCellValue('C1', 'nuptk');
-        $sheet->setCellValue('D1', 'subject_specialty');
 
         // Sample Data Row
         $sheet->setCellValue('A2', 'Budi Handoko, S.Pd.');
         $sheet->setCellValue('B2', 'budi@stovia.sch.id');
         $sheet->setCellValue('C2', '9876543210987654');
-        $sheet->setCellValue('D2', 'Matematika');
 
         $writer = new Xlsx($spreadsheet);
 
@@ -83,7 +81,6 @@ class GuruManagementController extends Controller
             'email' => ['required', 'string', 'email', 'max:255', 'unique:'.User::class],
             'password' => ['required', 'confirmed', Rules\Password::defaults()],
             'nuptk' => ['required', 'numeric', 'digits:16'],
-            'subject_specialty' => ['required', 'string', 'max:255'],
         ]);
 
         $user = User::create([
@@ -96,7 +93,6 @@ class GuruManagementController extends Controller
         Guru::create([
             'user_id' => $user->id,
             'nuptk' => $request->nuptk,
-            'subject_specialty' => $request->subject_specialty,
         ]);
 
         return redirect()->route('admin.manage.gurus.index')
@@ -116,7 +112,6 @@ class GuruManagementController extends Controller
             'email' => ['required', 'string', 'email', 'max:255', 'unique:users,email,'.$guru->id],
             'password' => ['nullable', 'confirmed', Rules\Password::defaults()],
             'nuptk' => ['required', 'numeric', 'digits:16'],
-            'subject_specialty' => ['required', 'string', 'max:255'],
         ]);
 
         $guru->update([
@@ -134,7 +129,6 @@ class GuruManagementController extends Controller
             ['user_id' => $guru->id],
             [
                 'nuptk' => $request->nuptk,
-                'subject_specialty' => $request->subject_specialty,
             ]
         );
 

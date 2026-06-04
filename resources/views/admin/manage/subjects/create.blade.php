@@ -15,17 +15,13 @@
 
     <div>
         <label for="create_kode_pelajaran" class="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-1.5">Kode Pelajaran</label>
-        <input type="text" name="kode_pelajaran" id="create_kode_pelajaran" value="{{ !old('_method') ? old('kode_pelajaran') : '' }}" required autofocus
-               placeholder="Contoh: MP001, RPL002"
-               class="w-full px-4 py-2.5 bg-white border border-gray-200 rounded-xl focus:outline-none focus:border-[#0c2b4d] focus:ring-1 focus:ring-[#0c2b4d] text-sm text-gray-800 transition-all shadow-sm uppercase">
-        @if(!old('_method'))
-            @error('kode_pelajaran') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
-        @endif
+        <input type="text" name="kode_pelajaran" id="create_kode_pelajaran" x-model="createKodePelajaran" readonly
+               class="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-sm text-gray-500 font-semibold transition-all shadow-sm cursor-not-allowed uppercase">
     </div>
 
     <div>
         <label for="create_nama_pelajaran" class="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-1.5">Nama Mata Pelajaran</label>
-        <input type="text" name="nama_pelajaran" id="create_nama_pelajaran" value="{{ !old('_method') ? old('nama_pelajaran') : '' }}" required
+        <input type="text" name="nama_pelajaran" id="create_nama_pelajaran" value="{{ !old('_method') ? old('nama_pelajaran') : '' }}" required autofocus
                placeholder="Contoh: Pemrograman Web"
                class="w-full px-4 py-2.5 bg-white border border-gray-200 rounded-xl focus:outline-none focus:border-[#0c2b4d] focus:ring-1 focus:ring-[#0c2b4d] text-sm text-gray-800 transition-all shadow-sm">
         @if(!old('_method'))

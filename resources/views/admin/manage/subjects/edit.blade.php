@@ -18,9 +18,8 @@
     <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
         <div>
             <label for="edit_kode_pelajaran" class="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-1.5">Kode Pelajaran</label>
-            <input type="text" name="kode_pelajaran" id="edit_kode_pelajaran" x-model="editData.kode_pelajaran" required
-                   placeholder="Contoh: MP001"
-                   class="w-full px-4 py-2.5 bg-white border border-gray-200 rounded-xl focus:outline-none focus:border-[#0c2b4d] focus:ring-1 focus:ring-[#0c2b4d] text-sm text-gray-800 transition-all shadow-sm uppercase">
+            <input type="text" name="kode_pelajaran" id="edit_kode_pelajaran" x-model="editData.kode_pelajaran" readonly
+                   class="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-sm text-gray-500 font-semibold transition-all shadow-sm cursor-not-allowed uppercase">
             @if(old('_method') === 'PUT')
                 @error('kode_pelajaran') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
             @endif

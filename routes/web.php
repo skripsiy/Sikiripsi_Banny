@@ -10,6 +10,7 @@ use App\Http\Controllers\TahunAjaranManagementController;
 use App\Http\Controllers\JurusanManagementController;
 use App\Http\Controllers\ClassroomManagementController;
 use App\Http\Controllers\SubjectManagementController;
+use App\Http\Controllers\PenugasanGuruController;
 
 Route::get('/', function () {
     return redirect()->route('login');
@@ -50,9 +51,29 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin/manage')->name('admin.m
 
     // Subject
     Route::resource('subjects', SubjectManagementController::class);
-    Route::post('subjects/{subject}/assign-teachers', [SubjectManagementController::class, 'assignTeachers'])->name('subjects.assign-teachers');
+    Route::resource('penugasan-guru', PenugasanGuruController::class)->except(['create', 'show', 'edit']);
 
     Route::resource('admins', AdminManagementController::class);
+});
+
+Route::middleware(['auth', 'role:guru'])->prefix('guru')->name('guru.')->group(function () {
+    Route::resource('learning-modules', \App\Http\Controllers\LearningModuleController::class);
+    Route::resource('learning-modules.materis', \App\Http\Controllers\MateriController::class)->except(['show']);
+    Route::resource('learning-modules.tugas', \App\Http\Controllers\TugasController::class)->except(['show']);
+    Route::resource('learning-modules.quizzes', \App\Http\Controllers\QuizController::class)->except(['show']);
+    Route::resource('learning-modules.ujians', \App\Http\Controllers\UjianController::class)->except(['show']);
+    Route::post('learning-modules/{learning_module}/absensi', [\App\Http\Controllers\LearningModuleController::class, 'storeAbsensi'])->name('learning-modules.absensi.store');
+    Route::get('learning-modules/{learning_module}/absensi', [\App\Http\Controllers\LearningModuleController::class, 'absensi'])->name('learning-modules.absensi.index');
+});
+
+Route::middleware(['auth', 'role:murid'])->prefix('murid')->name('murid.')->group(function () {
+    Route::get('learning-modules', [\App\Http\Controllers\MuridLearningModuleController::class, 'index'])->name('learning-modules.index');
+    Route::get('learning-modules/{learning_module}', [\App\Http\Controllers\MuridLearningModuleController::class, 'show'])->name('learning-modules.show');
+    Route::get('learning-modules/{learning_module}/materis', [\App\Http\Controllers\MuridLearningModuleController::class, 'materis'])->name('learning-modules.materis.index');
+    Route::get('learning-modules/{learning_module}/tugas', [\App\Http\Controllers\MuridLearningModuleController::class, 'tugas'])->name('learning-modules.tugas.index');
+    Route::get('learning-modules/{learning_module}/quizzes', [\App\Http\Controllers\MuridLearningModuleController::class, 'quizzes'])->name('learning-modules.quizzes.index');
+    Route::get('learning-modules/{learning_module}/ujians', [\App\Http\Controllers\MuridLearningModuleController::class, 'ujians'])->name('learning-modules.ujians.index');
+    Route::get('learning-modules/{learning_module}/absensi', [\App\Http\Controllers\MuridLearningModuleController::class, 'absensi'])->name('learning-modules.absensi.index');
 });
 
 require __DIR__.'/auth.php';

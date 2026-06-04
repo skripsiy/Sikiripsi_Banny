@@ -30,7 +30,6 @@ class DatabaseSeeder extends Seeder
         Admin::create([
             'user_id' => $adminUser->id,
             'nip' => '198805122010011002',
-            'department' => 'IT & Kurikulum',
         ]);
 
         // 2. Seed Guru
@@ -44,10 +43,29 @@ class DatabaseSeeder extends Seeder
         Guru::create([
             'user_id' => $guruUser->id,
             'nuptk' => '9876543210987654',
-            'subject_specialty' => 'Matematika & Pemrograman Web',
         ]);
 
-        // 3. Seed Murid
+        // 3. Seed Academic Prerequisites
+        $ta = \App\Models\TahunAjaran::create([
+            'tahun_ajaran' => '2025/2026',
+            'semester' => 'ganjil',
+            'is_active' => true,
+        ]);
+
+        $jurusan = \App\Models\Jurusan::create([
+            'kode_jurusan' => 'RPL',
+            'nama_jurusan' => 'Rekayasa Perangkat Lunak',
+            'is_active' => true,
+        ]);
+
+        $classroom = \App\Models\Classroom::create([
+            'nama_kelas' => 'XII RPL 1',
+            'jurusan_id' => $jurusan->id,
+            'tahun_ajaran_id' => $ta->id,
+            'is_active' => true,
+        ]);
+
+        // 4. Seed Murid
         $muridUser = User::create([
             'name' => 'Aji Pratama',
             'email' => 'aji@stovia.sch.id',
@@ -58,7 +76,8 @@ class DatabaseSeeder extends Seeder
         Murid::create([
             'user_id' => $muridUser->id,
             'nisn' => '0054321098',
-            'class_room' => 'XII RPL 1',
+            'classroom_id' => $classroom->id,
+            'no_telepon_orang_tua' => '628123456789',
         ]);
     }
 }

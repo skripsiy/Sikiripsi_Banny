@@ -10,8 +10,7 @@
             id: '{{ old('id') ?? '' }}',
             name: {{ json_encode(old('name') ?? '') }},
             email: {{ json_encode(old('email') ?? '') }},
-            nip: {{ json_encode(old('nip') ?? '') }},
-            department: {{ json_encode(old('department') ?? '') }}
+            nip: {{ json_encode(old('nip') ?? '') }}
         },
         editUrl: '{{ old('id') ? route('admin.manage.admins.update', old('id')) : '' }}'
     }">
@@ -48,7 +47,6 @@
                                     <th class="px-6 py-4 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">Nama</th>
                                     <th class="px-6 py-4 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">Email</th>
                                     <th class="px-6 py-4 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">NIP</th>
-                                    <th class="px-6 py-4 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">Departemen / Bidang</th>
                                     <th class="px-6 py-4 text-center text-xs font-bold text-gray-500 uppercase tracking-wider w-36">Aksi</th>
                                 </tr>
                             </thead>
@@ -58,7 +56,6 @@
                                         <td class="px-6 py-4 whitespace-nowrap text-sm font-semibold text-gray-900">{{ $userObj->name }}</td>
                                         <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ $userObj->email }}</td>
                                         <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ $userObj->admin->nip ?? '-' }}</td>
-                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ $userObj->admin->department ?? '-' }}</td>
                                         <td class="px-6 py-4 whitespace-nowrap text-sm text-center font-medium">
                                             <div class="flex items-center justify-center gap-3">
                                                 <button @click="
@@ -67,8 +64,7 @@
                                                         id: '{{ $userObj->id }}',
                                                         name: {{ json_encode($userObj->name) }},
                                                         email: {{ json_encode($userObj->email) }},
-                                                        nip: {{ json_encode($userObj->admin->nip ?? '') }},
-                                                        department: {{ json_encode($userObj->admin->department ?? '') }}
+                                                        nip: {{ json_encode($userObj->admin->nip ?? '') }}
                                                     };
                                                     editUrl = '{{ route('admin.manage.admins.update', $userObj->id) }}';
                                                  " 

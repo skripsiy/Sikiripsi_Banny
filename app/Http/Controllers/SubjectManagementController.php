@@ -12,10 +12,9 @@ class SubjectManagementController extends Controller
 {
     public function index()
     {
-        $subjects = Subject::with(['jurusan', 'gurus.user'])->latest()->get();
+        $subjects = Subject::with('jurusan')->latest()->get();
         $jurusans = Jurusan::where('is_active', true)->orderBy('nama_jurusan')->get();
-        $gurus = Guru::with('user')->get()->sortBy(fn($g) => $g->user?->name ?? '')->values();
-        return view('admin.manage.subjects.index', compact('subjects', 'jurusans', 'gurus'));
+        return view('admin.manage.subjects.index', compact('subjects', 'jurusans'));
     }
 
     public function create()
@@ -25,7 +24,16 @@ class SubjectManagementController extends Controller
 
     public function store(Request $request)
     {
-        if ($request->has('kode_pelajaran')) {
+        if (!$request->filled('kode_pelajaran') || $request->kode_pelajaran === 'DIBUAT OTOMATIS') {
+            // Generate a unique 6-character random uppercase alphanumeric string
+            do {
+                $kode = strtoupper(\Illuminate\Support\Str::random(6));
+            } while (Subject::where('kode_pelajaran', $kode)->whereNull('deleted_at')->exists());
+
+            $request->merge([
+                'kode_pelajaran' => $kode
+            ]);
+        } else {
             $request->merge([
                 'kode_pelajaran' => strtoupper($request->kode_pelajaran)
             ]);
@@ -48,7 +56,7 @@ class SubjectManagementController extends Controller
         ]);
 
         Subject::create([
-            'kode_pelajaran' => strtoupper($request->kode_pelajaran),
+            'kode_pelajaran' => $request->kode_pelajaran,
             'nama_pelajaran' => $request->nama_pelajaran,
             'jurusan_id' => $request->jurusan_id,
             'is_active' => true,
@@ -118,7 +126,14 @@ class SubjectManagementController extends Controller
 
         $subject->gurus()->sync($request->input('guru_ids', []));
 
-        return redirect()->route('admin.manage.subjects.index')
+        return redirect()->route('admin.manage.penugasan-guru.index')
             ->with('status', 'Guru pengampu berhasil diperbarui.');
+    }
+
+    public function penugasanGuru()
+    {
+        $subjects = Subject::with(['jurusan', 'gurus.user'])->latest()->get();
+        $gurus = Guru::with('user')->get()->sortBy(fn($g) => $g->user?->name ?? '')->values();
+        return view('admin.manage.subjects.assign_index', compact('subjects', 'gurus'));
     }
 }

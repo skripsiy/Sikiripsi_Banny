@@ -31,6 +31,15 @@
         @endif
     </div>
 
+    <div>
+        <label for="create_no_telepon_orang_tua" class="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-1.5">No. Telp Orang Tua (WhatsApp)</label>
+        <input type="text" name="no_telepon_orang_tua" id="create_no_telepon_orang_tua" value="{{ !old('_method') ? old('no_telepon_orang_tua') : '' }}" placeholder="Contoh: 628123456789"
+               class="w-full px-4 py-2.5 bg-white border border-gray-200 rounded-xl focus:outline-none focus:border-[#0c2b4d] focus:ring-1 focus:ring-[#0c2b4d] text-sm text-gray-800 transition-all shadow-sm">
+        @if(!old('_method'))
+            @error('no_telepon_orang_tua') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
+        @endif
+    </div>
+
     <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
         <div>
             <label for="create_nisn" class="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-1.5">NISN (10 Digit)</label>

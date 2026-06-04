@@ -28,7 +28,6 @@ class AdminManagementController extends Controller
             'email' => ['required', 'string', 'email', 'max:255', 'unique:'.User::class],
             'password' => ['required', 'confirmed', Rules\Password::defaults()],
             'nip' => ['required', 'numeric', 'digits:18'],
-            'department' => ['required', 'string', 'max:255'],
         ]);
 
         $user = User::create([
@@ -41,7 +40,6 @@ class AdminManagementController extends Controller
         Admin::create([
             'user_id' => $user->id,
             'nip' => $request->nip,
-            'department' => $request->department,
         ]);
 
         return redirect()->route('admin.manage.admins.index')
@@ -61,7 +59,6 @@ class AdminManagementController extends Controller
             'email' => ['required', 'string', 'email', 'max:255', 'unique:users,email,'.$admin->id],
             'password' => ['nullable', 'confirmed', Rules\Password::defaults()],
             'nip' => ['required', 'numeric', 'digits:18'],
-            'department' => ['required', 'string', 'max:255'],
         ]);
 
         $admin->update([
@@ -79,7 +76,6 @@ class AdminManagementController extends Controller
             ['user_id' => $admin->id],
             [
                 'nip' => $request->nip,
-                'department' => $request->department,
             ]
         );
 

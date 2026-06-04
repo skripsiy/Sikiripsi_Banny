@@ -25,12 +25,14 @@ class MuridManagementController extends Controller
         $sheet->setCellValue('B1', 'email');
         $sheet->setCellValue('C1', 'nisn');
         $sheet->setCellValue('D1', 'class_room');
+        $sheet->setCellValue('E1', 'no_telepon_orang_tua');
 
         // Sample Data Row
         $sheet->setCellValue('A2', 'Aji Pratama');
         $sheet->setCellValue('B2', 'aji@stovia.sch.id');
         $sheet->setCellValue('C2', '0054321098');
         $sheet->setCellValue('D2', 'XII RPL 1');
+        $sheet->setCellValue('E2', '628123456789');
 
         $writer = new Xlsx($spreadsheet);
 
@@ -85,6 +87,7 @@ class MuridManagementController extends Controller
             'password' => ['required', 'confirmed', Rules\Password::defaults()],
             'nisn' => ['required', 'numeric', 'digits:10'],
             'classroom_id' => ['required', 'exists:classrooms,id'],
+            'no_telepon_orang_tua' => ['nullable', 'string', 'max:20'],
         ]);
 
         $user = User::create([
@@ -98,6 +101,7 @@ class MuridManagementController extends Controller
             'user_id' => $user->id,
             'nisn' => $request->nisn,
             'classroom_id' => $request->classroom_id,
+            'no_telepon_orang_tua' => $request->no_telepon_orang_tua,
         ]);
 
         return redirect()->route('admin.manage.murids.index')
@@ -118,6 +122,7 @@ class MuridManagementController extends Controller
             'password' => ['nullable', 'confirmed', Rules\Password::defaults()],
             'nisn' => ['required', 'numeric', 'digits:10'],
             'classroom_id' => ['required', 'exists:classrooms,id'],
+            'no_telepon_orang_tua' => ['nullable', 'string', 'max:20'],
         ]);
 
         $murid->update([
@@ -136,6 +141,7 @@ class MuridManagementController extends Controller
             [
                 'nisn' => $request->nisn,
                 'classroom_id' => $request->classroom_id,
+                'no_telepon_orang_tua' => $request->no_telepon_orang_tua,
             ]
         );
 

@@ -28,10 +28,17 @@ class GurusImport implements ToCollection, WithHeadingRow, WithValidation
                 Guru::create([
                     'user_id'           => $user->id,
                     'nuptk'             => $row['nuptk'],
-                    'subject_specialty' => $row['subject_specialty'],
                 ]);
             }
         });
+    }
+
+    public function prepareForValidation($data, $index)
+    {
+        if (isset($data['nuptk'])) {
+            $data['nuptk'] = (string)$data['nuptk'];
+        }
+        return $data;
     }
 
     public function rules(): array
@@ -40,7 +47,6 @@ class GurusImport implements ToCollection, WithHeadingRow, WithValidation
             'name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'string', 'email', 'max:255', 'unique:users,email'],
             'nuptk' => ['required', 'string', 'max:50'],
-            'subject_specialty' => ['required', 'string', 'max:255'],
         ];
     }
 }

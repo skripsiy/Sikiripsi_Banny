@@ -37,9 +37,18 @@ class MuridsImport implements ToCollection, WithHeadingRow, WithValidation
                     'user_id'      => $user->id,
                     'nisn'         => $row['nisn'],
                     'classroom_id' => $classroom->id,
+                    'no_telepon_orang_tua' => $row['no_telepon_orang_tua'] ?? null,
                 ]);
             }
         });
+    }
+
+    public function prepareForValidation($data, $index)
+    {
+        if (isset($data['nisn'])) {
+            $data['nisn'] = (string)$data['nisn'];
+        }
+        return $data;
     }
 
     public function rules(): array
@@ -48,6 +57,7 @@ class MuridsImport implements ToCollection, WithHeadingRow, WithValidation
             'name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'string', 'email', 'max:255', 'unique:users,email'],
             'nisn' => ['required', 'string', 'max:50'],
+            'no_telepon_orang_tua' => ['nullable', 'string', 'max:20'],
             'class_room' => [
                 'required',
                 'string',

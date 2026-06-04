@@ -10,8 +10,7 @@
             id: '{{ old('id') ?? '' }}',
             name: {{ json_encode(old('name') ?? '') }},
             email: {{ json_encode(old('email') ?? '') }},
-            nuptk: {{ json_encode(old('nuptk') ?? '') }},
-            subject_specialty: {{ json_encode(old('subject_specialty') ?? '') }}
+            nuptk: {{ json_encode(old('nuptk') ?? '') }}
         },
         editUrl: '{{ old('id') ? route('admin.manage.gurus.update', old('id')) : '' }}'
     }">
@@ -83,7 +82,6 @@
                                     <th class="px-6 py-4 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">Nama</th>
                                     <th class="px-6 py-4 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">Email</th>
                                     <th class="px-6 py-4 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">NUPTK</th>
-                                    <th class="px-6 py-4 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">Spesialisasi Mata Pelajaran</th>
                                     <th class="px-6 py-4 text-center text-xs font-bold text-gray-500 uppercase tracking-wider w-36">Aksi</th>
                                 </tr>
                             </thead>
@@ -93,7 +91,6 @@
                                         <td class="px-6 py-4 whitespace-nowrap text-sm font-semibold text-gray-900">{{ $userObj->name }}</td>
                                         <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ $userObj->email }}</td>
                                         <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ $userObj->guru->nuptk ?? '-' }}</td>
-                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ $userObj->guru->subject_specialty ?? '-' }}</td>
                                         <td class="px-6 py-4 whitespace-nowrap text-sm text-center font-medium">
                                             <div class="flex items-center justify-center gap-3">
                                                 <button @click="
@@ -102,8 +99,7 @@
                                                         id: '{{ $userObj->id }}',
                                                         name: {{ json_encode($userObj->name) }},
                                                         email: {{ json_encode($userObj->email) }},
-                                                        nuptk: {{ json_encode($userObj->guru->nuptk ?? '') }},
-                                                        subject_specialty: {{ json_encode($userObj->guru->subject_specialty ?? '') }}
+                                                        nuptk: {{ json_encode($userObj->guru->nuptk ?? '') }}
                                                     };
                                                     editUrl = '{{ route('admin.manage.gurus.update', $userObj->id) }}';
                                                  " 

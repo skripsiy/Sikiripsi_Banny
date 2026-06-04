@@ -11,7 +11,8 @@
             name: {{ json_encode(old('name') ?? '') }},
             email: {{ json_encode(old('email') ?? '') }},
             nisn: {{ json_encode(old('nisn') ?? '') }},
-            classroom_id: '{{ old('classroom_id') ?? '' }}'
+            classroom_id: '{{ old('classroom_id') ?? '' }}',
+            no_telepon_orang_tua: {{ json_encode(old('no_telepon_orang_tua') ?? '') }}
         },
         editUrl: '{{ old('id') ? route('admin.manage.murids.update', old('id')) : '' }}'
     }">
@@ -84,6 +85,7 @@
                                     <th class="px-6 py-4 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">Email</th>
                                     <th class="px-6 py-4 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">NISN</th>
                                     <th class="px-6 py-4 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">Kelas</th>
+                                    <th class="px-6 py-4 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">No. Telp Ortu</th>
                                     <th class="px-6 py-4 text-center text-xs font-bold text-gray-500 uppercase tracking-wider w-36">Aksi</th>
                                 </tr>
                             </thead>
@@ -94,6 +96,7 @@
                                         <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ $userObj->email }}</td>
                                         <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ $userObj->murid->nisn ?? '-' }}</td>
                                         <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ $userObj->murid->classroom->nama_kelas ?? '-' }}</td>
+                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ $userObj->murid->no_telepon_orang_tua ?? '-' }}</td>
                                         <td class="px-6 py-4 whitespace-nowrap text-sm text-center font-medium">
                                             <div class="flex items-center justify-center gap-3">
                                                 <button @click="
@@ -103,7 +106,8 @@
                                                         name: {{ json_encode($userObj->name) }},
                                                         email: {{ json_encode($userObj->email) }},
                                                         nisn: {{ json_encode($userObj->murid->nisn ?? '') }},
-                                                        classroom_id: '{{ $userObj->murid->classroom_id ?? '' }}'
+                                                        classroom_id: '{{ $userObj->murid->classroom_id ?? '' }}',
+                                                        no_telepon_orang_tua: {{ json_encode($userObj->murid->no_telepon_orang_tua ?? '') }}
                                                     };
                                                     editUrl = '{{ route('admin.manage.murids.update', $userObj->id) }}';
                                                  " 

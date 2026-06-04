@@ -3,6 +3,8 @@
 use App\Models\User;
 use App\Models\Jurusan;
 use App\Models\Subject;
+use App\Models\Guru;
+use App\Models\SubjectGuru;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
 uses(RefreshDatabase::class);
@@ -33,9 +35,8 @@ describe('Subject CRUD Management', function () {
         $response->assertViewIs('admin.manage.subjects.index');
     });
 
-    it('creates a new subject successfully, forces it active by default, and converts code to uppercase', function () {
+    it('creates a new subject successfully, forces it active by default, and automatically generates a unique 6-character uppercase code', function () {
         $response = $this->actingAs($this->admin)->post(route('admin.manage.subjects.store'), [
-            'kode_pelajaran' => 'mp001', // lowercase to test uppercase
             'nama_pelajaran' => 'Matematika Peminatan',
             'jurusan_id' => $this->jurusan->id,
         ]);
@@ -44,36 +45,33 @@ describe('Subject CRUD Management', function () {
         $response->assertRedirect(route('admin.manage.subjects.index'));
         $response->assertSessionHas('status', 'Mata pelajaran berhasil ditambahkan.');
 
-        $this->assertDatabaseHas('subjects', [
-            'kode_pelajaran' => 'MP001', // verify auto-uppercase
-            'nama_pelajaran' => 'Matematika Peminatan',
-            'jurusan_id' => $this->jurusan->id,
-            'is_active' => true,
-        ]);
+        $subject = Subject::where('nama_pelajaran', 'Matematika Peminatan')->first();
+        $this->assertNotNull($subject);
+        $this->assertMatchesRegularExpression('/^[A-Z0-9]{6}$/', $subject->kode_pelajaran);
+        $this->assertEquals($this->jurusan->id, $subject->jurusan_id);
+        $this->assertTrue((bool)$subject->is_active);
     });
 
     it('allows creating a general subject with null jurusan_id', function () {
         $response = $this->actingAs($this->admin)->post(route('admin.manage.subjects.store'), [
-            'kode_pelajaran' => 'BIN01',
             'nama_pelajaran' => 'Bahasa Indonesia',
             'jurusan_id' => '', // general
         ]);
 
         $response->assertSessionHasNoErrors();
-        $this->assertDatabaseHas('subjects', [
-            'kode_pelajaran' => 'BIN01',
-            'nama_pelajaran' => 'Bahasa Indonesia',
-            'jurusan_id' => null,
-        ]);
+
+        $subject = Subject::where('nama_pelajaran', 'Bahasa Indonesia')->first();
+        $this->assertNotNull($subject);
+        $this->assertMatchesRegularExpression('/^[A-Z0-9]{6}$/', $subject->kode_pelajaran);
+        $this->assertNull($subject->jurusan_id);
     });
 
     it('validates required fields when creating a subject', function () {
         $response = $this->actingAs($this->admin)->post(route('admin.manage.subjects.store'), [
-            'kode_pelajaran' => '',
             'nama_pelajaran' => '',
         ]);
 
-        $response->assertSessionHasErrors(['kode_pelajaran', 'nama_pelajaran']);
+        $response->assertSessionHasErrors(['nama_pelajaran']);
     });
 
     it('updates an existing subject details and allows toggling status', function () {
@@ -121,104 +119,183 @@ describe('Subject CRUD Management', function () {
         ]);
     });
 
-    it('rejects duplicate code in active subjects', function () {
-        Subject::create([
+    it('rejects duplicate code when updating active subjects', function () {
+        $subject1 = Subject::create([
             'kode_pelajaran' => 'MP001',
             'nama_pelajaran' => 'Matematika',
             'is_active' => true,
         ]);
 
-        $response = $this->actingAs($this->admin)->post(route('admin.manage.subjects.store'), [
-            'kode_pelajaran' => 'mp001',
-            'nama_pelajaran' => 'Matematika Dasar',
+        $subject2 = Subject::create([
+            'kode_pelajaran' => 'MP002',
+            'nama_pelajaran' => 'Fisika',
+            'is_active' => true,
+        ]);
+
+        $response = $this->actingAs($this->admin)->put(route('admin.manage.subjects.update', $subject2->id), [
+            'kode_pelajaran' => 'mp001', // tries to update to existing code
+            'nama_pelajaran' => 'Fisika Baru',
+            'is_active' => '1',
         ]);
 
         $response->assertSessionHasErrors('kode_pelajaran');
     });
 
-    it('allows duplicate code if the previous subject was soft-deleted', function () {
-        $subject = Subject::create([
+    it('allows code if the conflicting subject was soft-deleted', function () {
+        $subject1 = Subject::create([
             'kode_pelajaran' => 'MP001',
-            'nama_pelajaran' => 'Matematika',
+            'nama_pelajaran' => 'Matematika Old',
             'is_active' => true,
         ]);
-        $subject->delete();
+        $subject1->delete();
 
-        $response = $this->actingAs($this->admin)->post(route('admin.manage.subjects.store'), [
-            'kode_pelajaran' => 'mp001',
-            'nama_pelajaran' => 'Matematika Baru',
+        $subject2 = Subject::create([
+            'kode_pelajaran' => 'MP002',
+            'nama_pelajaran' => 'Matematika New',
+            'is_active' => true,
+        ]);
+
+        $response = $this->actingAs($this->admin)->put(route('admin.manage.subjects.update', $subject2->id), [
+            'kode_pelajaran' => 'mp001', // tries to update to the soft-deleted code
+            'nama_pelajaran' => 'Matematika New',
+            'is_active' => '1',
         ]);
 
         $response->assertSessionHasNoErrors();
-        $this->assertDatabaseCount('subjects', 2);
+        $this->assertDatabaseHas('subjects', [
+            'id' => $subject2->id,
+            'kode_pelajaran' => 'MP001',
+        ]);
     });
 
-    it('denies teacher assignment access to non-admin users', function () {
+    it('denies penugasan-guru access to non-admin users', function () {
         $user = User::factory()->create(['role' => 'guru']);
-        $subject = Subject::create([
-            'kode_pelajaran' => 'MP001',
-            'nama_pelajaran' => 'Matematika',
-            'is_active' => true,
-        ]);
-
-        $response = $this->actingAs($user)->post(route('admin.manage.subjects.assign-teachers', $subject->id), [
-            'guru_ids' => []
-        ]);
+        
+        $response = $this->actingAs($user)->get(route('admin.manage.penugasan-guru.index'));
         $response->assertStatus(403);
     });
 
-    it('assigns teachers to a subject successfully', function () {
+    it('renders the assign index page for admins', function () {
+        $response = $this->actingAs($this->admin)->get(route('admin.manage.penugasan-guru.index'));
+        $response->assertOk();
+        $response->assertViewIs('admin.manage.subjects.assign_index');
+    });
+
+    it('creates a new penugasan-guru successfully', function () {
         $subject = Subject::create([
             'kode_pelajaran' => 'MP001',
             'nama_pelajaran' => 'Matematika',
             'is_active' => true,
         ]);
 
-        // Create a teacher user and Guru model
-        $guruUser1 = User::factory()->create(['role' => 'guru']);
-        $guru1 = \App\Models\Guru::create([
-            'user_id' => $guruUser1->id,
+        $guruUser = User::factory()->create(['role' => 'guru']);
+        $guru = Guru::create([
+            'user_id' => $guruUser->id,
             'nuptk' => '1234567890123456',
-            'subject_specialty' => 'Matematika',
         ]);
 
-        $guruUser2 = User::factory()->create(['role' => 'guru']);
-        $guru2 = \App\Models\Guru::create([
-            'user_id' => $guruUser2->id,
-            'nuptk' => '6543210987654321',
-            'subject_specialty' => 'Fisika',
-        ]);
-
-        $response = $this->actingAs($this->admin)->post(route('admin.manage.subjects.assign-teachers', $subject->id), [
-            'guru_ids' => [$guru1->id, $guru2->id]
+        $response = $this->actingAs($this->admin)->post(route('admin.manage.penugasan-guru.store'), [
+            'subject_id' => $subject->id,
+            'guru_id' => $guru->id,
         ]);
 
         $response->assertSessionHasNoErrors();
-        $response->assertRedirect(route('admin.manage.subjects.index'));
-        $response->assertSessionHas('status', 'Guru pengampu berhasil diperbarui.');
+        $response->assertRedirect(route('admin.manage.penugasan-guru.index'));
+        $response->assertSessionHas('status', 'Penugasan guru berhasil ditambahkan.');
 
         $this->assertDatabaseHas('subject_guru', [
             'subject_id' => $subject->id,
-            'guru_id' => $guru1->id,
-        ]);
-
-        $this->assertDatabaseHas('subject_guru', [
-            'subject_id' => $subject->id,
-            'guru_id' => $guru2->id,
+            'guru_id' => $guru->id,
         ]);
     });
 
-    it('fails when assigning invalid teacher ids', function () {
+    it('rejects duplicate penugasan-guru combination', function () {
         $subject = Subject::create([
             'kode_pelajaran' => 'MP001',
             'nama_pelajaran' => 'Matematika',
             'is_active' => true,
         ]);
 
-        $response = $this->actingAs($this->admin)->post(route('admin.manage.subjects.assign-teachers', $subject->id), [
-            'guru_ids' => [9999, 8888]
+        $guruUser = User::factory()->create(['role' => 'guru']);
+        $guru = Guru::create([
+            'user_id' => $guruUser->id,
+            'nuptk' => '1234567890123456',
         ]);
 
-        $response->assertSessionHasErrors(['guru_ids.0', 'guru_ids.1']);
+        SubjectGuru::create([
+            'subject_id' => $subject->id,
+            'guru_id' => $guru->id,
+        ]);
+
+        $response = $this->actingAs($this->admin)->post(route('admin.manage.penugasan-guru.store'), [
+            'subject_id' => $subject->id,
+            'guru_id' => $guru->id,
+        ]);
+
+        $response->assertSessionHasErrors('subject_id');
+    });
+
+    it('updates a penugasan-guru successfully', function () {
+        $subject1 = Subject::create([
+            'kode_pelajaran' => 'MP001',
+            'nama_pelajaran' => 'Matematika',
+            'is_active' => true,
+        ]);
+        $subject2 = Subject::create([
+            'kode_pelajaran' => 'FIS01',
+            'nama_pelajaran' => 'Fisika',
+            'is_active' => true,
+        ]);
+
+        $guruUser = User::factory()->create(['role' => 'guru']);
+        $guru = Guru::create([
+            'user_id' => $guruUser->id,
+            'nuptk' => '1234567890123456',
+        ]);
+
+        $assignment = SubjectGuru::create([
+            'subject_id' => $subject1->id,
+            'guru_id' => $guru->id,
+        ]);
+
+        $response = $this->actingAs($this->admin)->put(route('admin.manage.penugasan-guru.update', $assignment->id), [
+            'subject_id' => $subject2->id,
+            'guru_id' => $guru->id,
+        ]);
+
+        $response->assertSessionHasNoErrors();
+        $response->assertRedirect(route('admin.manage.penugasan-guru.index'));
+
+        $this->assertDatabaseHas('subject_guru', [
+            'id' => $assignment->id,
+            'subject_id' => $subject2->id,
+            'guru_id' => $guru->id,
+        ]);
+    });
+
+    it('deletes a penugasan-guru successfully', function () {
+        $subject = Subject::create([
+            'kode_pelajaran' => 'MP001',
+            'nama_pelajaran' => 'Matematika',
+            'is_active' => true,
+        ]);
+
+        $guruUser = User::factory()->create(['role' => 'guru']);
+        $guru = Guru::create([
+            'user_id' => $guruUser->id,
+            'nuptk' => '1234567890123456',
+        ]);
+
+        $assignment = SubjectGuru::create([
+            'subject_id' => $subject->id,
+            'guru_id' => $guru->id,
+        ]);
+
+        $response = $this->actingAs($this->admin)->delete(route('admin.manage.penugasan-guru.destroy', $assignment->id));
+
+        $response->assertRedirect(route('admin.manage.penugasan-guru.index'));
+        $this->assertDatabaseMissing('subject_guru', [
+            'id' => $assignment->id,
+        ]);
     });
 });

@@ -33,24 +33,13 @@
         @endif
     </div>
 
-    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-        <div>
-            <label for="edit_nuptk" class="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-1.5">NUPTK (16 Digit)</label>
-            <input type="text" name="nuptk" id="edit_nuptk" x-model="editData.nuptk" required
-                   class="w-full px-4 py-2.5 bg-white border border-gray-200 rounded-xl focus:outline-none focus:border-[#0c2b4d] focus:ring-1 focus:ring-[#0c2b4d] text-sm text-gray-800 transition-all shadow-sm">
-            @if(old('_method') === 'PUT')
-                @error('nuptk') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
-            @endif
-        </div>
-
-        <div>
-            <label for="edit_subject_specialty" class="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-1.5">Spesialisasi Mapel</label>
-            <input type="text" name="subject_specialty" id="edit_subject_specialty" x-model="editData.subject_specialty" required
-                   class="w-full px-4 py-2.5 bg-white border border-gray-200 rounded-xl focus:outline-none focus:border-[#0c2b4d] focus:ring-1 focus:ring-[#0c2b4d] text-sm text-gray-800 transition-all shadow-sm">
-            @if(old('_method') === 'PUT')
-                @error('subject_specialty') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
-            @endif
-        </div>
+    <div>
+        <label for="edit_nuptk" class="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-1.5">NUPTK (16 Digit)</label>
+        <input type="text" name="nuptk" id="edit_nuptk" x-model="editData.nuptk" required
+               class="w-full px-4 py-2.5 bg-white border border-gray-200 rounded-xl focus:outline-none focus:border-[#0c2b4d] focus:ring-1 focus:ring-[#0c2b4d] text-sm text-gray-800 transition-all shadow-sm">
+        @if(old('_method') === 'PUT')
+            @error('nuptk') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
+        @endif
     </div>
 
     <div class="p-3 bg-blue-50 border border-blue-150 rounded-xl text-[11px] text-blue-700 leading-normal">

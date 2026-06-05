@@ -37,7 +37,7 @@
              x-transition:enter-start="opacity-0 scale-95"
              x-transition:enter-end="opacity-100 scale-100">
             <img src="{{ asset('assets/images/LOGO SMKN 1.png') }}" class="h-16 w-auto object-contain mx-auto select-none" alt="SMKN 1 Logo">
-            <h1 class="mt-4 text-white text-base font-extrabold tracking-wider uppercase">STOVIA</h1>
+            <h1 class="mt-4 text-white text-base font-extrabold tracking-wider uppercase">SMKN 1 Jakarta</h1>
             <p class="mt-1 text-blue-100/80 text-[11px] font-medium text-center px-4 max-w-[200px] leading-relaxed">
                 Academic Management Portal
             </p>
@@ -169,6 +169,16 @@
                         <path stroke-linecap="round" stroke-linejoin="round" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path>
                     </svg>
                     <span x-show="sidebarOpen" class="whitespace-nowrap">Learning Module</span>
+                </a>
+
+                <!-- Bank Soal -->
+                <a href="{{ route('guru.bank-soal.index') }}" 
+                   class="flex items-center rounded-xl text-sm font-semibold transition-all duration-300 {{ request()->routeIs('guru.bank-soal.*') ? 'bg-[#0c2b4d] text-white shadow-inner font-bold' : 'text-white/80 hover:bg-white/10 hover:text-white' }}"
+                   :class="sidebarOpen ? 'px-4 py-3 justify-start gap-3' : 'px-0 py-3 justify-center gap-0 w-12 mx-auto'">
+                    <svg class="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"></path>
+                    </svg>
+                    <span x-show="sidebarOpen" class="whitespace-nowrap">Bank Soal</span>
                 </a>
             @endif
 

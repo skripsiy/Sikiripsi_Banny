@@ -10,6 +10,10 @@ use App\Models\LearningModuleUjian;
 use App\Models\LearningModuleAbsensi;
 use App\Models\Murid;
 use App\Models\Classroom;
+use App\Models\QuizAttempt;
+use App\Models\QuizAnswer;
+use App\Models\UjianAttempt;
+use App\Models\UjianAnswer;
 use Illuminate\Http\Request;
 
 class MuridLearningModuleController extends Controller
@@ -165,7 +169,12 @@ class MuridLearningModuleController extends Controller
         $this->authorizeModule($learningModule);
 
         $learningModule->load('subject');
+        
+        $murid = auth()->user()->murid;
         $tugas = LearningModuleTugas::where('learning_module_id', $learningModule->id)
+            ->with(['submissions' => function ($query) use ($murid) {
+                $query->where('murid_id', $murid->id);
+            }])
             ->latest()
             ->get();
 
@@ -177,11 +186,163 @@ class MuridLearningModuleController extends Controller
         $this->authorizeModule($learningModule);
 
         $learningModule->load('subject');
+        $murid = auth()->user()->murid;
+
         $quizzes = LearningModuleQuiz::where('learning_module_id', $learningModule->id)
+            ->withCount('soals')
             ->latest()
             ->get();
 
-        return view('murid.learning_modules.quizzes', compact('learningModule', 'quizzes'));
+        $attempts = QuizAttempt::where('murid_id', $murid->id)
+            ->whereIn('learning_module_quiz_id', $quizzes->pluck('id'))
+            ->get()
+            ->keyBy('learning_module_quiz_id');
+
+        return view('murid.learning_modules.quizzes', compact('learningModule', 'quizzes', 'attempts'));
+    }
+
+    public function startQuiz(LearningModule $learningModule, LearningModuleQuiz $quiz)
+    {
+        $this->authorizeModule($learningModule);
+        $murid = auth()->user()->murid;
+
+        if ($quiz->learning_module_id !== $learningModule->id) {
+            abort(404);
+        }
+
+        // Check if quiz has questions
+        if ($quiz->soals()->count() === 0) {
+            return redirect()->back()->withErrors(['error' => 'Kuis ini belum memiliki soal.']);
+        }
+
+        // Check for existing attempt
+        $existing = QuizAttempt::where('murid_id', $murid->id)
+            ->where('learning_module_quiz_id', $quiz->id)
+            ->first();
+
+        if ($existing) {
+            if ($existing->status === 'in_progress' && !$existing->isExpired()) {
+                return redirect()->route('murid.learning-modules.quizzes.take', [$learningModule->id, $quiz->id]);
+            }
+            return redirect()->route('murid.learning-modules.quizzes.result', [$learningModule->id, $quiz->id]);
+        }
+
+        // Check due date
+        if ($quiz->due_date && $quiz->due_date->isPast()) {
+            return redirect()->back()->withErrors(['error' => 'Batas waktu pengerjaan kuis ini sudah lewat.']);
+        }
+
+        QuizAttempt::create([
+            'learning_module_quiz_id' => $quiz->id,
+            'murid_id' => $murid->id,
+            'started_at' => now(),
+            'status' => 'in_progress',
+        ]);
+
+        return redirect()->route('murid.learning-modules.quizzes.take', [$learningModule->id, $quiz->id]);
+    }
+
+    public function takeQuiz(LearningModule $learningModule, LearningModuleQuiz $quiz)
+    {
+        $this->authorizeModule($learningModule);
+        $murid = auth()->user()->murid;
+
+        if ($quiz->learning_module_id !== $learningModule->id) {
+            abort(404);
+        }
+
+        $attempt = QuizAttempt::where('murid_id', $murid->id)
+            ->where('learning_module_quiz_id', $quiz->id)
+            ->firstOrFail();
+
+        if ($attempt->status !== 'in_progress') {
+            return redirect()->route('murid.learning-modules.quizzes.result', [$learningModule->id, $quiz->id]);
+        }
+
+        if ($attempt->isExpired()) {
+            // Auto submit empty or force calculation
+            $attempt->update([
+                'finished_at' => $attempt->started_at->copy()->addMinutes($quiz->duration_minutes),
+                'status' => 'submitted',
+            ]);
+            $attempt->calculateScore();
+            return redirect()->route('murid.learning-modules.quizzes.result', [$learningModule->id, $quiz->id])
+                ->with('status', 'Waktu pengerjaan telah habis. Jawaban Anda otomatis dikirim.');
+        }
+
+        // Get questions
+        $soals = $quiz->soals()->with('options')->get();
+
+        return view('murid.learning_modules.quizzes.take', compact('learningModule', 'quiz', 'attempt', 'soals'));
+    }
+
+    public function submitQuiz(Request $request, LearningModule $learningModule, LearningModuleQuiz $quiz)
+    {
+        $this->authorizeModule($learningModule);
+        $murid = auth()->user()->murid;
+
+        if ($quiz->learning_module_id !== $learningModule->id) {
+            abort(404);
+        }
+
+        $attempt = QuizAttempt::where('murid_id', $murid->id)
+            ->where('learning_module_quiz_id', $quiz->id)
+            ->firstOrFail();
+
+        if ($attempt->status !== 'in_progress') {
+            return redirect()->route('murid.learning-modules.quizzes.result', [$learningModule->id, $quiz->id]);
+        }
+
+        $finishedAt = now();
+        if ($attempt->isExpired()) {
+            $finishedAt = $attempt->started_at->copy()->addMinutes($quiz->duration_minutes);
+        }
+
+        $attempt->update([
+            'finished_at' => $finishedAt,
+            'status' => 'submitted',
+        ]);
+
+        $jawaban = $request->input('jawaban', []);
+
+        foreach ($quiz->soals as $soal) {
+            $ansData = [
+                'quiz_attempt_id' => $attempt->id,
+                'bank_soal_id' => $soal->id,
+            ];
+
+            if ($soal->tipe === 'pg') {
+                $ansData['jawaban_pg'] = $jawaban[$soal->id] ?? null;
+            } else {
+                $ansData['jawaban_essay'] = $jawaban[$soal->id] ?? null;
+            }
+
+            QuizAnswer::create($ansData);
+        }
+
+        $attempt->calculateScore();
+
+        return redirect()->route('murid.learning-modules.quizzes.result', [$learningModule->id, $quiz->id])
+            ->with('status', 'Kuis berhasil dikirim.');
+    }
+
+    public function quizResult(LearningModule $learningModule, LearningModuleQuiz $quiz)
+    {
+        $this->authorizeModule($learningModule);
+        $murid = auth()->user()->murid;
+
+        if ($quiz->learning_module_id !== $learningModule->id) {
+            abort(404);
+        }
+
+        $attempt = QuizAttempt::where('murid_id', $murid->id)
+            ->where('learning_module_quiz_id', $quiz->id)
+            ->with(['answers.bankSoal.options'])
+            ->firstOrFail();
+
+        $soals = $quiz->soals()->with('options')->get();
+
+        return view('murid.learning_modules.quizzes.result', compact('learningModule', 'quiz', 'attempt', 'soals'));
     }
 
     public function ujians(LearningModule $learningModule)
@@ -189,11 +350,159 @@ class MuridLearningModuleController extends Controller
         $this->authorizeModule($learningModule);
 
         $learningModule->load('subject');
+        $murid = auth()->user()->murid;
+
         $ujians = LearningModuleUjian::where('learning_module_id', $learningModule->id)
+            ->withCount('soals')
             ->latest()
             ->get();
 
-        return view('murid.learning_modules.ujians', compact('learningModule', 'ujians'));
+        $attempts = UjianAttempt::where('murid_id', $murid->id)
+            ->whereIn('learning_module_ujian_id', $ujians->pluck('id'))
+            ->get()
+            ->keyBy('learning_module_ujian_id');
+
+        return view('murid.learning_modules.ujians', compact('learningModule', 'ujians', 'attempts'));
+    }
+
+    public function startUjian(LearningModule $learningModule, LearningModuleUjian $ujian)
+    {
+        $this->authorizeModule($learningModule);
+        $murid = auth()->user()->murid;
+
+        if ($ujian->learning_module_id !== $learningModule->id) {
+            abort(404);
+        }
+
+        // Check if ujian has questions
+        if ($ujian->soals()->count() === 0) {
+            return redirect()->back()->withErrors(['error' => 'Ujian ini belum memiliki soal.']);
+        }
+
+        $existing = UjianAttempt::where('murid_id', $murid->id)
+            ->where('learning_module_ujian_id', $ujian->id)
+            ->first();
+
+        if ($existing) {
+            if ($existing->status === 'in_progress' && !$existing->isExpired()) {
+                return redirect()->route('murid.learning-modules.ujians.take', [$learningModule->id, $ujian->id]);
+            }
+            return redirect()->route('murid.learning-modules.ujians.result', [$learningModule->id, $ujian->id]);
+        }
+
+        if ($ujian->due_date && $ujian->due_date->isPast()) {
+            return redirect()->back()->withErrors(['error' => 'Batas waktu pengerjaan ujian ini sudah lewat.']);
+        }
+
+        UjianAttempt::create([
+            'learning_module_ujian_id' => $ujian->id,
+            'murid_id' => $murid->id,
+            'started_at' => now(),
+            'status' => 'in_progress',
+        ]);
+
+        return redirect()->route('murid.learning-modules.ujians.take', [$learningModule->id, $ujian->id]);
+    }
+
+    public function takeUjian(LearningModule $learningModule, LearningModuleUjian $ujian)
+    {
+        $this->authorizeModule($learningModule);
+        $murid = auth()->user()->murid;
+
+        if ($ujian->learning_module_id !== $learningModule->id) {
+            abort(404);
+        }
+
+        $attempt = UjianAttempt::where('murid_id', $murid->id)
+            ->where('learning_module_ujian_id', $ujian->id)
+            ->firstOrFail();
+
+        if ($attempt->status !== 'in_progress') {
+            return redirect()->route('murid.learning-modules.ujians.result', [$learningModule->id, $ujian->id]);
+        }
+
+        if ($attempt->isExpired()) {
+            $attempt->update([
+                'finished_at' => $attempt->started_at->copy()->addMinutes($ujian->duration_minutes),
+                'status' => 'submitted',
+            ]);
+            $attempt->calculateScore();
+            return redirect()->route('murid.learning-modules.ujians.result', [$learningModule->id, $ujian->id])
+                ->with('status', 'Waktu pengerjaan telah habis. Jawaban Anda otomatis dikirim.');
+        }
+
+        $soals = $ujian->soals()->with('options')->get();
+
+        return view('murid.learning_modules.ujians.take', compact('learningModule', 'ujian', 'attempt', 'soals'));
+    }
+
+    public function submitUjian(Request $request, LearningModule $learningModule, LearningModuleUjian $ujian)
+    {
+        $this->authorizeModule($learningModule);
+        $murid = auth()->user()->murid;
+
+        if ($ujian->learning_module_id !== $learningModule->id) {
+            abort(404);
+        }
+
+        $attempt = UjianAttempt::where('murid_id', $murid->id)
+            ->where('learning_module_ujian_id', $ujian->id)
+            ->firstOrFail();
+
+        if ($attempt->status !== 'in_progress') {
+            return redirect()->route('murid.learning-modules.ujians.result', [$learningModule->id, $ujian->id]);
+        }
+
+        $finishedAt = now();
+        if ($attempt->isExpired()) {
+            $finishedAt = $attempt->started_at->copy()->addMinutes($ujian->duration_minutes);
+        }
+
+        $attempt->update([
+            'finished_at' => $finishedAt,
+            'status' => 'submitted',
+        ]);
+
+        $jawaban = $request->input('jawaban', []);
+
+        foreach ($ujian->soals as $soal) {
+            $ansData = [
+                'ujian_attempt_id' => $attempt->id,
+                'bank_soal_id' => $soal->id,
+            ];
+
+            if ($soal->tipe === 'pg') {
+                $ansData['jawaban_pg'] = $jawaban[$soal->id] ?? null;
+            } else {
+                $ansData['jawaban_essay'] = $jawaban[$soal->id] ?? null;
+            }
+
+            UjianAnswer::create($ansData);
+        }
+
+        $attempt->calculateScore();
+
+        return redirect()->route('murid.learning-modules.ujians.result', [$learningModule->id, $ujian->id])
+            ->with('status', 'Ujian berhasil dikirim.');
+    }
+
+    public function ujianResult(LearningModule $learningModule, LearningModuleUjian $ujian)
+    {
+        $this->authorizeModule($learningModule);
+        $murid = auth()->user()->murid;
+
+        if ($ujian->learning_module_id !== $learningModule->id) {
+            abort(404);
+        }
+
+        $attempt = UjianAttempt::where('murid_id', $murid->id)
+            ->where('learning_module_ujian_id', $ujian->id)
+            ->with(['answers.bankSoal.options'])
+            ->firstOrFail();
+
+        $soals = $ujian->soals()->with('options')->get();
+
+        return view('murid.learning_modules.ujians.result', compact('learningModule', 'ujian', 'attempt', 'soals'));
     }
 
     public function absensi(LearningModule $learningModule)
@@ -210,5 +519,23 @@ class MuridLearningModuleController extends Controller
             ->get();
 
         return view('murid.learning_modules.absensi', compact('learningModule', 'absensis'));
+    }
+
+    public function rekapNilai(LearningModule $learningModule)
+    {
+        $this->authorizeModule($learningModule);
+
+        $learningModule->load('subject');
+        
+        $murid = auth()->user()->murid;
+        
+        $tugas = LearningModuleTugas::where('learning_module_id', $learningModule->id)
+            ->with(['submissions' => function ($query) use ($murid) {
+                $query->where('murid_id', $murid->id);
+            }])
+            ->latest()
+            ->get();
+
+        return view('murid.learning_modules.rekap_nilai', compact('learningModule', 'tugas'));
     }
 }

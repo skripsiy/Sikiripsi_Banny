@@ -34,6 +34,33 @@
             </div>
         </div>
 
+        <!-- Alerts -->
+        @if(session('status'))
+            <div class="mb-6 p-4 bg-emerald-50 border border-emerald-250 text-emerald-800 text-xs font-bold rounded-2xl flex items-center gap-2">
+                <svg class="w-4 h-4 text-emerald-600 flex-shrink-0" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                </svg>
+                <span>{{ session('status') }}</span>
+            </div>
+        @endif
+        @if(session('error'))
+            <div class="mb-6 p-4 bg-red-50 border border-red-250 text-red-800 text-xs font-bold rounded-2xl flex items-center gap-2">
+                <svg class="w-4 h-4 text-red-600 flex-shrink-0" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                </svg>
+                <span>{{ session('error') }}</span>
+            </div>
+        @endif
+        @if($errors->any())
+            <div class="mb-6 p-4 bg-red-50 border border-red-250 text-red-800 text-xs font-bold rounded-2xl">
+                <ul class="list-disc pl-4 space-y-1">
+                    @foreach($errors->all() as $error)
+                        <li>{{ $error }}</li>
+                    @endforeach
+                </ul>
+            </div>
+        @endif
+
         <!-- Main Content Area -->
         <div class="bg-white shadow-lg rounded-2xl border border-gray-100 p-6">
             <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
@@ -63,7 +90,7 @@
                             <div class="flex items-start gap-4 min-w-0 flex-grow">
                                 <div class="w-9 h-9 rounded-xl bg-rose-50 text-rose-600 flex items-center justify-center flex-shrink-0 mt-0.5 border border-rose-100">
                                     <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"></path>
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"></path>
                                     </svg>
                                 </div>
                                 <div class="min-w-0 flex-grow">
@@ -81,6 +108,91 @@
                                             </a>
                                         </div>
                                     @endif
+
+                                    <!-- Submission Section -->
+                                    <div class="mt-4 p-4 rounded-xl border {{ $tgs->submissions->isNotEmpty() ? 'bg-gray-50 border-gray-200' : 'bg-blue-50/10 border-blue-100/50' }}">
+                                        <h5 class="text-xs font-bold text-gray-750 mb-2 flex items-center gap-1.5">
+                                            <svg class="w-4 h-4 text-gray-550" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2"></path>
+                                            </svg>
+                                            Status Pengumpulan Tugas
+                                        </h5>
+
+                                        @if($tgs->submissions->isNotEmpty())
+                                            @php
+                                                $submission = $tgs->submissions->first();
+                                            @endphp
+                                            <div class="space-y-2 text-xs">
+                                                <div class="flex flex-wrap gap-2 items-center">
+                                                    @if($submission->nilai !== null)
+                                                        <span class="inline-flex items-center gap-1 bg-emerald-600 text-white text-[10px] font-extrabold px-2.5 py-1 rounded-full uppercase tracking-wider">
+                                                            Nilai: {{ $submission->nilai }}/100
+                                                        </span>
+                                                    @else
+                                                        <span class="inline-flex items-center gap-1 bg-[#0c2b4d] text-white text-[10px] font-extrabold px-2.5 py-1 rounded-full uppercase tracking-wider">
+                                                            Sudah Dikumpulkan (Belum Dinilai)
+                                                        </span>
+                                                    @endif
+                                                    <span class="text-gray-400 font-medium">Dikumpulkan pada: {{ $submission->submitted_at->translatedFormat('d F Y H:i') }}</span>
+                                                </div>
+
+                                                <div class="flex items-center gap-2 mt-2">
+                                                    <a href="{{ asset('storage/' . $submission->file_path) }}" target="_blank"
+                                                       class="inline-flex items-center gap-1.5 text-[#0c2b4d] hover:text-[#061424] font-bold text-xs bg-white border border-gray-200 px-3 py-1.5 rounded-xl transition-all shadow-sm">
+                                                        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+                                                            <path stroke-linecap="round" stroke-linejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path>
+                                                        </svg>
+                                                        Unduh Jawaban Anda
+                                                    </a>
+                                                </div>
+
+                                                @if($submission->catatan_murid)
+                                                    <div class="bg-white p-3 rounded-xl border border-gray-150 mt-2">
+                                                        <span class="text-[10px] text-gray-400 font-bold block mb-1 uppercase tracking-wider">Catatan Anda:</span>
+                                                        <p class="text-gray-750 italic font-medium">{{ $submission->catatan_murid }}</p>
+                                                    </div>
+                                                @endif
+
+                                                @if($submission->catatan_guru)
+                                                    <div class="bg-amber-50 p-3 rounded-xl border border-amber-200 mt-2">
+                                                        <span class="text-[10px] text-amber-600 font-bold block mb-1 uppercase tracking-wider">Catatan Guru / Feedback:</span>
+                                                        <p class="text-gray-800 font-bold leading-relaxed">{{ $submission->catatan_guru }}</p>
+                                                    </div>
+                                                @endif
+                                            </div>
+                                        @else
+                                            @if($tgs->due_date && $tgs->due_date->isPast())
+                                                <div class="text-xs text-red-650 font-bold flex items-center gap-1.5 mt-2 bg-red-50 border border-red-100 p-3 rounded-xl">
+                                                    <svg class="w-4 h-4 flex-shrink-0 text-red-600" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                                                        <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path>
+                                                    </svg>
+                                                    Tugas tidak dapat dikumpulkan lagi karena batas waktu telah terlewat.
+                                                </div>
+                                            @else
+                                                <form action="{{ route('murid.learning-modules.tugas.submit', [$learningModule->id, $tgs->id]) }}" method="POST" enctype="multipart/form-data" class="space-y-3 mt-3">
+                                                    @csrf
+                                                    <div>
+                                                        <label class="block text-[10px] font-bold text-gray-500 uppercase tracking-wider mb-1">Pilih File Tugas (Maks. 10MB)</label>
+                                                        <input type="file" name="file" required
+                                                               class="block w-full text-xs text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-bold file:bg-blue-50 file:text-[#0c2b4d] hover:file:bg-blue-100 transition-all cursor-pointer border border-gray-200 rounded-xl p-1 bg-white">
+                                                    </div>
+                                                    <div>
+                                                        <label class="block text-[10px] font-bold text-gray-500 uppercase tracking-wider mb-1">Catatan Tambahan (Opsional)</label>
+                                                        <textarea name="catatan_murid" rows="2" placeholder="Tulis catatan untuk guru jika ada..."
+                                                                  class="w-full p-3 border border-gray-200 rounded-xl focus:outline-none focus:border-[#0c2b4d] focus:ring-1 focus:ring-[#0c2b4d] text-xs text-gray-700 font-medium"></textarea>
+                                                    </div>
+                                                    <div>
+                                                        <button type="submit" class="inline-flex items-center gap-1.5 px-4 py-2.5 bg-[#0c2b4d] hover:bg-[#081d33] text-white text-xs font-bold rounded-xl transition-all shadow-sm">
+                                                            <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                                                                <path stroke-linecap="round" stroke-linejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"></path>
+                                                            </svg>
+                                                            Kumpulkan Tugas
+                                                        </button>
+                                                    </div>
+                                                </form>
+                                            @endif
+                                        @endif
+                                    </div>
                                 </div>
                             </div>
 

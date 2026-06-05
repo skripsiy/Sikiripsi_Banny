@@ -34,7 +34,13 @@
 
         <!-- Main Content Area -->
         <div class="bg-white shadow-lg rounded-2xl border border-gray-100 p-6">
-            <h3 class="text-base font-bold text-gray-800 mb-6">Log Kehadiran Pribadi</h3>
+            <div class="flex justify-between items-center mb-6">
+                <h3 class="text-base font-bold text-gray-800">Log Kehadiran Pribadi</h3>
+                <a href="{{ route('murid.learning-modules.izin.index', $learningModule->id) }}"
+                   class="bg-[#0c2b4d] hover:bg-[#07192d] text-white px-4 py-2.5 rounded-xl text-xs font-bold transition-all shadow-sm cursor-pointer select-none">
+                    Ajukan Izin Digital
+                </a>
+            </div>
 
             @if ($absensis->isNotEmpty())
                 <div class="overflow-x-auto border border-gray-150 rounded-2xl">

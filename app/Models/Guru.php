@@ -21,4 +21,9 @@ class Guru extends Model
     {
         return $this->belongsToMany(Subject::class, 'subject_guru', 'guru_id', 'subject_id')->withTimestamps();
     }
+
+    public function bankSoals()
+    {
+        return $this->hasMany(BankSoal::class);
+    }
 }

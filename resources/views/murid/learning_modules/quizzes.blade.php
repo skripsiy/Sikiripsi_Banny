@@ -77,17 +77,31 @@
                                             </svg>
                                             <span>Durasi: {{ $quiz->duration_minutes }} Menit</span>
                                         </span>
+                                        <span class="inline-flex items-center gap-1 text-[10px] font-bold bg-purple-50 text-purple-700 border border-purple-100 px-2 py-0.5 rounded-md select-none">
+                                            <span>Jumlah Soal: {{ $quiz->soals_count }} Soal</span>
+                                        </span>
+
+                                        <!-- Attempt status badges -->
+                                        @if($att = $attempts[$quiz->id] ?? null)
+                                            @if($att->status === 'graded')
+                                                <span class="inline-flex items-center gap-1 text-[10px] font-extrabold bg-green-50 text-green-700 border border-green-100 px-2 py-0.5 rounded-md">
+                                                    Nilai: {{ number_format($att->skor, 2) }}
+                                                </span>
+                                            @elseif($att->status === 'submitted')
+                                                <span class="inline-flex items-center gap-1 text-[10px] font-bold bg-blue-50 text-blue-700 border border-blue-100 px-2 py-0.5 rounded-md">
+                                                    Sudah Dikumpulkan
+                                                </span>
+                                            @else
+                                                <span class="inline-flex items-center gap-1 text-[10px] font-bold bg-amber-50 text-amber-700 border border-amber-100 px-2 py-0.5 rounded-md">
+                                                    Sedang Dikerjakan
+                                                </span>
+                                            @endif
+                                        @endif
                                     </div>
                                 </div>
                             </div>
 
                             <div class="flex flex-col sm:items-end gap-1.5 self-end sm:self-center flex-shrink-0">
-                                <span class="text-[10px] text-gray-400 font-medium bg-gray-50 px-2.5 py-1 rounded-lg border border-gray-100 whitespace-nowrap flex items-center gap-1 select-none">
-                                    <svg class="w-3.5 h-3.5 text-gray-450 flex-shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 0 1 2.25-2.25h13.5A2.25 2.25 0 0 1 21 7.5v11.25m-18 0A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75m-18 0v-7.5A2.25 2.25 0 0 1 5.25 9h13.5A2.25 2.25 0 0 1 21 11.25v7.5" />
-                                    </svg>
-                                    <span>Rilis: <strong class="text-gray-700 font-bold">{{ $quiz->created_at->translatedFormat('d F Y H:i') }}</strong></span>
-                                </span>
                                 @if($quiz->due_date)
                                     @php
                                         $isPast = $quiz->due_date->isPast();
@@ -96,6 +110,37 @@
                                         Batas: {{ $quiz->due_date->translatedFormat('d F Y H:i') }} ({{ $isPast ? 'Terlewat' : 'Aktif' }})
                                     </span>
                                 @endif
+
+                                <!-- Action Buttons -->
+                                <div class="mt-2.5">
+                                    @if($att = $attempts[$quiz->id] ?? null)
+                                        @if($att->status === 'in_progress' && !$att->isExpired())
+                                            <a href="{{ route('murid.learning-modules.quizzes.take', [$learningModule->id, $quiz->id]) }}"
+                                               class="bg-amber-500 hover:bg-amber-600 text-white px-4 py-2 rounded-xl text-xs font-bold transition-all shadow-sm cursor-pointer select-none whitespace-nowrap inline-block">
+                                                Lanjutkan Kuis
+                                            </a>
+                                        @else
+                                            <a href="{{ route('murid.learning-modules.quizzes.result', [$learningModule->id, $quiz->id]) }}"
+                                               class="bg-[#0c2b4d] hover:bg-[#07192d] text-white px-4 py-2 rounded-xl text-xs font-bold transition-all shadow-sm cursor-pointer select-none whitespace-nowrap inline-block">
+                                                Lihat Hasil
+                                            </a>
+                                        @endif
+                                    @else
+                                        @if($quiz->soals_count === 0)
+                                            <span class="text-xs text-gray-400 italic">Belum ada soal</span>
+                                        @elseif($quiz->due_date && $quiz->due_date->isPast())
+                                            <span class="text-xs text-red-500 font-bold">Waktu Habis</span>
+                                        @else
+                                            <form action="{{ route('murid.learning-modules.quizzes.start', [$learningModule->id, $quiz->id]) }}" method="POST" onsubmit="return confirm('Mulai kuis sekarang? Timer akan berjalan.');">
+                                                @csrf
+                                                <button type="submit"
+                                                        class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-xl text-xs font-bold transition-all shadow-sm cursor-pointer select-none whitespace-nowrap">
+                                                    Mulai Kerjakan
+                                                </button>
+                                            </form>
+                                        @endif
+                                    @endif
+                                </div>
                             </div>
                         </div>
                     @endforeach

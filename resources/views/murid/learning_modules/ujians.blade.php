@@ -70,33 +70,78 @@
                                     <h4 class="font-extrabold text-gray-800 text-sm">{{ $ujian->title }}</h4>
                                     <p class="text-xs text-gray-650 mt-2 leading-relaxed whitespace-pre-wrap font-medium">{{ $ujian->instructions }}</p>
                                     
-                                    <div class="mt-3 flex items-center gap-2">
-                                        <span class="inline-flex items-center gap-1 text-[10px] font-bold bg-blue-50 text-blue-700 border border-blue-100 px-2 py-0.5 rounded-md select-none">
-                                            <svg class="w-3.5 h-3.5 text-blue-600 flex-shrink-0" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
-                                                <path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
-                                            </svg>
-                                            <span>Durasi: {{ $ujian->duration_minutes }} Menit</span>
-                                        </span>
-                                    </div>
-                                </div>
-                            </div>
+                                     <div class="mt-3 flex items-center gap-2">
+                                         <span class="inline-flex items-center gap-1 text-[10px] font-bold bg-blue-50 text-blue-700 border border-blue-100 px-2 py-0.5 rounded-md select-none">
+                                             <svg class="w-3.5 h-3.5 text-blue-600 flex-shrink-0" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+                                                 <path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
+                                             </svg>
+                                             <span>Durasi: {{ $ujian->duration_minutes }} Menit</span>
+                                         </span>
+                                         <span class="inline-flex items-center gap-1 text-[10px] font-bold bg-purple-50 text-purple-700 border border-purple-100 px-2 py-0.5 rounded-md select-none">
+                                             <span>Jumlah Soal: {{ $ujian->soals_count }} Soal</span>
+                                         </span>
 
-                            <div class="flex flex-col sm:items-end gap-1.5 self-end sm:self-center flex-shrink-0">
-                                <span class="text-[10px] text-gray-400 font-medium bg-gray-50 px-2.5 py-1 rounded-lg border border-gray-100 whitespace-nowrap flex items-center gap-1 select-none">
-                                    <svg class="w-3.5 h-3.5 text-gray-450 flex-shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 0 1 2.25-2.25h13.5A2.25 2.25 0 0 1 21 7.5v11.25m-18 0A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75m-18 0v-7.5A2.25 2.25 0 0 1 5.25 9h13.5A2.25 2.25 0 0 1 21 11.25v7.5" />
-                                    </svg>
-                                    <span>Rilis: <strong class="text-gray-700 font-bold">{{ $ujian->created_at->translatedFormat('d F Y H:i') }}</strong></span>
-                                </span>
-                                @if($ujian->due_date)
-                                    @php
-                                        $isPast = $ujian->due_date->isPast();
-                                    @endphp
-                                    <span class="inline-flex text-[10px] uppercase tracking-wider px-2.5 py-1 rounded-xl font-bold border whitespace-nowrap {{ $isPast ? 'bg-red-50 text-red-700 border-red-100' : 'bg-amber-50 text-amber-700 border-amber-100' }}">
-                                        Batas: {{ $ujian->due_date->translatedFormat('d F Y H:i') }} ({{ $isPast ? 'Terlewat' : 'Aktif' }})
-                                    </span>
-                                @endif
-                            </div>
+                                         <!-- Attempt status badges -->
+                                         @if($att = $attempts[$ujian->id] ?? null)
+                                             @if($att->status === 'graded')
+                                                 <span class="inline-flex items-center gap-1 text-[10px] font-extrabold bg-green-50 text-green-700 border border-green-100 px-2 py-0.5 rounded-md">
+                                                     Nilai: {{ number_format($att->skor, 2) }}
+                                                 </span>
+                                             @elseif($att->status === 'submitted')
+                                                 <span class="inline-flex items-center gap-1 text-[10px] font-bold bg-blue-50 text-blue-700 border border-blue-100 px-2 py-0.5 rounded-md">
+                                                     Sudah Dikumpulkan
+                                                 </span>
+                                             @else
+                                                 <span class="inline-flex items-center gap-1 text-[10px] font-bold bg-amber-50 text-amber-700 border-amber-100 px-2 py-0.5 rounded-md">
+                                                     Sedang Dikerjakan
+                                                 </span>
+                                             @endif
+                                         @endif
+                                     </div>
+                                 </div>
+                             </div>
+
+                             <div class="flex flex-col sm:items-end gap-1.5 self-end sm:self-center flex-shrink-0">
+                                 @if($ujian->due_date)
+                                     @php
+                                         $isPast = $ujian->due_date->isPast();
+                                     @endphp
+                                     <span class="inline-flex text-[10px] uppercase tracking-wider px-2.5 py-1 rounded-xl font-bold border whitespace-nowrap {{ $isPast ? 'bg-red-50 text-red-700 border-red-100' : 'bg-amber-50 text-amber-700 border-amber-100' }}">
+                                         Batas: {{ $ujian->due_date->translatedFormat('d F Y H:i') }} ({{ $isPast ? 'Terlewat' : 'Aktif' }})
+                                     </span>
+                                 @endif
+
+                                 <!-- Action Buttons -->
+                                 <div class="mt-2.5">
+                                     @if($att = $attempts[$ujian->id] ?? null)
+                                         @if($att->status === 'in_progress' && !$att->isExpired())
+                                             <a href="{{ route('murid.learning-modules.ujians.take', [$learningModule->id, $ujian->id]) }}"
+                                                class="bg-amber-500 hover:bg-amber-600 text-white px-4 py-2 rounded-xl text-xs font-bold transition-all shadow-sm cursor-pointer select-none whitespace-nowrap inline-block">
+                                                 Lanjutkan Ujian
+                                             </a>
+                                         @else
+                                             <a href="{{ route('murid.learning-modules.ujians.result', [$learningModule->id, $ujian->id]) }}"
+                                                class="bg-[#0c2b4d] hover:bg-[#07192d] text-white px-4 py-2 rounded-xl text-xs font-bold transition-all shadow-sm cursor-pointer select-none whitespace-nowrap inline-block">
+                                                 Lihat Hasil
+                                             </a>
+                                         @endif
+                                     @else
+                                         @if($ujian->soals_count === 0)
+                                             <span class="text-xs text-gray-400 italic">Belum ada soal</span>
+                                         @elseif($ujian->due_date && $ujian->due_date->isPast())
+                                             <span class="text-xs text-red-500 font-bold">Waktu Habis</span>
+                                         @else
+                                             <form action="{{ route('murid.learning-modules.ujians.start', [$learningModule->id, $ujian->id]) }}" method="POST" onsubmit="return confirm('Mulai ujian sekarang? Timer akan berjalan.');">
+                                                 @csrf
+                                                 <button type="submit"
+                                                         class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-xl text-xs font-bold transition-all shadow-sm cursor-pointer select-none whitespace-nowrap">
+                                                     Mulai Kerjakan
+                                                 </button>
+                                             </form>
+                                         @endif
+                                     @endif
+                                 </div>
+                             </div>
                         </div>
                     @endforeach
                 </div>

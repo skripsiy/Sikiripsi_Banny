@@ -20,4 +20,9 @@ class LearningModuleTugas extends Model
     {
         return $this->belongsTo(LearningModule::class);
     }
+
+    public function submissions()
+    {
+        return $this->hasMany(TugasSubmission::class, 'learning_module_tugas_id');
+    }
 }

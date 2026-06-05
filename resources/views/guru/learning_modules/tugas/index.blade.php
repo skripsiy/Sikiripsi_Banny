@@ -111,7 +111,15 @@
                             </div>
 
                             <!-- Actions (Edit/Delete) -->
-                            <div class="flex items-center gap-1.5 self-end sm:self-center flex-shrink-0">
+                            <div class="flex items-center gap-2 self-end sm:self-center flex-shrink-0">
+                                <a href="{{ route('guru.learning-modules.tugas.submissions', [$learningModule->id, $t->id]) }}" 
+                                   class="text-[#0c2b4d] hover:text-[#061424] font-bold text-xs bg-blue-50 hover:bg-blue-100/80 px-3 py-2 rounded-xl transition-all shadow-sm flex items-center gap-1.5 cursor-pointer select-none">
+                                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path>
+                                    </svg>
+                                    Lihat Pengumpulan
+                                </a>
                                 <button @click="
                                     showEditTugasModal = true;
                                     editTugasData = {

@@ -21,4 +21,19 @@ class Murid extends Model
     {
         return $this->belongsTo(Classroom::class);
     }
+
+    public function tugasSubmissions()
+    {
+        return $this->hasMany(TugasSubmission::class);
+    }
+
+    public function quizAttempts()
+    {
+        return $this->hasMany(QuizAttempt::class);
+    }
+
+    public function ujianAttempts()
+    {
+        return $this->hasMany(UjianAttempt::class);
+    }
 }

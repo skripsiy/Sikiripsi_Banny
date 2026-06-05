@@ -353,7 +353,7 @@ class LearningModuleController extends Controller
                     $statusLabel = ucfirst($newStatus);
                     $formattedDate = Carbon::parse($date)->translatedFormat('d F Y');
 
-                    $message = "Notifikasi Kehadiran STOVIA:\n" .
+                    $message = "Notifikasi Kehadiran SMKN 1 Jakarta:\n" .
                         "Yth. Orang Tua/Wali dari siswa *{$studentName}*,\n\n" .
                         "Menginformasikan bahwa putra/putri Anda dinyatakan *{$statusLabel}* pada mata pelajaran *{$subjectName}* pada tanggal *{$formattedDate}*.\n\n" .
                         "Terima kasih atas perhatian Anda.";
@@ -367,5 +367,137 @@ class LearningModuleController extends Controller
             'learning_module' => $learningModule->id,
             'date' => $date,
         ])->with('status', 'Absensi berhasil disimpan.');
+    }
+
+    public function rekapAbsensi(LearningModule $learningModule)
+    {
+        $guru = auth()->user()->guru;
+        if (!$guru || $learningModule->guru_id !== $guru->id) {
+            abort(403, 'Aksi tidak diizinkan.');
+        }
+
+        $learningModule->load('subject');
+
+        $jurusanId = $learningModule->subject->jurusan_id;
+        $query = Classroom::where('tahun_ajaran_id', $learningModule->tahun_ajaran_id)
+            ->where('is_active', true);
+        if ($jurusanId) {
+            $query->where('jurusan_id', $jurusanId);
+        }
+        $classroomIds = $query->pluck('id');
+
+        $murids = Murid::whereIn('classroom_id', $classroomIds)
+            ->with('user', 'classroom')
+            ->get()
+            ->sortBy(fn($m) => $m->user?->name ?? '')
+            ->values();
+
+        $absensis = LearningModuleAbsensi::where('learning_module_id', $learningModule->id)->get();
+
+        $rekap = $murids->map(function ($murid) use ($absensis) {
+            $studentAbsensis = $absensis->where('murid_id', $murid->id);
+            $totalHadir = $studentAbsensis->where('status', 'hadir')->count();
+            $totalSakit = $studentAbsensis->where('status', 'sakit')->count();
+            $totalIzin = $studentAbsensis->where('status', 'izin')->count();
+            $totalAlpa = $studentAbsensis->where('status', 'alpa')->count();
+            $totalPertemuan = $studentAbsensis->count();
+
+            $percentage = $totalPertemuan > 0 ? round(($totalHadir / $totalPertemuan) * 100, 1) : 100;
+
+            return (object) [
+                'murid' => $murid,
+                'hadir' => $totalHadir,
+                'sakit' => $totalSakit,
+                'izin' => $totalIzin,
+                'alpa' => $totalAlpa,
+                'pertemuan' => $totalPertemuan,
+                'percentage' => $percentage
+            ];
+        });
+
+        return view('guru.learning_modules.absensi.rekap', compact('learningModule', 'rekap'));
+    }
+
+    public function exportAbsensi(LearningModule $learningModule)
+    {
+        $guru = auth()->user()->guru;
+        if (!$guru || $learningModule->guru_id !== $guru->id) {
+            abort(403, 'Aksi tidak diizinkan.');
+        }
+
+        $learningModule->load('subject');
+
+        $jurusanId = $learningModule->subject->jurusan_id;
+        $query = Classroom::where('tahun_ajaran_id', $learningModule->tahun_ajaran_id)
+            ->where('is_active', true);
+        if ($jurusanId) {
+            $query->where('jurusan_id', $jurusanId);
+        }
+        $classroomIds = $query->pluck('id');
+
+        $murids = Murid::whereIn('classroom_id', $classroomIds)
+            ->with('user', 'classroom')
+            ->get()
+            ->sortBy(fn($m) => $m->user?->name ?? '')
+            ->values();
+
+        $absensis = LearningModuleAbsensi::where('learning_module_id', $learningModule->id)->get();
+
+        $spreadsheet = new \PhpOffice\PhpSpreadsheet\Spreadsheet();
+        $sheet = $spreadsheet->getActiveSheet();
+
+        $sheet->setCellValue('A1', 'REKAPITULASI ABSENSI SISWA');
+        $sheet->setCellValue('A2', 'Modul: ' . $learningModule->title);
+        $sheet->setCellValue('A3', 'Mata Pelajaran: ' . $learningModule->subject->nama_pelajaran);
+        $sheet->setCellValue('A4', 'Tahun Ajaran: ' . ($learningModule->tahunAjaran->tahun_ajaran ?? '-'));
+        $sheet->setCellValue('A5', 'Dicetak pada: ' . date('d F Y H:i'));
+
+        $sheet->setCellValue('A7', 'No');
+        $sheet->setCellValue('B7', 'Nama Siswa');
+        $sheet->setCellValue('C7', 'NISN');
+        $sheet->setCellValue('D7', 'Kelas');
+        $sheet->setCellValue('E7', 'Hadir');
+        $sheet->setCellValue('F7', 'Sakit');
+        $sheet->setCellValue('G7', 'Izin');
+        $sheet->setCellValue('H7', 'Alpa');
+        $sheet->setCellValue('I7', 'Total Pertemuan');
+        $sheet->setCellValue('J7', 'Persentase Kehadiran (%)');
+
+        $rowNum = 8;
+        foreach ($murids as $index => $murid) {
+            $studentAbsensis = $absensis->where('murid_id', $murid->id);
+            $totalHadir = $studentAbsensis->where('status', 'hadir')->count();
+            $totalSakit = $studentAbsensis->where('status', 'sakit')->count();
+            $totalIzin = $studentAbsensis->where('status', 'izin')->count();
+            $totalAlpa = $studentAbsensis->where('status', 'alpa')->count();
+            $totalPertemuan = $studentAbsensis->count();
+            $percentage = $totalPertemuan > 0 ? round(($totalHadir / $totalPertemuan) * 100, 1) : 100;
+
+            $sheet->setCellValue('A' . $rowNum, $index + 1);
+            $sheet->setCellValue('B' . $rowNum, $murid->user->name ?? '-');
+            $sheet->setCellValue('C' . $rowNum, $murid->nisn);
+            $sheet->setCellValue('D' . $rowNum, $murid->classroom->nama_kelas ?? '-');
+            $sheet->setCellValue('E' . $rowNum, $totalHadir);
+            $sheet->setCellValue('F' . $rowNum, $totalSakit);
+            $sheet->setCellValue('G' . $rowNum, $totalIzin);
+            $sheet->setCellValue('H' . $rowNum, $totalAlpa);
+            $sheet->setCellValue('I' . $rowNum, $totalPertemuan);
+            $sheet->setCellValue('J' . $rowNum, $percentage . '%');
+
+            $rowNum++;
+        }
+
+        foreach (range('A', 'J') as $col) {
+            $sheet->getColumnDimension($col)->setAutoSize(true);
+        }
+
+        $writer = new \PhpOffice\PhpSpreadsheet\Writer\Xlsx($spreadsheet);
+        $fileName = 'rekap_absensi_' . str_replace(' ', '_', strtolower($learningModule->title)) . '.xlsx';
+
+        return response()->streamDownload(function () use ($writer) {
+            $writer->save('php://output');
+        }, $fileName, [
+            'Content-Type' => 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+        ]);
     }
 }

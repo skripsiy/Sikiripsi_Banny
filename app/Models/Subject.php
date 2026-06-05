@@ -25,4 +25,9 @@ class Subject extends Model
     {
         return $this->belongsToMany(Guru::class, 'subject_guru', 'subject_id', 'guru_id')->withTimestamps();
     }
+
+    public function bankSoals()
+    {
+        return $this->hasMany(BankSoal::class);
+    }
 }

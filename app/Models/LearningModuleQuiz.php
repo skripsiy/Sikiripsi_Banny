@@ -20,4 +20,17 @@ class LearningModuleQuiz extends Model
     {
         return $this->belongsTo(LearningModule::class);
     }
+
+    public function soals()
+    {
+        return $this->belongsToMany(BankSoal::class, 'quiz_soals', 'learning_module_quiz_id', 'bank_soal_id')
+            ->withPivot('id', 'urutan', 'bobot')
+            ->orderByPivot('urutan')
+            ->withTimestamps();
+    }
+
+    public function attempts()
+    {
+        return $this->hasMany(QuizAttempt::class, 'learning_module_quiz_id');
+    }
 }

@@ -4,6 +4,9 @@ namespace App\Http\Controllers;
 
 use App\Models\LearningModule;
 use App\Models\LearningModuleTugas;
+use App\Models\TugasSubmission;
+use App\Models\Classroom;
+use App\Models\Murid;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 
@@ -97,5 +100,60 @@ class TugasController extends Controller
 
         return redirect()->route('guru.learning-modules.tugas.index', $learningModule->id)
             ->with('status', 'Tugas berhasil dihapus.');
+    }
+
+    public function submissions(LearningModule $learningModule, LearningModuleTugas $tuga)
+    {
+        $guru = auth()->user()->guru;
+        if (!$guru || $learningModule->guru_id !== $guru->id || $tuga->learning_module_id !== $learningModule->id) {
+            abort(403, 'Aksi tidak diizinkan.');
+        }
+
+        $learningModule->load('subject');
+        
+        $jurusanId = $learningModule->subject->jurusan_id;
+        $query = Classroom::where('tahun_ajaran_id', $learningModule->tahun_ajaran_id)
+            ->where('is_active', true);
+        if ($jurusanId) {
+            $query->where('jurusan_id', $jurusanId);
+        }
+        $classroomIds = $query->pluck('id');
+
+        $murids = Murid::whereIn('classroom_id', $classroomIds)
+            ->with('user', 'classroom')
+            ->get()
+            ->sortBy(fn($m) => $m->user?->name ?? '')
+            ->values();
+
+        $submissions = TugasSubmission::where('learning_module_tugas_id', $tuga->id)
+            ->get()
+            ->keyBy('murid_id');
+
+        return view('guru.learning_modules.tugas.submissions', compact('learningModule', 'tuga', 'murids', 'submissions'));
+    }
+
+    public function grade(Request $request, LearningModule $learningModule, TugasSubmission $submission)
+    {
+        $guru = auth()->user()->guru;
+        if (!$guru || $learningModule->guru_id !== $guru->id) {
+            abort(403, 'Aksi tidak diizinkan.');
+        }
+
+        if ($submission->tugas->learning_module_id !== $learningModule->id) {
+            abort(404, 'Submission tidak ditemukan di modul ini.');
+        }
+
+        $request->validate([
+            'nilai' => ['required', 'integer', 'min:0', 'max:100'],
+            'catatan_guru' => ['nullable', 'string', 'max:1000'],
+        ]);
+
+        $submission->update([
+            'nilai' => $request->nilai,
+            'catatan_guru' => $request->catatan_guru,
+            'graded_at' => now(),
+        ]);
+
+        return back()->with('status', 'Nilai berhasil disimpan.');
     }
 }

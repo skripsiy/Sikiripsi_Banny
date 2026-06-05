@@ -27,7 +27,7 @@ class GuruManagementController extends Controller
 
         // Sample Data Row
         $sheet->setCellValue('A2', 'Budi Handoko, S.Pd.');
-        $sheet->setCellValue('B2', 'budi@stovia.sch.id');
+        $sheet->setCellValue('B2', 'budi@smkn1jakarta.sch.id');
         $sheet->setCellValue('C2', '9876543210987654');
 
         $writer = new Xlsx($spreadsheet);

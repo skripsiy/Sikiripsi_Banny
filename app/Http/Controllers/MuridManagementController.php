@@ -29,7 +29,7 @@ class MuridManagementController extends Controller
 
         // Sample Data Row
         $sheet->setCellValue('A2', 'Aji Pratama');
-        $sheet->setCellValue('B2', 'aji@stovia.sch.id');
+        $sheet->setCellValue('B2', 'aji@smkn1jakarta.sch.id');
         $sheet->setCellValue('C2', '0054321098');
         $sheet->setCellValue('D2', 'XII RPL 1');
         $sheet->setCellValue('E2', '628123456789');

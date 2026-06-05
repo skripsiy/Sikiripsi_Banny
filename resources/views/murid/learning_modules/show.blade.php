@@ -40,7 +40,7 @@
                     </span>
                 </div>
             </div>
-            <div>
+            <div class="flex items-center gap-2">
                 <!-- Absensi Saya Button -->
                 <a href="{{ route('murid.learning-modules.absensi.index', $learningModule->id) }}"
                    class="inline-flex items-center gap-1.5 font-bold px-4 py-2.5 rounded-xl text-xs bg-white/10 hover:bg-white/20 text-white transition-all border border-white/10 select-none cursor-pointer">
@@ -49,11 +49,19 @@
                     </svg>
                     Absensi Saya
                 </a>
+                <!-- Rekap Nilai Saya Button -->
+                <a href="{{ route('murid.learning-modules.rekap-nilai', $learningModule->id) }}"
+                   class="inline-flex items-center gap-1.5 font-bold px-4 py-2.5 rounded-xl text-xs bg-emerald-650 hover:bg-emerald-700 text-white transition-all border border-emerald-600 select-none cursor-pointer">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2"></path>
+                    </svg>
+                    Rekap Nilai Saya
+                </a>
             </div>
         </div>
 
         <!-- Statistics / Overview Cards Grid -->
-        <div class="grid grid-cols-2 md:grid-cols-5 gap-4 mb-6">
+        <div class="grid grid-cols-2 md:grid-cols-6 gap-4 mb-6">
             <!-- Absensi Saya Card -->
             <a href="{{ route('murid.learning-modules.absensi.index', $learningModule->id) }}"
                class="group/card bg-white border border-gray-100 hover:border-blue-200 hover:shadow-md rounded-2xl p-4 transition-all duration-200 cursor-pointer select-none">
@@ -65,9 +73,28 @@
                     </div>
                     <div class="flex-grow min-w-0">
                         <p class="text-[10px] font-bold text-gray-400 uppercase tracking-wider truncate">Absensi Saya</p>
-                        <p class="text-xs font-bold text-gray-600 mt-1">Lihat Log Kehadiran</p>
+                        <p class="text-xs font-bold text-gray-600 mt-1">Kehadiran Saya</p>
                     </div>
                     <svg class="w-4 h-4 text-gray-350 group-hover/card:text-blue-500 transition-colors flex-shrink-0" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"></path>
+                    </svg>
+                </div>
+            </a>
+
+            <!-- Rekap Nilai Card -->
+            <a href="{{ route('murid.learning-modules.rekap-nilai', $learningModule->id) }}"
+               class="group/card bg-white border border-gray-100 hover:border-emerald-200 hover:shadow-md rounded-2xl p-4 transition-all duration-200 cursor-pointer select-none">
+                <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center flex-shrink-0">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2"></path>
+                        </svg>
+                    </div>
+                    <div class="flex-grow min-w-0">
+                        <p class="text-[10px] font-bold text-gray-400 uppercase tracking-wider truncate">Rekap Nilai</p>
+                        <p class="text-xs font-bold text-gray-600 mt-1">Nilai Tugas Saya</p>
+                    </div>
+                    <svg class="w-4 h-4 text-gray-350 group-hover/card:text-emerald-500 transition-colors flex-shrink-0" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"></path>
                     </svg>
                 </div>

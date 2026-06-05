@@ -49,7 +49,7 @@
     <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
         <div>
             <label for="edit_password" class="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-1.5">Password Baru</label>
-            <input type="password" name="password" id="edit_password"
+            <input type="password" name="password" id="edit_password" autocomplete="new-password"
                    class="w-full px-4 py-2.5 bg-white border border-gray-200 rounded-xl focus:outline-none focus:border-[#0c2b4d] focus:ring-1 focus:ring-[#0c2b4d] text-sm text-gray-800 transition-all shadow-sm">
             @if(old('_method') === 'PUT')
                 @error('password') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
@@ -58,7 +58,7 @@
 
         <div>
             <label for="edit_password_confirmation" class="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-1.5">Konfirmasi Password</label>
-            <input type="password" name="password_confirmation" id="edit_password_confirmation"
+            <input type="password" name="password_confirmation" id="edit_password_confirmation" autocomplete="new-password"
                    class="w-full px-4 py-2.5 bg-white border border-gray-200 rounded-xl focus:outline-none focus:border-[#0c2b4d] focus:ring-1 focus:ring-[#0c2b4d] text-sm text-gray-800 transition-all shadow-sm">
         </div>
     </div>

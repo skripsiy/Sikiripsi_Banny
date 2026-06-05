@@ -70,8 +70,8 @@
     <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
         <div>
             <label for="create_password" class="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-1.5">Password</label>
-            <input type="password" name="password" id="create_password" required
-                   class="w-full px-4 py-2.5 bg-white border border-gray-200 rounded-xl focus:outline-none focus:border-[#0c2b4d] focus:ring-1 focus:ring-[#0c2b4d] text-sm text-gray-800 transition-all shadow-sm">
+            <input type="text" name="password" id="create_password" value="ChangeMe@123" readonly
+                   class="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 text-gray-400 cursor-not-allowed select-none rounded-xl focus:outline-none text-sm transition-all shadow-sm">
             @if(!old('_method'))
                 @error('password') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
             @endif
@@ -79,8 +79,8 @@
 
         <div>
             <label for="create_password_confirmation" class="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-1.5">Konfirmasi Password</label>
-            <input type="password" name="password_confirmation" id="create_password_confirmation" required
-                   class="w-full px-4 py-2.5 bg-white border border-gray-200 rounded-xl focus:outline-none focus:border-[#0c2b4d] focus:ring-1 focus:ring-[#0c2b4d] text-sm text-gray-800 transition-all shadow-sm">
+            <input type="text" name="password_confirmation" id="create_password_confirmation" value="ChangeMe@123" readonly
+                   class="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 text-gray-400 cursor-not-allowed select-none rounded-xl focus:outline-none text-sm transition-all shadow-sm">
         </div>
     </div>
 

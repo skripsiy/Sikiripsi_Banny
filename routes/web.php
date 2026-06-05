@@ -42,7 +42,8 @@ Route::get('/dashboard', function () {
         if ($murid) {
             $classroom = $murid->classroom;
             if ($classroom) {
-                $modules = \App\Models\LearningModule::where('tahun_ajaran_id', $classroom->tahun_ajaran_id)
+                $semesterIds = \App\Models\TahunAjaran::where('academic_year_id', $classroom->tahun_ajaran_id)->pluck('id');
+                $modules = \App\Models\LearningModule::whereIn('tahun_ajaran_id', $semesterIds)
                     ->whereHas('subject', function ($query) use ($classroom) {
                         $query->where('is_active', true)
                               ->where(function ($q) use ($classroom) {

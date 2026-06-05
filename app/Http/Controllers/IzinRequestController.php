@@ -22,7 +22,8 @@ class IzinRequestController extends Controller
             abort(403, 'Kelas Anda tidak aktif atau tidak ditemukan.');
         }
 
-        if ($learningModule->tahun_ajaran_id !== $classroom->tahun_ajaran_id) {
+        $activeTahunAjaran = \App\Models\TahunAjaran::where('is_active', true)->first();
+        if (!$activeTahunAjaran || $learningModule->tahun_ajaran_id !== $activeTahunAjaran->id || $classroom->tahun_ajaran_id !== $activeTahunAjaran->academic_year_id) {
             abort(403, 'Aksi tidak diizinkan. Modul tidak sesuai dengan tahun ajaran kelas Anda.');
         }
 

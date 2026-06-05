@@ -23,11 +23,38 @@ class Classroom extends Model
 
     public function tahunAjaran()
     {
-        return $this->belongsTo(TahunAjaran::class);
+        return $this->belongsTo(AcademicYear::class, 'tahun_ajaran_id');
     }
 
     public function murids()
     {
         return $this->hasMany(Murid::class);
+    }
+
+    protected static function booted()
+    {
+        static::creating(function ($classroom) {
+            if ($classroom->tahun_ajaran_id) {
+                $exists = AcademicYear::where('id', $classroom->tahun_ajaran_id)->exists();
+                if (!$exists) {
+                    $ta = TahunAjaran::find($classroom->tahun_ajaran_id);
+                    if ($ta) {
+                        $classroom->tahun_ajaran_id = $ta->academic_year_id;
+                    }
+                }
+            }
+        });
+
+        static::updating(function ($classroom) {
+            if ($classroom->isDirty('tahun_ajaran_id') && $classroom->tahun_ajaran_id) {
+                $exists = AcademicYear::where('id', $classroom->tahun_ajaran_id)->exists();
+                if (!$exists) {
+                    $ta = TahunAjaran::find($classroom->tahun_ajaran_id);
+                    if ($ta) {
+                        $classroom->tahun_ajaran_id = $ta->academic_year_id;
+                    }
+                }
+            }
+        });
     }
 }

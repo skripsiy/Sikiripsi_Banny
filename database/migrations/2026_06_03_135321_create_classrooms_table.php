@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->string('nama_kelas', 50);
             $table->foreignId('jurusan_id')->constrained('jurusans')->restrictOnDelete();
-            $table->foreignId('tahun_ajaran_id')->constrained('tahun_ajarans')->restrictOnDelete();
+            $table->foreignId('tahun_ajaran_id')->constrained('academic_years')->restrictOnDelete();
             $table->boolean('is_active')->default(true);
             $table->timestamps();
             $table->softDeletes();

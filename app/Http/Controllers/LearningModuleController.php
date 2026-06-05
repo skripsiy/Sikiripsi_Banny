@@ -26,14 +26,28 @@ class LearningModuleController extends Controller
             abort(403, 'Profil Guru tidak ditemukan.');
         }
 
-        $tahunAjarans = TahunAjaran::orderBy('tahun_ajaran', 'desc')->orderBy('semester', 'desc')->get();
+        $semesters = TahunAjaran::orderBy('tahun_ajaran', 'desc')->orderBy('semester', 'desc')->get();
+        $academicYears = \App\Models\AcademicYear::orderBy('tahun_ajaran', 'desc')->get();
         $activeTahunAjaran = TahunAjaran::where('is_active', true)->first();
-        $selectedTahunAjaranId = request('tahun_ajaran_id', $activeTahunAjaran?->id);
+        
+        $selectedAcademicYearId = request('academic_year_id', $activeTahunAjaran?->academic_year_id);
+        $selectedSemester = request('semester', $activeTahunAjaran?->semester);
 
         // Get modules owned by this teacher
         $learningModules = LearningModule::where('guru_id', $guru->id)
-            ->when($selectedTahunAjaranId, function($q) use ($selectedTahunAjaranId) {
-                return $q->where('tahun_ajaran_id', $selectedTahunAjaranId);
+            ->when($selectedAcademicYearId, function($q) use ($selectedAcademicYearId) {
+                return $q->whereIn('tahun_ajaran_id', function($subQuery) use ($selectedAcademicYearId) {
+                    $subQuery->select('id')
+                             ->from('tahun_ajarans')
+                             ->where('academic_year_id', $selectedAcademicYearId);
+                });
+            })
+            ->when($selectedSemester, function($q) use ($selectedSemester) {
+                return $q->whereIn('tahun_ajaran_id', function($subQuery) use ($selectedSemester) {
+                    $subQuery->select('id')
+                             ->from('tahun_ajarans')
+                             ->where('semester', $selectedSemester);
+                });
             })
             ->with(['subject', 'tahunAjaran'])
             ->withCount(['materis', 'tugas', 'quizzes', 'ujians', 'absensis'])
@@ -46,7 +60,10 @@ class LearningModuleController extends Controller
             ->orderBy('nama_pelajaran')
             ->get();
 
-        return view('guru.learning_modules.index', compact('learningModules', 'subjects', 'tahunAjarans', 'selectedTahunAjaranId'));
+        $tahunAjarans = $semesters;
+        $selectedTahunAjaranId = $activeTahunAjaran?->id;
+
+        return view('guru.learning_modules.index', compact('learningModules', 'subjects', 'tahunAjarans', 'academicYears', 'selectedAcademicYearId', 'selectedSemester', 'selectedTahunAjaranId'));
     }
 
     public function store(Request $request)

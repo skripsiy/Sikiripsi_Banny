@@ -46,10 +46,23 @@ class DatabaseSeeder extends Seeder
         ]);
 
         // 3. Seed Academic Prerequisites
-        $ta = \App\Models\TahunAjaran::create([
+        $ay = \App\Models\AcademicYear::create([
+            'tahun_ajaran' => '2025/2026',
+            'is_active' => true,
+        ]);
+
+        $taGanjil = \App\Models\TahunAjaran::create([
+            'academic_year_id' => $ay->id,
             'tahun_ajaran' => '2025/2026',
             'semester' => 'ganjil',
             'is_active' => true,
+        ]);
+
+        $taGenap = \App\Models\TahunAjaran::create([
+            'academic_year_id' => $ay->id,
+            'tahun_ajaran' => '2025/2026',
+            'semester' => 'genap',
+            'is_active' => false,
         ]);
 
         $jurusan = \App\Models\Jurusan::create([
@@ -61,7 +74,7 @@ class DatabaseSeeder extends Seeder
         $classroom = \App\Models\Classroom::create([
             'nama_kelas' => 'XII RPL 1',
             'jurusan_id' => $jurusan->id,
-            'tahun_ajaran_id' => $ta->id,
+            'tahun_ajaran_id' => $ay->id,
             'is_active' => true,
         ]);
 

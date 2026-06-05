@@ -30,9 +30,10 @@ class MuridLearningModuleController extends Controller
             abort(403, 'Kelas Anda tidak aktif atau tidak ditemukan.');
         }
 
-        // Check if learning module has the same academic year
-        if ($learningModule->tahun_ajaran_id !== $classroom->tahun_ajaran_id) {
-            abort(403, 'Aksi tidak diizinkan. Modul tidak sesuai dengan tahun ajaran kelas Anda.');
+        // Check if learning module has the same academic year and semester
+        $activeTahunAjaran = \App\Models\TahunAjaran::where('is_active', true)->first();
+        if (!$activeTahunAjaran || $learningModule->tahun_ajaran_id !== $activeTahunAjaran->id || $classroom->tahun_ajaran_id !== $activeTahunAjaran->academic_year_id) {
+            abort(403, 'Aksi tidak diizinkan. Modul tidak sesuai dengan tahun ajaran atau semester aktif Anda.');
         }
 
         // Check if subject is suitable for the student's jurusan
@@ -57,18 +58,23 @@ class MuridLearningModuleController extends Controller
         if (!$classroom) {
             $learningModules = collect();
         } else {
-            $learningModules = LearningModule::where('tahun_ajaran_id', $classroom->tahun_ajaran_id)
-                ->whereHas('subject', function ($query) use ($classroom) {
-                    $query->where('is_active', true)
-                          ->where(function ($q) use ($classroom) {
-                              $q->whereNull('jurusan_id')
-                                ->orWhere('jurusan_id', $classroom->jurusan_id);
-                          });
-                })
+            $activeTahunAjaran = \App\Models\TahunAjaran::where('is_active', true)->first();
+            if (!$activeTahunAjaran || $classroom->tahun_ajaran_id !== $activeTahunAjaran->academic_year_id) {
+                $learningModules = collect();
+            } else {
+                $learningModules = LearningModule::where('tahun_ajaran_id', $activeTahunAjaran->id)
+                    ->whereHas('subject', function ($query) use ($classroom) {
+                        $query->where('is_active', true)
+                              ->where(function ($q) use ($classroom) {
+                                  $q->whereNull('jurusan_id')
+                                    ->orWhere('jurusan_id', $classroom->jurusan_id);
+                              });
+                    })
                 ->with(['guru.user', 'subject', 'tahunAjaran'])
                 ->withCount(['materis', 'tugas', 'quizzes', 'ujians'])
                 ->latest()
                 ->get();
+            }
         }
 
         return view('murid.learning_modules.index', compact('learningModules', 'classroom'));

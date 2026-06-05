@@ -62,13 +62,22 @@
                         </svg>
                         Tahun Ajaran:
                     </span>
-                    <select name="tahun_ajaran_id" id="filter_tahun_ajaran_id" onchange="this.form.submit()"
-                            class="px-4 py-2.5 bg-gray-50 border border-gray-150 rounded-xl text-xs text-gray-700 font-semibold focus:outline-none focus:bg-white focus:border-[#0c2b4d] transition-all shadow-sm cursor-pointer min-w-[200px]">
-                        @foreach($tahunAjarans as $ta)
-                            <option value="{{ $ta->id }}" {{ $selectedTahunAjaranId == $ta->id ? 'selected' : '' }}>
-                                {{ $ta->tahun_ajaran }} ({{ ucfirst($ta->semester) }})
+                    <select name="academic_year_id" id="filter_academic_year_id" onchange="this.form.submit()"
+                            class="px-4 py-2.5 bg-gray-50 border border-gray-150 rounded-xl text-xs text-gray-700 font-semibold focus:outline-none focus:bg-white focus:border-[#0c2b4d] transition-all shadow-sm cursor-pointer min-w-[150px]">
+                        @foreach($academicYears as $ay)
+                            <option value="{{ $ay->id }}" {{ $selectedAcademicYearId == $ay->id ? 'selected' : '' }}>
+                                {{ $ay->tahun_ajaran }}
                             </option>
                         @endforeach
+                    </select>
+
+                    <span class="text-xs font-bold text-gray-400 uppercase tracking-wider whitespace-nowrap flex items-center gap-1.5 ml-2">
+                        Semester:
+                    </span>
+                    <select name="semester" id="filter_semester" onchange="this.form.submit()"
+                            class="px-4 py-2.5 bg-gray-50 border border-gray-150 rounded-xl text-xs text-gray-700 font-semibold focus:outline-none focus:bg-white focus:border-[#0c2b4d] transition-all shadow-sm cursor-pointer min-w-[100px]">
+                        <option value="ganjil" {{ $selectedSemester == 'ganjil' ? 'selected' : '' }}>Ganjil</option>
+                        <option value="genap" {{ $selectedSemester == 'genap' ? 'selected' : '' }}>Genap</option>
                     </select>
                 </form>
             </div>
@@ -214,7 +223,7 @@
         @if ($subjects->isNotEmpty())
             <!-- Create Modal -->
             <div x-show="showCreateModal" class="fixed inset-0 overflow-y-auto px-4 py-6 sm:px-0 z-50 flex items-center justify-center shadow-2xl" style="display: none;">
-                <div x-show="showCreateModal" x-transition:enter="ease-out duration-300" x-transition:enter-start="opacity-0" x-transition:enter-end="opacity-100" x-transition:leave="ease-in duration-200" x-transition:leave-start="opacity-100" x-transition:leave-end="opacity-0" class="fixed inset-0 transform transition-all" @click="showCreateModal = false">
+                <div x-show="showCreateModal" x-transition:enter="ease-out duration-300" x-transition:enter-start="opacity-0" x-transition:enter-end="opacity-100" x-transition:leave="ease-in duration-200" x-transition:leave-start="opacity-100" x-transition:leave-end="opacity-0" class="fixed inset-0 transform transition-all">
                     <div class="absolute inset-0 bg-gray-900/60 backdrop-blur-sm"></div>
                 </div>
 
@@ -228,7 +237,7 @@
 
             <!-- Edit Modal -->
             <div x-show="showEditModal" class="fixed inset-0 overflow-y-auto px-4 py-6 sm:px-0 z-50 flex items-center justify-center shadow-2xl" style="display: none;">
-                <div x-show="showEditModal" x-transition:enter="ease-out duration-300" x-transition:enter-start="opacity-0" x-transition:enter-end="opacity-100" x-transition:leave="ease-in duration-200" x-transition:leave-start="opacity-100" x-transition:leave-end="opacity-0" class="fixed inset-0 transform transition-all" @click="showEditModal = false">
+                <div x-show="showEditModal" x-transition:enter="ease-out duration-300" x-transition:enter-start="opacity-0" x-transition:enter-end="opacity-100" x-transition:leave="ease-in duration-200" x-transition:leave-start="opacity-100" x-transition:leave-end="opacity-0" class="fixed inset-0 transform transition-all">
                     <div class="absolute inset-0 bg-gray-900/60 backdrop-blur-sm"></div>
                 </div>
 

@@ -11,16 +11,12 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('tahun_ajarans', function (Blueprint $table) {
+        Schema::create('academic_years', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('academic_year_id')->constrained('academic_years')->cascadeOnDelete();
-            $table->string('tahun_ajaran', 9);
-            $table->enum('semester', ['ganjil', 'genap']);
+            $table->string('tahun_ajaran', 9)->unique();
             $table->boolean('is_active')->default(false);
             $table->timestamps();
             $table->softDeletes();
-
-            $table->index(['tahun_ajaran', 'semester']);
         });
     }
 
@@ -29,6 +25,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('tahun_ajarans');
+        Schema::dropIfExists('academic_years');
     }
 };

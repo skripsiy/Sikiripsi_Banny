@@ -14,7 +14,7 @@ class ClassroomManagementController extends Controller
     {
         $classrooms = Classroom::with(['jurusan', 'tahunAjaran'])->latest()->get();
         $jurusans = Jurusan::where('is_active', true)->orderBy('nama_jurusan')->get();
-        $tahunAjarans = TahunAjaran::where('is_active', true)->latest()->get();
+        $tahunAjarans = \App\Models\AcademicYear::where('is_active', true)->latest()->get();
 
         return view('admin.manage.classrooms.index', compact('classrooms', 'jurusans', 'tahunAjarans'));
     }
@@ -32,7 +32,7 @@ class ClassroomManagementController extends Controller
                 }),
             ],
             'jurusan_id' => ['required', 'exists:jurusans,id'],
-            'tahun_ajaran_id' => ['required', 'exists:tahun_ajarans,id'],
+            'tahun_ajaran_id' => ['required', 'exists:academic_years,id'],
         ], [
             'nama_kelas.unique' => 'Nama kelas ini sudah terdaftar pada tahun ajaran tersebut.',
             'jurusan_id.exists' => 'Jurusan yang dipilih tidak valid.',
@@ -63,7 +63,7 @@ class ClassroomManagementController extends Controller
                 })->ignore($classroom->id),
             ],
             'jurusan_id' => ['required', 'exists:jurusans,id'],
-            'tahun_ajaran_id' => ['required', 'exists:tahun_ajarans,id'],
+            'tahun_ajaran_id' => ['required', 'exists:academic_years,id'],
             'is_active' => ['required', 'boolean'],
         ], [
             'nama_kelas.unique' => 'Nama kelas ini sudah terdaftar pada tahun ajaran tersebut.',

@@ -344,7 +344,7 @@ describe('Tahun Ajaran - Black Box Testing (EP, BVA, Decision Table)', function 
 
     // 4.3 Decision Table Testing
     describe('Decision Table Testing', function () {
-        it('Rule 1: keeps existing active record active when new record is inactive', function () {
+        it('Rule 1: keeps existing active record active when new Year is added', function () {
             // Setup: create active record
             $activeTa = \App\Models\TahunAjaran::create([
                 'tahun_ajaran' => '2024/2025',
@@ -352,26 +352,7 @@ describe('Tahun Ajaran - Black Box Testing (EP, BVA, Decision Table)', function 
                 'is_active' => true,
             ]);
 
-            // Action: create inactive record
-            $response = $this->actingAs($this->admin)->post(route('admin.manage.tahun-ajarans.store'), [
-                'tahun_ajaran' => '2025/2026',
-                'semester' => 'ganjil',
-                'is_active' => '0',
-            ]);
-
-            $response->assertSessionHasNoErrors();
-            $this->assertTrue($activeTa->fresh()->is_active);
-        });
-
-        it('Rule 2: auto-deactivates other active record when new record is active', function () {
-            // Setup: create active record
-            $activeTa = \App\Models\TahunAjaran::create([
-                'tahun_ajaran' => '2024/2025',
-                'semester' => 'ganjil',
-                'is_active' => true,
-            ]);
-
-            // Action: create active record
+            // Action: create new year
             $response = $this->actingAs($this->admin)->post(route('admin.manage.tahun-ajarans.store'), [
                 'tahun_ajaran' => '2025/2026',
                 'semester' => 'ganjil',
@@ -379,8 +360,25 @@ describe('Tahun Ajaran - Black Box Testing (EP, BVA, Decision Table)', function 
             ]);
 
             $response->assertSessionHasNoErrors();
-            // Assert old record is now inactive
-            $this->assertFalse($activeTa->fresh()->is_active);
+            $this->assertTrue($activeTa->fresh()->is_active);
+        });
+
+        it('Rule 2: creates both Ganjil and Genap semesters as active by default', function () {
+            // Action: create new year
+            $response = $this->actingAs($this->admin)->post(route('admin.manage.tahun-ajarans.store'), [
+                'tahun_ajaran' => '2025/2026',
+                'semester' => 'ganjil',
+                'is_active' => '1',
+            ]);
+
+            $response->assertSessionHasNoErrors();
+            
+            // Assert both Ganjil and Genap are active
+            $semesters = \App\Models\TahunAjaran::where('tahun_ajaran', '2025/2026')->get();
+            $this->assertCount(2, $semesters);
+            foreach ($semesters as $s) {
+                $this->assertTrue($s->is_active);
+            }
         });
 
         it('Rule 3: rejects creating duplicate active [tahun_ajaran, semester] combination', function () {

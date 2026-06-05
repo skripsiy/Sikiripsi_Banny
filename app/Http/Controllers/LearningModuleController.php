@@ -30,19 +30,19 @@ class LearningModuleController extends Controller
         $academicYears = \App\Models\AcademicYear::orderBy('tahun_ajaran', 'desc')->get();
         $activeTahunAjaran = TahunAjaran::where('is_active', true)->first();
         
-        $selectedAcademicYearId = request('academic_year_id', $activeTahunAjaran?->academic_year_id);
-        $selectedSemester = request('semester', $activeTahunAjaran?->semester);
+        $selectedAcademicYearId = request('academic_year_id', 'all');
+        $selectedSemester = request('semester', 'all');
 
         // Get modules owned by this teacher
         $learningModules = LearningModule::where('guru_id', $guru->id)
-            ->when($selectedAcademicYearId, function($q) use ($selectedAcademicYearId) {
+            ->when($selectedAcademicYearId && $selectedAcademicYearId !== 'all', function($q) use ($selectedAcademicYearId) {
                 return $q->whereIn('tahun_ajaran_id', function($subQuery) use ($selectedAcademicYearId) {
                     $subQuery->select('id')
                              ->from('tahun_ajarans')
                              ->where('academic_year_id', $selectedAcademicYearId);
                 });
             })
-            ->when($selectedSemester, function($q) use ($selectedSemester) {
+            ->when($selectedSemester && $selectedSemester !== 'all', function($q) use ($selectedSemester) {
                 return $q->whereIn('tahun_ajaran_id', function($subQuery) use ($selectedSemester) {
                     $subQuery->select('id')
                              ->from('tahun_ajarans')

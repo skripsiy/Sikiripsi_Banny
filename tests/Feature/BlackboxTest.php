@@ -49,7 +49,10 @@ describe('Equivalence Partitioning (EP) - Email & Required Fields Validation', f
         ]);
 
         $response->assertSessionHasNoErrors();
-        $this->assertDatabaseHas('users', ['email' => 'validemail@stovia.sch.id']);
+        $this->assertDatabaseHas('users', [
+            'email' => 'validemail@stovia.sch.id',
+            'must_change_password' => true,
+        ]);
     });
 
     it('rejects invalid email partition', function () {
@@ -76,6 +79,23 @@ describe('Equivalence Partitioning (EP) - Email & Required Fields Validation', f
         ]);
 
         $response->assertSessionHasErrors('name');
+    });
+
+    it('sets must_change_password to true for manually created gurus', function () {
+        $response = $this->actingAs($this->admin)->post(route('admin.manage.gurus.store'), [
+            'name' => 'Guru Baru',
+            'email' => 'gurubaru@stovia.sch.id',
+            'password' => 'ChangeMe@123',
+            'password_confirmation' => 'ChangeMe@123',
+            'nuptk' => '1234567890123456',
+        ]);
+
+        $response->assertSessionHasNoErrors();
+        $this->assertDatabaseHas('users', [
+            'email' => 'gurubaru@stovia.sch.id',
+            'role' => 'guru',
+            'must_change_password' => true,
+        ]);
     });
 });
 

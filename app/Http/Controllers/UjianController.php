@@ -178,7 +178,7 @@ class UjianController extends Controller
         return view('guru.learning_modules.ujians.results', compact('learningModule', 'ujian', 'attempts'));
     }
 
-    public function gradeEssay(Request $request, LearningModule $learningModule, UjianAttempt $attempt)
+    public function gradeEssay(Request $request, LearningModule $learningModule, LearningModuleUjian $ujian, UjianAttempt $attempt)
     {
         $guru = auth()->user()->guru;
         if (!$guru || $learningModule->guru_id !== $guru->id || $attempt->ujian->learning_module_id !== $learningModule->id) {

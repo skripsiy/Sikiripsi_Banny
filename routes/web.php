@@ -172,6 +172,7 @@ Route::middleware(['auth', 'role:murid'])->prefix('murid')->name('murid.')->grou
     Route::get('learning-modules/{learning_module}/quizzes', [\App\Http\Controllers\MuridLearningModuleController::class, 'quizzes'])->name('learning-modules.quizzes.index');
     Route::post('learning-modules/{learning_module}/quizzes/{quiz}/start', [\App\Http\Controllers\MuridLearningModuleController::class, 'startQuiz'])->name('learning-modules.quizzes.start');
     Route::get('learning-modules/{learning_module}/quizzes/{quiz}/take', [\App\Http\Controllers\MuridLearningModuleController::class, 'takeQuiz'])->name('learning-modules.quizzes.take');
+    Route::post('learning-modules/{learning_module}/quizzes/{quiz}/save-answer', [\App\Http\Controllers\MuridLearningModuleController::class, 'saveQuizAnswer'])->name('learning-modules.quizzes.save-answer');
     Route::post('learning-modules/{learning_module}/quizzes/{quiz}/submit', [\App\Http\Controllers\MuridLearningModuleController::class, 'submitQuiz'])->name('learning-modules.quizzes.submit');
     Route::get('learning-modules/{learning_module}/quizzes/{quiz}/result', [\App\Http\Controllers\MuridLearningModuleController::class, 'quizResult'])->name('learning-modules.quizzes.result');
 
@@ -179,6 +180,7 @@ Route::middleware(['auth', 'role:murid'])->prefix('murid')->name('murid.')->grou
     Route::get('learning-modules/{learning_module}/ujians', [\App\Http\Controllers\MuridLearningModuleController::class, 'ujians'])->name('learning-modules.ujians.index');
     Route::post('learning-modules/{learning_module}/ujians/{ujian}/start', [\App\Http\Controllers\MuridLearningModuleController::class, 'startUjian'])->name('learning-modules.ujians.start');
     Route::get('learning-modules/{learning_module}/ujians/{ujian}/take', [\App\Http\Controllers\MuridLearningModuleController::class, 'takeUjian'])->name('learning-modules.ujians.take');
+    Route::post('learning-modules/{learning_module}/ujians/{ujian}/save-answer', [\App\Http\Controllers\MuridLearningModuleController::class, 'saveUjianAnswer'])->name('learning-modules.ujians.save-answer');
     Route::post('learning-modules/{learning_module}/ujians/{ujian}/submit', [\App\Http\Controllers\MuridLearningModuleController::class, 'submitUjian'])->name('learning-modules.ujians.submit');
     Route::get('learning-modules/{learning_module}/ujians/{ujian}/result', [\App\Http\Controllers\MuridLearningModuleController::class, 'ujianResult'])->name('learning-modules.ujians.result');
 

@@ -215,4 +215,103 @@ describe('Murid Learning Module Access', function () {
         $response->assertViewIs('murid.learning_modules.absensi');
         $response->assertSee('Hadir');
     });
+
+    it('autosaves quiz answers and pre-loads them on page refresh', function () {
+        $quiz = LearningModuleQuiz::create([
+            'learning_module_id' => $this->moduleRpl->id,
+            'title' => 'Quiz Tag HTML',
+            'instructions' => 'Selesaikan kuis.',
+            'duration_minutes' => 10,
+            'due_date' => now()->addDays(1),
+        ]);
+
+        $soal = \App\Models\BankSoal::create([
+            'subject_id' => $this->subjectRpl->id,
+            'guru_id' => $this->guru->id,
+            'tipe' => 'pg',
+            'pertanyaan' => 'Apa tag untuk link?',
+        ]);
+
+        $soal->options()->create([
+            'label' => 'A',
+            'teks_opsi' => '<a>',
+            'is_correct' => true,
+        ]);
+        $soal->options()->create([
+            'label' => 'B',
+            'teks_opsi' => '<p>',
+            'is_correct' => false,
+        ]);
+
+        $quiz->soals()->attach($soal->id, ['urutan' => 1, 'bobot' => 5]);
+
+        // Start Quiz
+        $responseStart = $this->actingAs($this->muridUserRpl)->post(route('murid.learning-modules.quizzes.start', [$this->moduleRpl->id, $quiz->id]));
+        $responseStart->assertRedirect(route('murid.learning-modules.quizzes.take', [$this->moduleRpl->id, $quiz->id]));
+
+        // Autosave answer via AJAX
+        $responseSave = $this->actingAs($this->muridUserRpl)->postJson(route('murid.learning-modules.quizzes.save-answer', [$this->moduleRpl->id, $quiz->id]), [
+            'bank_soal_id' => $soal->id,
+            'tipe' => 'pg',
+            'nilai' => 'A',
+        ]);
+        $responseSave->assertOk();
+        $responseSave->assertJson(['success' => true]);
+
+        $this->assertDatabaseHas('quiz_answers', [
+            'bank_soal_id' => $soal->id,
+            'jawaban_pg' => 'A',
+        ]);
+
+        // Refresh take page and verify existingAnswers contains the saved answer
+        $responseTake = $this->actingAs($this->muridUserRpl)->get(route('murid.learning-modules.quizzes.take', [$this->moduleRpl->id, $quiz->id]));
+        $responseTake->assertOk();
+        $responseTake->assertViewHas('existingAnswers', [
+            $soal->id => 'A',
+        ]);
+    });
+
+    it('autosaves exam answers and pre-loads them on page refresh', function () {
+        $ujian = LearningModuleUjian::create([
+            'learning_module_id' => $this->moduleRpl->id,
+            'title' => 'Ujian Akhir',
+            'instructions' => 'Selesaikan ujian.',
+            'duration_minutes' => 90,
+            'due_date' => now()->addDays(2),
+        ]);
+
+        $soal = \App\Models\BankSoal::create([
+            'subject_id' => $this->subjectRpl->id,
+            'guru_id' => $this->guru->id,
+            'tipe' => 'essay',
+            'pertanyaan' => 'Jelaskan konsep OOP.',
+        ]);
+
+        $ujian->soals()->attach($soal->id, ['urutan' => 1, 'bobot' => 10]);
+
+        // Start Ujian
+        $responseStart = $this->actingAs($this->muridUserRpl)->post(route('murid.learning-modules.ujians.start', [$this->moduleRpl->id, $ujian->id]));
+        $responseStart->assertRedirect(route('murid.learning-modules.ujians.take', [$this->moduleRpl->id, $ujian->id]));
+
+        // Autosave answer via AJAX
+        $responseSave = $this->actingAs($this->muridUserRpl)->postJson(route('murid.learning-modules.ujians.save-answer', [$this->moduleRpl->id, $ujian->id]), [
+            'bank_soal_id' => $soal->id,
+            'tipe' => 'essay',
+            'nilai' => 'OOP adalah Pemrograman Berorientasi Objek.',
+        ]);
+        $responseSave->assertOk();
+        $responseSave->assertJson(['success' => true]);
+
+        $this->assertDatabaseHas('ujian_answers', [
+            'bank_soal_id' => $soal->id,
+            'jawaban_essay' => 'OOP adalah Pemrograman Berorientasi Objek.',
+        ]);
+
+        // Refresh take page and verify existingAnswers contains the saved answer
+        $responseTake = $this->actingAs($this->muridUserRpl)->get(route('murid.learning-modules.ujians.take', [$this->moduleRpl->id, $ujian->id]));
+        $responseTake->assertOk();
+        $responseTake->assertViewHas('existingAnswers', [
+            $soal->id => 'OOP adalah Pemrograman Berorientasi Objek.',
+        ]);
+    });
 });

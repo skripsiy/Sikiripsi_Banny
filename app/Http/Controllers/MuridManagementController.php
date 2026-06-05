@@ -95,6 +95,7 @@ class MuridManagementController extends Controller
             'email' => $request->email,
             'password' => Hash::make($request->password),
             'role' => 'murid',
+            'must_change_password' => true,
         ]);
 
         Murid::create([

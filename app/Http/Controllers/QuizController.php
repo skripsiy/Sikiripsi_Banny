@@ -178,7 +178,7 @@ class QuizController extends Controller
         return view('guru.learning_modules.quizzes.results', compact('learningModule', 'quiz', 'attempts'));
     }
 
-    public function gradeEssay(Request $request, LearningModule $learningModule, QuizAttempt $attempt)
+    public function gradeEssay(Request $request, LearningModule $learningModule, LearningModuleQuiz $quiz, QuizAttempt $attempt)
     {
         $guru = auth()->user()->guru;
         if (!$guru || $learningModule->guru_id !== $guru->id || $attempt->quiz->learning_module_id !== $learningModule->id) {

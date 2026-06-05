@@ -5,9 +5,17 @@
 
     <!-- Full Test Interface -->
     <div class="max-w-7xl mx-auto font-sans" x-data="{
-        currentQuestionIndex: 0,
+        currentQuestionIndex: Math.max(0, Math.min(
+            parseInt(localStorage.getItem('active_q_quiz_{{ $quiz->id }}_att_{{ $attempt->id }}') || 0),
+            {{ $soals->count() - 1 }}
+        )),
         totalQuestions: {{ $soals->count() }},
-        jawaban: {},
+        jawaban: {
+            @foreach($soals as $s)
+                '{{ $s->id }}': {{ json_encode($existingAnswers[$s->id] ?? null) }},
+            @endforeach
+        },
+        showSubmitConfirmModal: false,
         init() {
             // Count down timer
             const startedAt = new Date('{{ $attempt->started_at->toIso8601String() }}').getTime();
@@ -37,6 +45,32 @@
                     }
                 }
             }, 1000);
+
+            // Watch currentQuestionIndex to save to localStorage
+            this.$watch('currentQuestionIndex', value => {
+                localStorage.setItem('active_q_quiz_{{ $quiz->id }}_att_{{ $attempt->id }}', value);
+            });
+        },
+        saveAnswer(soalId, tipe, nilai) {
+            fetch('{{ route('murid.learning-modules.quizzes.save-answer', [$learningModule->id, $quiz->id]) }}', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                },
+                body: JSON.stringify({
+                    bank_soal_id: soalId,
+                    tipe: tipe,
+                    nilai: nilai
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                console.log('Answer saved:', data);
+            })
+            .catch(error => {
+                console.error('Error saving answer:', error);
+            });
         }
     }">
 
@@ -98,6 +132,7 @@
                                                    :class="jawaban[{{ $soal->id }}] === '{{ $opt->label }}' ? 'bg-blue-50/50 border-blue-500 ring-1 ring-blue-500' : ''">
                                                 <input type="radio" name="jawaban[{{ $soal->id }}]" value="{{ $opt->label }}"
                                                        x-model="jawaban[{{ $soal->id }}]"
+                                                       @change="saveAnswer({{ $soal->id }}, 'pg', '{{ $opt->label }}')"
                                                        class="w-4 h-4 text-[#0c2b4d] focus:ring-[#0c2b4d] border-gray-300">
                                                 <span class="text-xs font-bold text-gray-500 select-none">{{ $opt->label }}.</span>
                                                 <span class="text-xs text-gray-750 font-medium select-none">{{ $opt->teks_opsi }}</span>
@@ -109,6 +144,7 @@
                                         <label class="block text-xs font-bold text-gray-500 uppercase tracking-wide">Ketik Jawaban Anda:</label>
                                         <textarea name="jawaban[{{ $soal->id }}]" rows="6" placeholder="Tulis jawaban esai lengkap di sini..."
                                                   x-model="jawaban[{{ $soal->id }}]"
+                                                  @input.debounce.500ms="saveAnswer({{ $soal->id }}, 'essay', $event.target.value)"
                                                   class="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl text-xs text-gray-800 focus:outline-none focus:bg-white focus:border-[#0c2b4d] transition-all placeholder-gray-400"></textarea>
                                     </div>
                                 @endif
@@ -130,8 +166,8 @@
                             Selanjutnya
                         </button>
 
-                        <button type="submit" x-show="currentQuestionIndex === totalQuestions - 1" style="display: none;"
-                                onclick="return confirm('Apakah Anda yakin ingin menyelesaikan kuis ini? Jawaban Anda akan langsung dikirim.');"
+                        <button type="button" x-show="currentQuestionIndex === totalQuestions - 1" style="display: none;"
+                                @click="showSubmitConfirmModal = true"
                                 class="px-5 py-2.5 bg-[#0c2b4d] hover:bg-[#07192d] text-white rounded-xl text-xs font-bold transition-all cursor-pointer select-none shadow-sm">
                             Submit Jawaban
                         </button>
@@ -170,5 +206,36 @@
 
         </div>
 
+        <!-- Submit Confirmation Modal -->
+        <div x-show="showSubmitConfirmModal" class="fixed inset-0 overflow-y-auto px-4 py-6 sm:px-0 z-50 flex items-center justify-center shadow-2xl" style="display: none;">
+            <div x-show="showSubmitConfirmModal" x-transition:enter="ease-out duration-300" x-transition:enter-start="opacity-0" x-transition:enter-end="opacity-100" x-transition:leave="ease-in duration-200" x-transition:leave-start="opacity-100" x-transition:leave-end="opacity-0" class="fixed inset-0 transform transition-all" @click="showSubmitConfirmModal = false">
+                <div class="absolute inset-0 bg-gray-900/60 backdrop-blur-sm"></div>
+            </div>
+            <div x-show="showSubmitConfirmModal" x-transition:enter="ease-out duration-300" x-transition:enter-start="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95" x-transition:enter-end="opacity-100 translate-y-0 sm:scale-100" x-transition:leave="ease-in duration-200" x-transition:leave-start="opacity-100 translate-y-0 sm:scale-100" x-transition:leave-end="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95" class="bg-white rounded-2xl overflow-hidden shadow-2xl transform transition-all w-full max-w-md mx-auto z-10 border border-gray-100">
+                <div class="h-1.5 bg-gradient-to-r from-[#0c2b4d] to-[#1a4a7d]"></div>
+                <div class="p-6 text-center">
+                    <div class="w-12 h-12 bg-blue-50 text-blue-500 rounded-full flex items-center justify-center mx-auto mb-4 border border-blue-100">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                        </svg>
+                    </div>
+                    <h3 class="text-base font-bold text-gray-800 mb-2">Kumpulkan Jawaban?</h3>
+                    <p class="text-xs text-gray-500 leading-relaxed px-4">
+                        Apakah Anda yakin ingin menyelesaikan kuis ini? Jawaban Anda akan langsung dikirim dan tidak dapat diubah lagi.
+                    </p>
+                    
+                    <div class="mt-6 flex justify-center gap-3">
+                        <button type="button" @click="showSubmitConfirmModal = false"
+                                class="px-4 py-2 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-xl text-xs font-bold transition-all cursor-pointer">
+                            Batal
+                        </button>
+                        <button type="button" @click="document.getElementById('quiz-form').submit(); showSubmitConfirmModal = false;"
+                                class="px-4 py-2 bg-[#0c2b4d] hover:bg-[#07192d] text-white rounded-xl text-xs font-bold transition-all shadow-sm cursor-pointer">
+                            Kirim Jawaban
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 </x-app-layout>

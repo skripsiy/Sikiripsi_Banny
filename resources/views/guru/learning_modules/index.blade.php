@@ -64,20 +64,12 @@
                     </span>
                     <select name="academic_year_id" id="filter_academic_year_id" onchange="this.form.submit()"
                             class="px-4 py-2.5 bg-gray-50 border border-gray-150 rounded-xl text-xs text-gray-700 font-semibold focus:outline-none focus:bg-white focus:border-[#0c2b4d] transition-all shadow-sm cursor-pointer min-w-[150px]">
+                        <option value="all" {{ $selectedAcademicYearId == 'all' ? 'selected' : '' }}>Semua Tahun Ajaran</option>
                         @foreach($academicYears as $ay)
                             <option value="{{ $ay->id }}" {{ $selectedAcademicYearId == $ay->id ? 'selected' : '' }}>
                                 {{ $ay->tahun_ajaran }}
                             </option>
                         @endforeach
-                    </select>
-
-                    <span class="text-xs font-bold text-gray-400 uppercase tracking-wider whitespace-nowrap flex items-center gap-1.5 ml-2">
-                        Semester:
-                    </span>
-                    <select name="semester" id="filter_semester" onchange="this.form.submit()"
-                            class="px-4 py-2.5 bg-gray-50 border border-gray-150 rounded-xl text-xs text-gray-700 font-semibold focus:outline-none focus:bg-white focus:border-[#0c2b4d] transition-all shadow-sm cursor-pointer min-w-[100px]">
-                        <option value="ganjil" {{ $selectedSemester == 'ganjil' ? 'selected' : '' }}>Ganjil</option>
-                        <option value="genap" {{ $selectedSemester == 'genap' ? 'selected' : '' }}>Genap</option>
                     </select>
                 </form>
             </div>
@@ -166,10 +158,9 @@
                                 </div>
                             </div>
 
-                            <!-- Academic Year info -->
                             <div class="mt-auto">
                                 <span class="text-[10px] font-bold text-white/90 bg-white/20 px-2 py-0.5 rounded-md backdrop-blur-sm tracking-wide">
-                                    {{ $module->tahunAjaran->tahun_ajaran ?? '-' }} ({{ ucfirst($module->tahunAjaran->semester ?? '') }})
+                                    {{ $module->tahunAjaran->tahun_ajaran ?? '-' }}
                                 </span>
                             </div>
                         </div>

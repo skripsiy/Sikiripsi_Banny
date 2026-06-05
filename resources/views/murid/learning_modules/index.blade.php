@@ -14,7 +14,7 @@
             </div>
             @if($classroom)
                 <span class="bg-blue-50 text-blue-700 border border-blue-100 px-3.5 py-1.5 rounded-xl text-xs font-bold shadow-sm">
-                    Kelas: {{ $classroom->nama_kelas }} ({{ $classroom->tahunAjaran->tahun_ajaran ?? '-' }} - {{ ucfirst($classroom->tahunAjaran->semester ?? '') }})
+                    Kelas: {{ $classroom->nama_kelas }} ({{ $classroom->tahunAjaran->tahun_ajaran ?? '-' }})
                 </span>
             @endif
         </div>
@@ -92,7 +92,7 @@
                             <!-- Academic Year info -->
                             <div class="mt-auto">
                                 <span class="text-[10px] font-bold text-white/90 bg-white/20 px-2 py-0.5 rounded-md backdrop-blur-sm tracking-wide">
-                                    {{ $module->tahunAjaran->tahun_ajaran ?? '-' }} ({{ ucfirst($module->tahunAjaran->semester ?? '') }})
+                                    {{ $module->tahunAjaran->tahun_ajaran ?? '-' }}
                                 </span>
                             </div>
                         </div>

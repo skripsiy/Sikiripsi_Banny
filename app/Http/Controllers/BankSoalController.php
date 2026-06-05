@@ -38,27 +38,39 @@ class BankSoalController extends Controller
             abort(403, 'Profil Guru tidak ditemukan.');
         }
 
-        $request->validate([
+        $rules = [
             'subject_id' => ['required', 'exists:subjects,id'],
             'tipe' => ['required', 'in:pg,essay'],
             'pertanyaan' => ['required', 'string'],
             'gambar' => ['nullable', 'image', 'max:2048'],
             'pembahasan' => ['nullable', 'string'],
-            'teks_opsi' => ['required_if:tipe,pg', 'array'],
-            'teks_opsi.A' => ['required_if:tipe,pg', 'string'],
-            'teks_opsi.B' => ['required_if:tipe,pg', 'string'],
-            'teks_opsi.C' => ['required_if:tipe,pg', 'string'],
-            'teks_opsi.D' => ['required_if:tipe,pg', 'string'],
-            'correct_option' => ['required_if:tipe,pg', 'in:A,B,C,D'],
-        ], [
+        ];
+
+        if ($request->input('tipe') === 'pg') {
+            $rules['teks_opsi'] = ['required', 'array'];
+            $rules['teks_opsi.A'] = ['required', 'string'];
+            $rules['teks_opsi.B'] = ['required', 'string'];
+            $rules['teks_opsi.C'] = ['required', 'string'];
+            $rules['teks_opsi.D'] = ['required', 'string'];
+            $rules['correct_option'] = ['required', 'in:A,B,C,D'];
+        } else {
+            $rules['teks_opsi'] = ['nullable', 'array'];
+            $rules['teks_opsi.A'] = ['nullable'];
+            $rules['teks_opsi.B'] = ['nullable'];
+            $rules['teks_opsi.C'] = ['nullable'];
+            $rules['teks_opsi.D'] = ['nullable'];
+            $rules['correct_option'] = ['nullable'];
+        }
+
+        $request->validate($rules, [
             'subject_id.required' => 'Mata pelajaran wajib dipilih.',
             'tipe.required' => 'Tipe soal wajib dipilih.',
             'pertanyaan.required' => 'Pertanyaan wajib diisi.',
-            'teks_opsi.A.required_if' => 'Opsi A wajib diisi untuk soal Pilihan Ganda.',
-            'teks_opsi.B.required_if' => 'Opsi B wajib diisi untuk soal Pilihan Ganda.',
-            'teks_opsi.C.required_if' => 'Opsi C wajib diisi untuk soal Pilihan Ganda.',
-            'teks_opsi.D.required_if' => 'Opsi D wajib diisi untuk soal Pilihan Ganda.',
-            'correct_option.required_if' => 'Jawaban benar wajib dipilih untuk soal Pilihan Ganda.',
+            'teks_opsi.A.required' => 'Opsi A wajib diisi untuk soal Pilihan Ganda.',
+            'teks_opsi.B.required' => 'Opsi B wajib diisi untuk soal Pilihan Ganda.',
+            'teks_opsi.C.required' => 'Opsi C wajib diisi untuk soal Pilihan Ganda.',
+            'teks_opsi.D.required' => 'Opsi D wajib diisi untuk soal Pilihan Ganda.',
+            'correct_option.required' => 'Jawaban benar wajib dipilih untuk soal Pilihan Ganda.',
         ]);
 
         // Authorize that the teacher is assigned to this subject
@@ -104,25 +116,37 @@ class BankSoalController extends Controller
             abort(403, 'Aksi tidak diizinkan.');
         }
 
-        $request->validate([
+        $rules = [
             'subject_id' => ['required', 'exists:subjects,id'],
             'pertanyaan' => ['required', 'string'],
             'gambar' => ['nullable', 'image', 'max:2048'],
             'pembahasan' => ['nullable', 'string'],
-            'teks_opsi' => ['required_if:tipe,pg', 'array'],
-            'teks_opsi.A' => ['required_if:tipe,pg', 'string'],
-            'teks_opsi.B' => ['required_if:tipe,pg', 'string'],
-            'teks_opsi.C' => ['required_if:tipe,pg', 'string'],
-            'teks_opsi.D' => ['required_if:tipe,pg', 'string'],
-            'correct_option' => ['required_if:tipe,pg', 'in:A,B,C,D'],
-        ], [
+        ];
+
+        if ($bankSoal->tipe === 'pg') {
+            $rules['teks_opsi'] = ['required', 'array'];
+            $rules['teks_opsi.A'] = ['required', 'string'];
+            $rules['teks_opsi.B'] = ['required', 'string'];
+            $rules['teks_opsi.C'] = ['required', 'string'];
+            $rules['teks_opsi.D'] = ['required', 'string'];
+            $rules['correct_option'] = ['required', 'in:A,B,C,D'];
+        } else {
+            $rules['teks_opsi'] = ['nullable', 'array'];
+            $rules['teks_opsi.A'] = ['nullable'];
+            $rules['teks_opsi.B'] = ['nullable'];
+            $rules['teks_opsi.C'] = ['nullable'];
+            $rules['teks_opsi.D'] = ['nullable'];
+            $rules['correct_option'] = ['nullable'];
+        }
+
+        $request->validate($rules, [
             'subject_id.required' => 'Mata pelajaran wajib dipilih.',
             'pertanyaan.required' => 'Pertanyaan wajib diisi.',
-            'teks_opsi.A.required_if' => 'Opsi A wajib diisi untuk soal Pilihan Ganda.',
-            'teks_opsi.B.required_if' => 'Opsi B wajib diisi untuk soal Pilihan Ganda.',
-            'teks_opsi.C.required_if' => 'Opsi C wajib diisi untuk soal Pilihan Ganda.',
-            'teks_opsi.D.required_if' => 'Opsi D wajib diisi untuk soal Pilihan Ganda.',
-            'correct_option.required_if' => 'Jawaban benar wajib dipilih untuk soal Pilihan Ganda.',
+            'teks_opsi.A.required' => 'Opsi A wajib diisi untuk soal Pilihan Ganda.',
+            'teks_opsi.B.required' => 'Opsi B wajib diisi untuk soal Pilihan Ganda.',
+            'teks_opsi.C.required' => 'Opsi C wajib diisi untuk soal Pilihan Ganda.',
+            'teks_opsi.D.required' => 'Opsi D wajib diisi untuk soal Pilihan Ganda.',
+            'correct_option.required' => 'Jawaban benar wajib dipilih untuk soal Pilihan Ganda.',
         ]);
 
         if (!$guru->subjects()->where('subjects.id', $request->subject_id)->exists()) {

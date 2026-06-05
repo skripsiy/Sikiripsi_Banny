@@ -4,7 +4,9 @@
     </x-slot>
 
     <div class="max-w-7xl mx-auto font-sans" x-data="{
-        searchQuery: ''
+        searchQuery: '',
+        showConfirmModal: false,
+        confirmActionUrl: ''
     }">
 
         <!-- Back Button (outside header) -->
@@ -131,13 +133,10 @@
                                          @elseif($ujian->due_date && $ujian->due_date->isPast())
                                              <span class="text-xs text-red-500 font-bold">Waktu Habis</span>
                                          @else
-                                             <form action="{{ route('murid.learning-modules.ujians.start', [$learningModule->id, $ujian->id]) }}" method="POST" onsubmit="return confirm('Mulai ujian sekarang? Timer akan berjalan.');">
-                                                 @csrf
-                                                 <button type="submit"
-                                                         class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-xl text-xs font-bold transition-all shadow-sm cursor-pointer select-none whitespace-nowrap">
-                                                     Mulai Kerjakan
-                                                 </button>
-                                             </form>
+                                            <button type="button" @click="confirmActionUrl = '{{ route('murid.learning-modules.ujians.start', [$learningModule->id, $ujian->id]) }}'; showConfirmModal = true"
+                                                    class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-xl text-xs font-bold transition-all shadow-sm cursor-pointer select-none whitespace-nowrap">
+                                                Mulai Kerjakan
+                                            </button>
                                          @endif
                                      @endif
                                  </div>
@@ -150,6 +149,39 @@
                     Belum ada ujian evaluasi yang ditambahkan.
                 </div>
             @endif
+        </div>
+
+        <!-- Confirmation Modal -->
+        <div x-show="showConfirmModal" class="fixed inset-0 overflow-y-auto px-4 py-6 sm:px-0 z-50 flex items-center justify-center shadow-2xl" style="display: none;">
+            <div x-show="showConfirmModal" x-transition:enter="ease-out duration-300" x-transition:enter-start="opacity-0" x-transition:enter-end="opacity-100" x-transition:leave="ease-in duration-200" x-transition:leave-start="opacity-100" x-transition:leave-end="opacity-0" class="fixed inset-0 transform transition-all" @click="showConfirmModal = false">
+                <div class="absolute inset-0 bg-gray-900/60 backdrop-blur-sm"></div>
+            </div>
+            <div x-show="showConfirmModal" x-transition:enter="ease-out duration-300" x-transition:enter-start="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95" x-transition:enter-end="opacity-100 translate-y-0 sm:scale-100" x-transition:leave="ease-in duration-200" x-transition:leave-start="opacity-100 translate-y-0 sm:scale-100" x-transition:leave-end="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95" class="bg-white rounded-2xl overflow-hidden shadow-2xl transform transition-all w-full max-w-md mx-auto z-10 border border-gray-150">
+                <div class="h-1.5 bg-gradient-to-r from-[#0c2b4d] to-[#1a4a7d]"></div>
+                <div class="p-6 text-center">
+                    <div class="w-12 h-12 bg-purple-50 text-purple-500 rounded-full flex items-center justify-center mx-auto mb-4 border border-purple-100">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path>
+                        </svg>
+                    </div>
+                    <h3 class="text-base font-bold text-gray-800 mb-2">Mulai Ujian?</h3>
+                    <p class="text-xs text-gray-500 leading-relaxed px-4">
+                        Apakah Anda yakin ingin memulai ujian ini sekarang? Waktu pengerjaan (timer) akan langsung berjalan dan tidak dapat dihentikan.
+                    </p>
+                    
+                    <form x-bind:action="confirmActionUrl" method="POST" class="mt-6 flex justify-center gap-3">
+                        @csrf
+                        <button type="button" @click="showConfirmModal = false"
+                                class="px-4 py-2 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-xl text-xs font-bold transition-all cursor-pointer">
+                            Batal
+                        </button>
+                        <button type="submit"
+                                class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-xl text-xs font-bold transition-all shadow-sm cursor-pointer">
+                            Mulai Kerjakan
+                        </button>
+                    </form>
+                </div>
+            </div>
         </div>
     </div>
 </x-app-layout>

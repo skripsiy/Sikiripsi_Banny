@@ -88,6 +88,7 @@ class GuruManagementController extends Controller
             'email' => $request->email,
             'password' => Hash::make($request->password),
             'role' => 'guru',
+            'must_change_password' => true,
         ]);
 
         Guru::create([

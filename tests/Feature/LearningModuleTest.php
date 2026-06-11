@@ -62,7 +62,7 @@ describe('Learning Module Management', function () {
     it('denies access to non-guru roles (admin)', function () {
         $admin = User::factory()->create(['role' => 'admin']);
         $response = $this->actingAs($admin)->get(route('guru.learning-modules.index'));
-        $response->assertStatus(403);
+        $response->assertRedirect(route('dashboard'));
     });
 
     it('grants access to teachers', function () {

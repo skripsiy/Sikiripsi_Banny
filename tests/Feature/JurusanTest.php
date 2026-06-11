@@ -16,7 +16,7 @@ describe('Jurusan CRUD Management', function () {
         $user = User::factory()->create(['role' => 'guru']);
 
         $response = $this->actingAs($user)->get(route('admin.manage.jurusans.index'));
-        $response->assertStatus(403);
+        $response->assertRedirect(route('dashboard'));
     });
 
     it('renders the index page for admins', function () {

@@ -35,7 +35,7 @@ describe('Bank Soal CRUD and Validation', function () {
     it('denies access to non-guru users', function () {
         $user = User::factory()->create(['role' => 'murid']);
         $response = $this->actingAs($user)->get(route('guru.bank-soal.index'));
-        $response->assertStatus(403);
+        $response->assertRedirect(route('dashboard'));
     });
 
     it('renders bank soal index for teacher', function () {

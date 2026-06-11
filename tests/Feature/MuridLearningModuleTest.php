@@ -117,7 +117,7 @@ describe('Murid Learning Module Access', function () {
 
     it('denies access to non-murid users', function () {
         $response = $this->actingAs($this->guruUser)->get(route('murid.learning-modules.index'));
-        $response->assertStatus(403);
+        $response->assertRedirect(route('dashboard'));
     });
 
     it('allows student to view list of matching learning modules', function () {

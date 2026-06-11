@@ -27,6 +27,6 @@ class CheckRole
             return $next($request);
         }
 
-        abort(403, 'Unauthorized action.');
+        return redirect()->route('dashboard')->with('error', 'Anda tidak memiliki hak akses ke halaman tersebut.');
     }
 }

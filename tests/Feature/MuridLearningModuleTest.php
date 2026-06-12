@@ -32,6 +32,7 @@ describe('Murid Learning Module Access', function () {
             'semester' => 'ganjil',
             'is_active' => true,
         ]);
+        $this->academicYear = $this->tahunAjaran->academicYear;
 
         $this->jurusanRpl = Jurusan::create([
             'kode_jurusan' => 'RPL',
@@ -71,7 +72,7 @@ describe('Murid Learning Module Access', function () {
         $this->classroomRpl = Classroom::create([
             'nama_kelas' => 'XII RPL 1',
             'jurusan_id' => $this->jurusanRpl->id,
-            'tahun_ajaran_id' => $this->tahunAjaran->id,
+            'tahun_ajaran_id' => $this->academicYear->id,
             'is_active' => true,
         ]);
 
@@ -88,7 +89,7 @@ describe('Murid Learning Module Access', function () {
         $this->moduleGeneral = LearningModule::create([
             'guru_id' => $this->guru->id,
             'subject_id' => $this->subjectGeneral->id,
-            'tahun_ajaran_id' => $this->tahunAjaran->id,
+            'tahun_ajaran_id' => $this->academicYear->id,
             'title' => 'Bahasa Indonesia Modul',
             'description' => 'Materi umum.',
         ]);
@@ -96,7 +97,7 @@ describe('Murid Learning Module Access', function () {
         $this->moduleRpl = LearningModule::create([
             'guru_id' => $this->guru->id,
             'subject_id' => $this->subjectRpl->id,
-            'tahun_ajaran_id' => $this->tahunAjaran->id,
+            'tahun_ajaran_id' => $this->academicYear->id,
             'title' => 'Web Dev Modul',
             'description' => 'Materi RPL.',
         ]);
@@ -104,7 +105,7 @@ describe('Murid Learning Module Access', function () {
         $this->moduleTkj = LearningModule::create([
             'guru_id' => $this->guru->id,
             'subject_id' => $this->subjectTkj->id,
-            'tahun_ajaran_id' => $this->tahunAjaran->id,
+            'tahun_ajaran_id' => $this->academicYear->id,
             'title' => 'Cisco Jaringan Modul',
             'description' => 'Materi TKJ.',
         ]);

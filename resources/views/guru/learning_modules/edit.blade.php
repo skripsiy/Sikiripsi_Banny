@@ -38,7 +38,7 @@
             <option value="">-- Pilih Tahun Ajaran --</option>
             @foreach ($tahunAjarans as $ta)
                 <option value="{{ $ta->id }}">
-                    {{ $ta->tahun_ajaran }} ({{ ucfirst($ta->semester) }})
+                    {{ $ta->tahun_ajaran }}
                 </option>
             @endforeach
         </select>

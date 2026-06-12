@@ -36,7 +36,7 @@
             <option value="">-- Pilih Tahun Ajaran --</option>
             @foreach ($tahunAjarans as $ta)
                 <option value="{{ $ta->id }}" {{ (!old('_method') && (old('tahun_ajaran_id') == $ta->id || ($selectedTahunAjaranId == $ta->id && !old('tahun_ajaran_id')))) ? 'selected' : '' }}>
-                    {{ $ta->tahun_ajaran }} ({{ ucfirst($ta->semester) }})
+                    {{ $ta->tahun_ajaran }}
                 </option>
             @endforeach
         </select>

@@ -41,6 +41,7 @@ describe('Learning Module Details and Sub-content', function () {
             'semester' => 'ganjil',
             'is_active' => true,
         ]);
+        $this->academicYear = $this->tahunAjaran->academicYear;
 
         $this->jurusan = Jurusan::create([
             'kode_jurusan' => 'RPL',
@@ -59,7 +60,7 @@ describe('Learning Module Details and Sub-content', function () {
         $this->classroom = Classroom::create([
             'nama_kelas' => 'XII RPL 1',
             'jurusan_id' => $this->jurusan->id,
-            'tahun_ajaran_id' => $this->tahunAjaran->id,
+            'tahun_ajaran_id' => $this->academicYear->id,
             'is_active' => true,
         ]);
 
@@ -76,7 +77,7 @@ describe('Learning Module Details and Sub-content', function () {
         $this->learningModule = LearningModule::create([
             'guru_id' => $this->guru1->id,
             'subject_id' => $this->subject->id,
-            'tahun_ajaran_id' => $this->tahunAjaran->id,
+            'tahun_ajaran_id' => $this->academicYear->id,
             'title' => 'Aljabar Modul',
             'description' => 'Materi Aljabar.',
         ]);

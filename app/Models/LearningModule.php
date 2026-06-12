@@ -24,7 +24,7 @@ class LearningModule extends Model
 
     public function tahunAjaran()
     {
-        return $this->belongsTo(TahunAjaran::class);
+        return $this->belongsTo(AcademicYear::class, 'tahun_ajaran_id');
     }
 
     public function materis()

@@ -26,28 +26,16 @@ class LearningModuleController extends Controller
             abort(403, 'Profil Guru tidak ditemukan.');
         }
 
-        $semesters = TahunAjaran::orderBy('tahun_ajaran', 'desc')->orderBy('semester', 'desc')->get();
         $academicYears = \App\Models\AcademicYear::orderBy('tahun_ajaran', 'desc')->get();
-        $activeTahunAjaran = TahunAjaran::where('is_active', true)->first();
+        $activeAcademicYear = \App\Models\AcademicYear::where('is_active', true)->first();
         
         $selectedAcademicYearId = request('academic_year_id', 'all');
-        $selectedSemester = request('semester', 'all');
+        $selectedSemester = 'all';
 
         // Get modules owned by this teacher
         $learningModules = LearningModule::where('guru_id', $guru->id)
             ->when($selectedAcademicYearId && $selectedAcademicYearId !== 'all', function($q) use ($selectedAcademicYearId) {
-                return $q->whereIn('tahun_ajaran_id', function($subQuery) use ($selectedAcademicYearId) {
-                    $subQuery->select('id')
-                             ->from('tahun_ajarans')
-                             ->where('academic_year_id', $selectedAcademicYearId);
-                });
-            })
-            ->when($selectedSemester && $selectedSemester !== 'all', function($q) use ($selectedSemester) {
-                return $q->whereIn('tahun_ajaran_id', function($subQuery) use ($selectedSemester) {
-                    $subQuery->select('id')
-                             ->from('tahun_ajarans')
-                             ->where('semester', $selectedSemester);
-                });
+                return $q->where('tahun_ajaran_id', $selectedAcademicYearId);
             })
             ->with(['subject', 'tahunAjaran'])
             ->withCount(['materis', 'tugas', 'quizzes', 'ujians', 'absensis'])
@@ -60,8 +48,8 @@ class LearningModuleController extends Controller
             ->orderBy('nama_pelajaran')
             ->get();
 
-        $tahunAjarans = $semesters;
-        $selectedTahunAjaranId = $activeTahunAjaran?->id;
+        $tahunAjarans = $academicYears;
+        $selectedTahunAjaranId = $activeAcademicYear?->id;
 
         return view('guru.learning_modules.index', compact('learningModules', 'subjects', 'tahunAjarans', 'academicYears', 'selectedAcademicYearId', 'selectedSemester', 'selectedTahunAjaranId'));
     }
@@ -75,7 +63,7 @@ class LearningModuleController extends Controller
 
         $request->validate([
             'subject_id' => ['required', 'exists:subjects,id'],
-            'tahun_ajaran_id' => ['required', 'exists:tahun_ajarans,id'],
+            'tahun_ajaran_id' => ['required', 'exists:academic_years,id'],
             'title' => ['required', 'string', 'max:255'],
             'description' => ['required', 'string'],
             'file' => ['nullable', 'file', 'mimes:pdf,doc,docx,ppt,pptx,xls,xlsx,zip,png,jpg,jpeg', 'max:10240'],
@@ -125,7 +113,7 @@ class LearningModuleController extends Controller
 
         $request->validate([
             'subject_id' => ['required', 'exists:subjects,id'],
-            'tahun_ajaran_id' => ['required', 'exists:tahun_ajarans,id'],
+            'tahun_ajaran_id' => ['required', 'exists:academic_years,id'],
             'title' => ['required', 'string', 'max:255'],
             'description' => ['required', 'string'],
             'file' => ['nullable', 'file', 'mimes:pdf,doc,docx,ppt,pptx,xls,xlsx,zip,png,jpg,jpeg', 'max:10240'],

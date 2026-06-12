@@ -25,7 +25,7 @@
                     </span>
                     @if($learningModule->tahunAjaran)
                         <span class="bg-emerald-500/20 text-emerald-200 border border-emerald-500/30 text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wider">
-                            Tahun Ajaran: {{ $learningModule->tahunAjaran->tahun_ajaran }} ({{ ucfirst($learningModule->tahunAjaran->semester) }})
+                            Tahun Ajaran: {{ $learningModule->tahunAjaran->tahun_ajaran }}
                         </span>
                     @endif
                 </div>

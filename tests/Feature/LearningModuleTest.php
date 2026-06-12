@@ -33,6 +33,7 @@ describe('Learning Module Management', function () {
             'semester' => 'ganjil',
             'is_active' => true,
         ]);
+        $this->academicYear = $this->tahunAjaran->academicYear;
 
         // Create subjects
         $this->subject1 = Subject::create([
@@ -74,7 +75,7 @@ describe('Learning Module Management', function () {
     it('creates a learning module successfully', function () {
         $response = $this->actingAs($this->guruUser1)->post(route('guru.learning-modules.store'), [
             'subject_id' => $this->subject1->id,
-            'tahun_ajaran_id' => $this->tahunAjaran->id,
+            'tahun_ajaran_id' => $this->academicYear->id,
             'title' => 'Materi Pertemuan 1',
             'description' => 'Materi pengenalan aljabar dasar.',
         ]);
@@ -87,7 +88,7 @@ describe('Learning Module Management', function () {
         $this->assertDatabaseHas('learning_modules', [
             'guru_id' => $this->guru1->id,
             'subject_id' => $this->subject1->id,
-            'tahun_ajaran_id' => $this->tahunAjaran->id,
+            'tahun_ajaran_id' => $this->academicYear->id,
             'title' => 'Materi Pertemuan 1',
             'description' => 'Materi pengenalan aljabar dasar.',
         ]);
@@ -96,7 +97,7 @@ describe('Learning Module Management', function () {
     it('fails to create a learning module for a subject not assigned to the teacher', function () {
         $response = $this->actingAs($this->guruUser1)->post(route('guru.learning-modules.store'), [
             'subject_id' => $this->subject2->id, // Subject assigned to guru2
-            'tahun_ajaran_id' => $this->tahunAjaran->id,
+            'tahun_ajaran_id' => $this->academicYear->id,
             'title' => 'Materi Pertemuan 1',
             'description' => 'Materi pengenalan aljabar dasar.',
         ]);
@@ -110,14 +111,14 @@ describe('Learning Module Management', function () {
         $module = LearningModule::create([
             'guru_id' => $this->guru1->id,
             'subject_id' => $this->subject1->id,
-            'tahun_ajaran_id' => $this->tahunAjaran->id,
+            'tahun_ajaran_id' => $this->academicYear->id,
             'title' => 'Judul Lama',
             'description' => 'Deskripsi lama.',
         ]);
 
         $response = $this->actingAs($this->guruUser1)->put(route('guru.learning-modules.update', $module->id), [
             'subject_id' => $this->subject1->id,
-            'tahun_ajaran_id' => $this->tahunAjaran->id,
+            'tahun_ajaran_id' => $this->academicYear->id,
             'title' => 'Judul Baru',
             'description' => 'Deskripsi baru.',
         ]);
@@ -136,14 +137,14 @@ describe('Learning Module Management', function () {
         $module = LearningModule::create([
             'guru_id' => $this->guru2->id, // Owned by guru2
             'subject_id' => $this->subject2->id,
-            'tahun_ajaran_id' => $this->tahunAjaran->id,
+            'tahun_ajaran_id' => $this->academicYear->id,
             'title' => 'Modul Guru 2',
             'description' => 'Materi guru 2.',
         ]);
 
         $response = $this->actingAs($this->guruUser1)->put(route('guru.learning-modules.update', $module->id), [
             'subject_id' => $this->subject1->id,
-            'tahun_ajaran_id' => $this->tahunAjaran->id,
+            'tahun_ajaran_id' => $this->academicYear->id,
             'title' => 'Diubah Guru 1',
             'description' => 'Mencoba meretas.',
         ]);
@@ -159,7 +160,7 @@ describe('Learning Module Management', function () {
         $module = LearningModule::create([
             'guru_id' => $this->guru1->id,
             'subject_id' => $this->subject1->id,
-            'tahun_ajaran_id' => $this->tahunAjaran->id,
+            'tahun_ajaran_id' => $this->academicYear->id,
             'title' => 'Modul Hapus',
             'description' => 'Materi hapus.',
         ]);
@@ -176,7 +177,7 @@ describe('Learning Module Management', function () {
         $module = LearningModule::create([
             'guru_id' => $this->guru2->id, // Owned by guru2
             'subject_id' => $this->subject2->id,
-            'tahun_ajaran_id' => $this->tahunAjaran->id,
+            'tahun_ajaran_id' => $this->academicYear->id,
             'title' => 'Modul Guru 2',
             'description' => 'Materi guru 2.',
         ]);

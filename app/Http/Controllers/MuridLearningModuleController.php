@@ -31,8 +31,7 @@ class MuridLearningModuleController extends Controller
         }
 
         // Check if learning module has the same academic year
-        $semesterIds = \App\Models\TahunAjaran::where('academic_year_id', $classroom->tahun_ajaran_id)->pluck('id')->toArray();
-        if (!in_array($learningModule->tahun_ajaran_id, $semesterIds)) {
+        if ($learningModule->tahun_ajaran_id != $classroom->tahun_ajaran_id) {
             abort(403, 'Aksi tidak diizinkan. Modul tidak sesuai dengan tahun ajaran kelas Anda.');
         }
 
@@ -58,8 +57,7 @@ class MuridLearningModuleController extends Controller
         if (!$classroom) {
             $learningModules = collect();
         } else {
-            $semesterIds = \App\Models\TahunAjaran::where('academic_year_id', $classroom->tahun_ajaran_id)->pluck('id');
-            $learningModules = LearningModule::whereIn('tahun_ajaran_id', $semesterIds)
+            $learningModules = LearningModule::where('tahun_ajaran_id', $classroom->tahun_ajaran_id)
                 ->whereHas('subject', function ($query) use ($classroom) {
                     $query->where('is_active', true)
                           ->where(function ($q) use ($classroom) {

@@ -50,9 +50,9 @@ class LearningModuleController extends Controller
             ->get();
 
         $semesters = $academicYears;
-        $selectedTahunAjaranId = $activeAcademicYear?->id;
+        $selectedTahunAkademikId = $activeAcademicYear?->id;
 
-        return view('guru.learning_modules.index', compact('learningModules', 'mata_pelajarans', 'semesters', 'academicYears', 'selectedAcademicYearId', 'selectedSemester', 'selectedTahunAjaranId'));
+        return view('guru.learning_modules.index', compact('learningModules', 'mata_pelajarans', 'semesters', 'academicYears', 'selectedAcademicYearId', 'selectedSemester', 'selectedTahunAkademikId'));
     }
 
     public function store(Request $request)

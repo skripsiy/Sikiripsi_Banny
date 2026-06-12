@@ -35,7 +35,7 @@
                 class="w-full px-4 py-2.5 bg-white border border-gray-200 rounded-xl focus:outline-none focus:border-[#0c2b4d] focus:ring-1 focus:ring-[#0c2b4d] text-sm text-gray-800 transition-all shadow-sm">
             <option value="">-- Pilih Tahun Ajaran --</option>
             @foreach ($semesters as $ta)
-                <option value="{{ $ta->id }}" {{ (!old('_method') && (old('tahun_akademik_id') == $ta->id || ($selectedTahunAjaranId == $ta->id && !old('tahun_akademik_id')))) ? 'selected' : '' }}>
+                <option value="{{ $ta->id }}" {{ (!old('_method') && (old('tahun_akademik_id') == $ta->id || ($selectedTahunAkademikId == $ta->id && !old('tahun_akademik_id')))) ? 'selected' : '' }}>
                     {{ $ta->tahun_ajaran }}
                 </option>
             @endforeach

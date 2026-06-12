@@ -69,8 +69,8 @@ class MuridManagementController extends Controller
     }
     public function index()
     {
-        $murids = User::where('role', 'murid')->with('murid.classroom.jurusan', 'murid.classroom.tahunAjaran')->latest()->get();
-        $classrooms = \App\Models\Classroom::where('is_active', true)->with('jurusan', 'tahunAjaran')->get();
+        $murids = User::where('role', 'murid')->with('murid.classroom.jurusan', 'murid.classroom.tahunAkademik')->latest()->get();
+        $classrooms = \App\Models\Classroom::where('is_active', true)->with('jurusan', 'tahunAkademik')->get();
         return view('admin.manage.murids.index', compact('murids', 'classrooms'));
     }
 

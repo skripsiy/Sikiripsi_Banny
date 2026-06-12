@@ -18,7 +18,7 @@ class QuizController extends Controller
             abort(403, 'Aksi tidak diizinkan.');
         }
 
-        $learningModule->load('subject');
+        $learningModule->load('mataPelajaran');
         $quizzes = LearningModuleQuiz::where('learning_module_id', $learningModule->id)->latest()->get();
 
         return view('guru.learning_modules.quizzes.index', compact('learningModule', 'quizzes'));
@@ -95,7 +95,7 @@ class QuizController extends Controller
             abort(403, 'Aksi tidak diizinkan.');
         }
 
-        $learningModule->load('subject');
+        $learningModule->load('mataPelajaran');
         $attachedSoalIds = $quiz->soals()->pluck('bank_soals.id')->toArray();
 
         // Get questions in bank that are NOT attached
@@ -181,7 +181,7 @@ class QuizController extends Controller
             abort(403, 'Aksi tidak diizinkan.');
         }
 
-        $learningModule->load('subject');
+        $learningModule->load('mataPelajaran');
         $attempts = QuizAttempt::where('learning_module_quiz_id', $quiz->id)
             ->with(['murid.user', 'answers.bankSoal'])
             ->latest()

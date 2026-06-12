@@ -18,7 +18,7 @@ class UjianController extends Controller
             abort(403, 'Aksi tidak diizinkan.');
         }
 
-        $learningModule->load('subject');
+        $learningModule->load('mataPelajaran');
         $ujians = LearningModuleUjian::where('learning_module_id', $learningModule->id)->latest()->get();
 
         return view('guru.learning_modules.ujians.index', compact('learningModule', 'ujians'));
@@ -95,7 +95,7 @@ class UjianController extends Controller
             abort(403, 'Aksi tidak diizinkan.');
         }
 
-        $learningModule->load('subject');
+        $learningModule->load('mataPelajaran');
         $attachedSoalIds = $ujian->soals()->pluck('bank_soals.id')->toArray();
 
         // Get questions in bank that are NOT attached
@@ -181,7 +181,7 @@ class UjianController extends Controller
             abort(403, 'Aksi tidak diizinkan.');
         }
 
-        $learningModule->load('subject');
+        $learningModule->load('mataPelajaran');
         $attempts = UjianAttempt::where('learning_module_ujian_id', $ujian->id)
             ->with(['murid.user', 'answers.bankSoal'])
             ->latest()

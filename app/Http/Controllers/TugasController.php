@@ -19,7 +19,7 @@ class TugasController extends Controller
             abort(403, 'Aksi tidak diizinkan.');
         }
 
-        $learningModule->load('subject');
+        $learningModule->load('mataPelajaran');
         $tugas = LearningModuleTugas::where('learning_module_id', $learningModule->id)->latest()->get();
 
         return view('guru.learning_modules.tugas.index', compact('learningModule', 'tugas'));
@@ -109,7 +109,7 @@ class TugasController extends Controller
             abort(403, 'Aksi tidak diizinkan.');
         }
 
-        $learningModule->load('subject');
+        $learningModule->load('mataPelajaran');
         
         $jurusanId = $learningModule->mataPelajaran->jurusan_id;
         $query = Classroom::where('tahun_akademik_id', $learningModule->tahun_akademik_id)

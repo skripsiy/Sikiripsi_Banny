@@ -38,6 +38,12 @@ describe('Equivalence Partitioning (EP) - Email & Required Fields Validation', f
         ]);
     });
 
+    it('can load the murid management index page successfully', function () {
+        $response = $this->actingAs($this->admin)->get(route('admin.manage.murids.index'));
+        $response->assertStatus(200);
+        $response->assertViewIs('admin.manage.murids.index');
+    });
+
     it('accepts valid email partition', function () {
         $response = $this->actingAs($this->admin)->post(route('admin.manage.murids.store'), [
             'name' => 'Valid Name',

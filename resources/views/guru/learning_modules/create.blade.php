@@ -14,34 +14,34 @@
     @csrf
 
     <div>
-        <label for="create_subject_id" class="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-1.5">Mata Pelajaran</label>
-        <select name="subject_id" id="create_subject_id" required
+        <label for="create_mata_pelajaran_id" class="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-1.5">Mata Pelajaran</label>
+        <select name="mata_pelajaran_id" id="create_mata_pelajaran_id" required
                 class="w-full px-4 py-2.5 bg-white border border-gray-200 rounded-xl focus:outline-none focus:border-[#0c2b4d] focus:ring-1 focus:ring-[#0c2b4d] text-sm text-gray-800 transition-all shadow-sm">
             <option value="">-- Pilih Mata Pelajaran --</option>
-            @foreach ($subjects as $subject)
-                <option value="{{ $subject->id }}" {{ (!old('_method') && old('subject_id') == $subject->id) ? 'selected' : '' }}>
+            @foreach ($mata_pelajarans as $subject)
+                <option value="{{ $subject->id }}" {{ (!old('_method') && old('mata_pelajaran_id') == $subject->id) ? 'selected' : '' }}>
                     {{ $subject->nama_pelajaran }} ({{ $subject->kode_pelajaran }})
                 </option>
             @endforeach
         </select>
         @if(!old('_method'))
-            @error('subject_id') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
+            @error('mata_pelajaran_id') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
         @endif
     </div>
 
     <div>
-        <label for="create_tahun_ajaran_id" class="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-1.5">Tahun Ajaran</label>
-        <select name="tahun_ajaran_id" id="create_tahun_ajaran_id" required
+        <label for="create_tahun_akademik_id" class="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-1.5">Tahun Ajaran</label>
+        <select name="tahun_akademik_id" id="create_tahun_akademik_id" required
                 class="w-full px-4 py-2.5 bg-white border border-gray-200 rounded-xl focus:outline-none focus:border-[#0c2b4d] focus:ring-1 focus:ring-[#0c2b4d] text-sm text-gray-800 transition-all shadow-sm">
             <option value="">-- Pilih Tahun Ajaran --</option>
-            @foreach ($tahunAjarans as $ta)
-                <option value="{{ $ta->id }}" {{ (!old('_method') && (old('tahun_ajaran_id') == $ta->id || ($selectedTahunAjaranId == $ta->id && !old('tahun_ajaran_id')))) ? 'selected' : '' }}>
+            @foreach ($semesters as $ta)
+                <option value="{{ $ta->id }}" {{ (!old('_method') && (old('tahun_akademik_id') == $ta->id || ($selectedTahunAjaranId == $ta->id && !old('tahun_akademik_id')))) ? 'selected' : '' }}>
                     {{ $ta->tahun_ajaran }}
                 </option>
             @endforeach
         </select>
         @if(!old('_method'))
-            @error('tahun_ajaran_id') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
+            @error('tahun_akademik_id') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
         @endif
     </div>
 

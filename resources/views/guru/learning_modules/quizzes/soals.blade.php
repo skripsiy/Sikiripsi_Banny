@@ -24,7 +24,7 @@
             <div>
                 <div class="flex flex-wrap gap-2">
                     <span class="bg-blue-500/20 text-blue-200 border border-blue-500/30 text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wider">
-                        {{ $learningModule->subject->nama_pelajaran }}
+                        {{ $learningModule->mataPelajaran->nama_pelajaran }}
                     </span>
                     <span class="bg-amber-500/20 text-amber-200 border border-amber-500/30 text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wider">
                         Durasi: {{ $quiz->duration_minutes }} Menit
@@ -165,7 +165,7 @@
                             </svg>
                         </div>
                     </div>
-                    <p class="text-[11px] text-gray-400 mb-6">Hanya menampilkan soal-soal untuk mata pelajaran <strong>{{ $learningModule->subject->nama_pelajaran }}</strong> yang belum ditambahkan ke kuis ini.</p>
+                    <p class="text-[11px] text-gray-400 mb-6">Hanya menampilkan soal-soal untuk mata pelajaran <strong>{{ $learningModule->mataPelajaran->nama_pelajaran }}</strong> yang belum ditambahkan ke kuis ini.</p>
                     
                     @if($availableSoals->isNotEmpty())
                         <form action="{{ route('guru.learning-modules.quizzes.soals.attach', [$learningModule->id, $quiz->id]) }}" method="POST">

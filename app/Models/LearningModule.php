@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
-#[Fillable(['guru_id', 'subject_id', 'tahun_ajaran_id', 'title', 'description', 'file_path'])]
+#[Fillable(['guru_id', 'mata_pelajaran_id', 'tahun_akademik_id', 'title', 'description', 'file_path'])]
 class LearningModule extends Model
 {
     use HasFactory, SoftDeletes;
@@ -17,14 +17,14 @@ class LearningModule extends Model
         return $this->belongsTo(Guru::class);
     }
 
-    public function subject()
+    public function mataPelajaran()
     {
-        return $this->belongsTo(Subject::class);
+        return $this->belongsTo(MataPelajaran::class, 'mata_pelajaran_id');
     }
 
-    public function tahunAjaran()
+    public function tahunAkademik()
     {
-        return $this->belongsTo(AcademicYear::class, 'tahun_ajaran_id');
+        return $this->belongsTo(TahunAkademik::class, 'tahun_akademik_id');
     }
 
     public function materis()

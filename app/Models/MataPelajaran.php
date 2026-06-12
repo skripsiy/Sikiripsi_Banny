@@ -8,9 +8,11 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 #[Fillable(['kode_pelajaran', 'nama_pelajaran', 'jurusan_id', 'is_active'])]
-class Subject extends Model
+class MataPelajaran extends Model
 {
     use HasFactory, SoftDeletes;
+
+    protected $table = 'mata_pelajarans';
 
     protected $casts = [
         'is_active' => 'boolean',
@@ -23,11 +25,6 @@ class Subject extends Model
 
     public function gurus()
     {
-        return $this->belongsToMany(Guru::class, 'subject_guru', 'subject_id', 'guru_id')->withTimestamps();
-    }
-
-    public function bankSoals()
-    {
-        return $this->hasMany(BankSoal::class);
+        return $this->belongsToMany(Guru::class, 'guru_mata_pelajaran', 'mata_pelajaran_id', 'guru_id')->withTimestamps();
     }
 }

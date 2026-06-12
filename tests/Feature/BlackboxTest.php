@@ -18,7 +18,7 @@ describe('Equivalence Partitioning (EP) - Email & Required Fields Validation', f
         // Create an admin to bypass role middleware for managing murids
         $this->admin = User::factory()->create(['role' => 'admin']);
 
-        $this->tahunAjaran = \App\Models\TahunAjaran::create([
+        $this->tahunAkademik = \App\Models\Semester::create([
             'tahun_ajaran' => '2025/2026',
             'semester' => 'ganjil',
             'is_active' => true,
@@ -33,7 +33,7 @@ describe('Equivalence Partitioning (EP) - Email & Required Fields Validation', f
         $this->classroom = \App\Models\Classroom::create([
             'nama_kelas' => 'XII RPL 1',
             'jurusan_id' => $this->jurusan->id,
-            'tahun_ajaran_id' => $this->tahunAjaran->id,
+            'tahun_akademik_id' => $this->tahunAkademik->id,
             'is_active' => true,
         ]);
     });
@@ -109,7 +109,7 @@ describe('Boundary Value Analysis (BVA) - NISN Length & Password Length', functi
     beforeEach(function () {
         $this->admin = User::factory()->create(['role' => 'admin']);
 
-        $this->tahunAjaran = \App\Models\TahunAjaran::create([
+        $this->tahunAkademik = \App\Models\Semester::create([
             'tahun_ajaran' => '2025/2026',
             'semester' => 'ganjil',
             'is_active' => true,
@@ -124,7 +124,7 @@ describe('Boundary Value Analysis (BVA) - NISN Length & Password Length', functi
         $this->classroom = \App\Models\Classroom::create([
             'nama_kelas' => 'XII RPL 1',
             'jurusan_id' => $this->jurusan->id,
-            'tahun_ajaran_id' => $this->tahunAjaran->id,
+            'tahun_akademik_id' => $this->tahunAkademik->id,
             'is_active' => true,
         ]);
     });
@@ -294,14 +294,14 @@ describe('Tahun Ajaran - Black Box Testing (EP, BVA, Decision Table)', function 
     // 4.1 Equivalence Partitioning (EP)
     describe('Equivalence Partitioning (EP)', function () {
         it('accepts valid tahun ajaran format and sequence (2025/2026)', function () {
-            $response = $this->actingAs($this->admin)->post(route('admin.manage.tahun-ajarans.store'), [
+            $response = $this->actingAs($this->admin)->post(route('admin.manage.semesters.store'), [
                 'tahun_ajaran' => '2025/2026',
                 'semester' => 'ganjil',
                 'is_active' => '1',
             ]);
 
             $response->assertSessionHasNoErrors();
-            $this->assertDatabaseHas('tahun_ajarans', [
+            $this->assertDatabaseHas('semesters', [
                 'tahun_ajaran' => '2025/2026',
                 'semester' => 'ganjil',
                 'is_active' => true,
@@ -309,7 +309,7 @@ describe('Tahun Ajaran - Black Box Testing (EP, BVA, Decision Table)', function 
         });
 
         it('rejects invalid format (wrong separator, e.g., 2025-2026)', function () {
-            $response = $this->actingAs($this->admin)->post(route('admin.manage.tahun-ajarans.store'), [
+            $response = $this->actingAs($this->admin)->post(route('admin.manage.semesters.store'), [
                 'tahun_ajaran' => '2025-2026',
                 'semester' => 'ganjil',
                 'is_active' => '1',
@@ -319,7 +319,7 @@ describe('Tahun Ajaran - Black Box Testing (EP, BVA, Decision Table)', function 
         });
 
         it('rejects invalid sequence (not +1 year, e.g., 2025/2027)', function () {
-            $response = $this->actingAs($this->admin)->post(route('admin.manage.tahun-ajarans.store'), [
+            $response = $this->actingAs($this->admin)->post(route('admin.manage.semesters.store'), [
                 'tahun_ajaran' => '2025/2027',
                 'semester' => 'ganjil',
                 'is_active' => '1',
@@ -332,7 +332,7 @@ describe('Tahun Ajaran - Black Box Testing (EP, BVA, Decision Table)', function 
     // 4.2 Boundary Value Analysis (BVA)
     describe('Boundary Value Analysis (BVA)', function () {
         it('rejects tahun ajaran with 8 characters (below boundary)', function () {
-            $response = $this->actingAs($this->admin)->post(route('admin.manage.tahun-ajarans.store'), [
+            $response = $this->actingAs($this->admin)->post(route('admin.manage.semesters.store'), [
                 'tahun_ajaran' => '2025/202', // 8 characters
                 'semester' => 'ganjil',
                 'is_active' => '1',
@@ -342,7 +342,7 @@ describe('Tahun Ajaran - Black Box Testing (EP, BVA, Decision Table)', function 
         });
 
         it('accepts tahun ajaran with 9 characters (on boundary)', function () {
-            $response = $this->actingAs($this->admin)->post(route('admin.manage.tahun-ajarans.store'), [
+            $response = $this->actingAs($this->admin)->post(route('admin.manage.semesters.store'), [
                 'tahun_ajaran' => '2025/2026', // 9 characters
                 'semester' => 'ganjil',
                 'is_active' => '1',
@@ -352,7 +352,7 @@ describe('Tahun Ajaran - Black Box Testing (EP, BVA, Decision Table)', function 
         });
 
         it('rejects tahun ajaran with 10 characters (above boundary)', function () {
-            $response = $this->actingAs($this->admin)->post(route('admin.manage.tahun-ajarans.store'), [
+            $response = $this->actingAs($this->admin)->post(route('admin.manage.semesters.store'), [
                 'tahun_ajaran' => '2025/20267', // 10 characters
                 'semester' => 'ganjil',
                 'is_active' => '1',
@@ -366,14 +366,14 @@ describe('Tahun Ajaran - Black Box Testing (EP, BVA, Decision Table)', function 
     describe('Decision Table Testing', function () {
         it('Rule 1: keeps existing active record active when new Year is added', function () {
             // Setup: create active record
-            $activeTa = \App\Models\TahunAjaran::create([
+            $activeTa = \App\Models\Semester::create([
                 'tahun_ajaran' => '2024/2025',
                 'semester' => 'ganjil',
                 'is_active' => true,
             ]);
 
             // Action: create new year
-            $response = $this->actingAs($this->admin)->post(route('admin.manage.tahun-ajarans.store'), [
+            $response = $this->actingAs($this->admin)->post(route('admin.manage.semesters.store'), [
                 'tahun_ajaran' => '2025/2026',
                 'semester' => 'ganjil',
                 'is_active' => '1',
@@ -385,7 +385,7 @@ describe('Tahun Ajaran - Black Box Testing (EP, BVA, Decision Table)', function 
 
         it('Rule 2: creates both Ganjil and Genap semesters as active by default', function () {
             // Action: create new year
-            $response = $this->actingAs($this->admin)->post(route('admin.manage.tahun-ajarans.store'), [
+            $response = $this->actingAs($this->admin)->post(route('admin.manage.semesters.store'), [
                 'tahun_ajaran' => '2025/2026',
                 'semester' => 'ganjil',
                 'is_active' => '1',
@@ -394,7 +394,7 @@ describe('Tahun Ajaran - Black Box Testing (EP, BVA, Decision Table)', function 
             $response->assertSessionHasNoErrors();
             
             // Assert both Ganjil and Genap are active
-            $semesters = \App\Models\TahunAjaran::where('tahun_ajaran', '2025/2026')->get();
+            $semesters = \App\Models\Semester::where('tahun_ajaran', '2025/2026')->get();
             $this->assertCount(2, $semesters);
             foreach ($semesters as $s) {
                 $this->assertTrue($s->is_active);
@@ -403,14 +403,14 @@ describe('Tahun Ajaran - Black Box Testing (EP, BVA, Decision Table)', function 
 
         it('Rule 3: rejects creating duplicate active [tahun_ajaran, semester] combination', function () {
             // Setup: create active record
-            \App\Models\TahunAjaran::create([
+            \App\Models\Semester::create([
                 'tahun_ajaran' => '2024/2025',
                 'semester' => 'ganjil',
                 'is_active' => true,
             ]);
 
             // Action: create duplicate combination
-            $response = $this->actingAs($this->admin)->post(route('admin.manage.tahun-ajarans.store'), [
+            $response = $this->actingAs($this->admin)->post(route('admin.manage.semesters.store'), [
                 'tahun_ajaran' => '2024/2025',
                 'semester' => 'ganjil',
                 'is_active' => '0',
@@ -421,7 +421,7 @@ describe('Tahun Ajaran - Black Box Testing (EP, BVA, Decision Table)', function 
 
         it('Rule 4: allows creating duplicate combination if the existing one is soft-deleted', function () {
             // Setup: create active record and soft delete it
-            $ta = \App\Models\TahunAjaran::create([
+            $ta = \App\Models\Semester::create([
                 'tahun_ajaran' => '2024/2025',
                 'semester' => 'ganjil',
                 'is_active' => true,
@@ -429,14 +429,14 @@ describe('Tahun Ajaran - Black Box Testing (EP, BVA, Decision Table)', function 
             $ta->delete();
 
             // Action: create duplicate combination
-            $response = $this->actingAs($this->admin)->post(route('admin.manage.tahun-ajarans.store'), [
+            $response = $this->actingAs($this->admin)->post(route('admin.manage.semesters.store'), [
                 'tahun_ajaran' => '2024/2025',
                 'semester' => 'ganjil',
                 'is_active' => '1',
             ]);
 
             $response->assertSessionHasNoErrors();
-            $this->assertDatabaseCount('tahun_ajarans', 2);
+            $this->assertDatabaseCount('semesters', 2);
         });
     });
 });

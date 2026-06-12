@@ -5,7 +5,7 @@ namespace App\Imports;
 use App\Models\User;
 use App\Models\Murid;
 use App\Models\Classroom;
-use App\Models\TahunAjaran;
+use App\Models\Semester;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\DB;
@@ -17,12 +17,12 @@ class MuridsImport implements ToCollection, WithHeadingRow, WithValidation
 {
     public function collection(Collection $rows)
     {
-        $activeTa = TahunAjaran::where('is_active', true)->first();
+        $activeTa = Semester::where('is_active', true)->first();
 
         DB::transaction(function () use ($rows, $activeTa) {
             foreach ($rows as $row) {
                 $classroom = Classroom::where('nama_kelas', $row['class_room'])
-                    ->where('tahun_ajaran_id', $activeTa->id)
+                    ->where('tahun_akademik_id', $activeTa->id)
                     ->first();
 
                 $user = User::create([
@@ -62,13 +62,13 @@ class MuridsImport implements ToCollection, WithHeadingRow, WithValidation
                 'required',
                 'string',
                 function ($attribute, $value, $fail) {
-                    $activeTa = TahunAjaran::where('is_active', true)->first();
+                    $activeTa = Semester::where('is_active', true)->first();
                     if (!$activeTa) {
                         $fail('Tidak ada Tahun Ajaran aktif saat ini.');
                         return;
                     }
                     $exists = Classroom::where('nama_kelas', $value)
-                        ->where('tahun_ajaran_id', $activeTa->id)
+                        ->where('tahun_akademik_id', $activeTa->id)
                         ->whereNull('deleted_at')
                         ->exists();
                     if (!$exists) {

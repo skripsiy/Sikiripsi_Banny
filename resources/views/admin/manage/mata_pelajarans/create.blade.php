@@ -10,7 +10,7 @@
     </div>
 </div>
 
-<form method="POST" action="{{ route('admin.manage.subjects.store') }}" class="space-y-4">
+<form method="POST" action="{{ route('admin.manage.mata_pelajarans.store') }}" class="space-y-4">
     @csrf
 
     <div>

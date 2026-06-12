@@ -59,7 +59,7 @@
                 <option value="" disabled>Pilih Kelas</option>
                 @foreach($classrooms as $classroom)
                     <option value="{{ $classroom->id }}">
-                        {{ $classroom->nama_kelas }} ({{ $classroom->tahunAjaran->tahun_ajaran ?? '-' }})
+                        {{ $classroom->nama_kelas }} ({{ $classroom->tahunAkademik->tahun_ajaran ?? '-' }})
                     </option>
                 @endforeach
             </select>

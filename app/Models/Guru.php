@@ -17,9 +17,9 @@ class Guru extends Model
         return $this->belongsTo(User::class);
     }
 
-    public function subjects()
+    public function mataPelajarans()
     {
-        return $this->belongsToMany(Subject::class, 'subject_guru', 'guru_id', 'subject_id')->withTimestamps();
+        return $this->belongsToMany(MataPelajaran::class, 'guru_mata_pelajaran', 'guru_id', 'mata_pelajaran_id')->withTimestamps();
     }
 
     public function bankSoals()

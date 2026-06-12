@@ -14,7 +14,7 @@ return new class extends Migration
         // 1. Bank Soal Table
         Schema::create('bank_soals', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('subject_id')->constrained('subjects')->cascadeOnDelete();
+            $table->foreignId('mata_pelajaran_id')->constrained('mata_pelajarans')->cascadeOnDelete();
             $table->foreignId('guru_id')->constrained('gurus')->cascadeOnDelete();
             $table->enum('tipe', ['pg', 'essay']);
             $table->text('pertanyaan');

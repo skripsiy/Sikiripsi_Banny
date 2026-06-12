@@ -6,10 +6,10 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AdminManagementController;
 use App\Http\Controllers\GuruManagementController;
 use App\Http\Controllers\MuridManagementController;
-use App\Http\Controllers\TahunAjaranManagementController;
+use App\Http\Controllers\SemesterManagementController;
 use App\Http\Controllers\JurusanManagementController;
 use App\Http\Controllers\ClassroomManagementController;
-use App\Http\Controllers\SubjectManagementController;
+use App\Http\Controllers\MataPelajaranManagementController;
 use App\Http\Controllers\PenugasanGuruController;
 
 Route::get('/', function () {
@@ -42,8 +42,8 @@ Route::get('/dashboard', function () {
         if ($murid) {
             $classroom = $murid->classroom;
             if ($classroom) {
-                $modules = \App\Models\LearningModule::where('tahun_ajaran_id', $classroom->tahun_ajaran_id)
-                    ->whereHas('subject', function ($query) use ($classroom) {
+                $modules = \App\Models\LearningModule::where('tahun_akademik_id', $classroom->tahun_akademik_id)
+                    ->whereHas('mataPelajaran', function ($query) use ($classroom) {
                         $query->where('is_active', true)
                               ->where(function ($q) use ($classroom) {
                                   $q->whereNull('jurusan_id')
@@ -106,8 +106,8 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin/manage')->name('admin.m
     Route::post('murids/import', [MuridManagementController::class, 'import'])->name('murids.import');
     Route::resource('murids', MuridManagementController::class);
 
-    // Tahun Ajaran
-    Route::resource('tahun-ajarans', TahunAjaranManagementController::class);
+    // Semester
+    Route::resource('semesters', SemesterManagementController::class);
 
     // Jurusan
     Route::resource('jurusans', JurusanManagementController::class);
@@ -115,8 +115,8 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin/manage')->name('admin.m
     // Classroom
     Route::resource('classrooms', ClassroomManagementController::class);
 
-    // Subject
-    Route::resource('subjects', SubjectManagementController::class);
+    // Mata Pelajaran
+    Route::resource('mata-pelajarans', MataPelajaranManagementController::class)->names('mata_pelajarans');
     Route::resource('penugasan-guru', PenugasanGuruController::class)->except(['create', 'show', 'edit']);
 
     Route::resource('admins', AdminManagementController::class);

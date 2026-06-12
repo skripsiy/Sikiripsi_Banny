@@ -99,7 +99,7 @@ class QuizController extends Controller
         $attachedSoalIds = $quiz->soals()->pluck('bank_soals.id')->toArray();
 
         // Get questions in bank that are NOT attached
-        $availableSoals = BankSoal::where('subject_id', $learningModule->subject_id)
+        $availableSoals = BankSoal::where('mata_pelajaran_id', $learningModule->mata_pelajaran_id)
             ->where('guru_id', $guru->id)
             ->whereNotIn('id', $attachedSoalIds)
             ->with('options')

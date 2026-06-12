@@ -9,7 +9,7 @@
         formTipe: 'pg',
         editData: {
             id: '',
-            subject_id: '',
+            mata_pelajaran_id: '',
             tipe: 'pg',
             pertanyaan: '',
             pembahasan: '',
@@ -62,10 +62,10 @@
             <div>
                 <form method="GET" action="{{ route('guru.bank-soal.index') }}" class="flex items-center gap-2.5">
                     <span class="text-xs font-bold text-gray-400 uppercase tracking-wider whitespace-nowrap">Filter Mapel:</span>
-                    <select name="subject_id" onchange="this.form.submit()"
+                    <select name="mata_pelajaran_id" onchange="this.form.submit()"
                             class="px-4 py-2 bg-gray-50 border border-gray-150 rounded-xl text-xs text-gray-700 font-semibold focus:outline-none focus:bg-white focus:border-[#0c2b4d] cursor-pointer min-w-[200px]">
                         <option value="">Semua Mata Pelajaran</option>
-                        @foreach($subjects as $sub)
+                        @foreach($mata_pelajarans as $sub)
                             <option value="{{ $sub->id }}" {{ $selectedSubjectId == $sub->id ? 'selected' : '' }}>
                                 {{ $sub->nama_pelajaran }}
                             </option>
@@ -97,7 +97,7 @@
                                     </td>
                                     <td class="py-4 px-6 text-gray-800">
                                         <span class="bg-blue-50 text-[#0c2b4d] px-2.5 py-1 rounded-lg border border-blue-100 font-bold text-[10px] uppercase">
-                                            {{ $soal->subject->nama_pelajaran }}
+                                            {{ $soal->mataPelajaran->nama_pelajaran }}
                                         </span>
                                     </td>
                                     <td class="py-4 px-6 text-center">
@@ -133,7 +133,7 @@
                                                 formTipe = '{{ $soal->tipe }}';
                                                 editData = {
                                                     id: '{{ $soal->id }}',
-                                                    subject_id: '{{ $soal->subject_id }}',
+                                                    mata_pelajaran_id: '{{ $soal->mata_pelajaran_id }}',
                                                     tipe: '{{ $soal->tipe }}',
                                                     pertanyaan: {{ json_encode($soal->pertanyaan) }},
                                                     pembahasan: {{ json_encode($soal->pembahasan) }},
@@ -196,11 +196,11 @@
                         <!-- Mapel -->
                         <div>
                             <label class="block text-xs font-bold text-gray-500 uppercase tracking-wide mb-1.5">Mata Pelajaran</label>
-                            <select name="subject_id" required
+                            <select name="mata_pelajaran_id" required
                                     class="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-xs text-gray-700 font-semibold focus:outline-none focus:bg-white focus:border-[#0c2b4d] transition-all">
                                 <option value="" disabled selected>Pilih Mata Pelajaran</option>
-                                @foreach($subjects as $sub)
-                                    <option value="{{ $sub->id }}" {{ old('subject_id', $selectedSubjectId) == $sub->id ? 'selected' : '' }}>
+                                @foreach($mata_pelajarans as $sub)
+                                    <option value="{{ $sub->id }}" {{ old('mata_pelajaran_id', $selectedSubjectId) == $sub->id ? 'selected' : '' }}>
                                         {{ $sub->nama_pelajaran }}
                                     </option>
                                 @endforeach
@@ -287,9 +287,9 @@
                         <!-- Mapel -->
                         <div>
                             <label class="block text-xs font-bold text-gray-500 uppercase tracking-wide mb-1.5">Mata Pelajaran</label>
-                            <select name="subject_id" required x-model="editData.subject_id"
+                            <select name="mata_pelajaran_id" required x-model="editData.mata_pelajaran_id"
                                     class="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-xs text-gray-700 font-semibold focus:outline-none focus:bg-white focus:border-[#0c2b4d] transition-all">
-                                @foreach($subjects as $sub)
+                                @foreach($mata_pelajarans as $sub)
                                     <option value="{{ $sub->id }}">
                                         {{ $sub->nama_pelajaran }}
                                     </option>

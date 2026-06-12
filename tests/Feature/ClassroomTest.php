@@ -2,7 +2,7 @@
 
 use App\Models\User;
 use App\Models\Jurusan;
-use App\Models\TahunAjaran;
+use App\Models\Semester;
 use App\Models\Classroom;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
@@ -14,14 +14,14 @@ describe('Classroom CRUD Management', function () {
         $this->admin = User::factory()->create(['role' => 'admin']);
 
         // Create initial Tahun Ajaran
-        $this->tahunAjaran = TahunAjaran::create([
+        $this->tahunAkademik = Semester::create([
             'tahun_ajaran' => '2025/2026',
             'semester' => 'ganjil',
             'is_active' => true,
         ]);
 
         // Create another Tahun Ajaran for testing cross-year duplicates
-        $this->tahunAjaran2 = TahunAjaran::create([
+        $this->tahunAkademik2 = Semester::create([
             'tahun_ajaran' => '2026/2027',
             'semester' => 'ganjil',
             'is_active' => false,
@@ -52,7 +52,7 @@ describe('Classroom CRUD Management', function () {
         $response = $this->actingAs($this->admin)->post(route('admin.manage.classrooms.store'), [
             'nama_kelas' => 'xii rpl 1', // test auto-uppercase
             'jurusan_id' => $this->jurusan->id,
-            'tahun_ajaran_id' => $this->tahunAjaran->id,
+            'tahun_akademik_id' => $this->tahunAkademik->id,
         ]);
 
         $response->assertSessionHasNoErrors();
@@ -62,7 +62,7 @@ describe('Classroom CRUD Management', function () {
         $this->assertDatabaseHas('classrooms', [
             'nama_kelas' => 'XII RPL 1', // verify auto-uppercase
             'jurusan_id' => $this->jurusan->id,
-            'tahun_ajaran_id' => $this->tahunAjaran->id,
+            'tahun_akademik_id' => $this->tahunAkademik->id,
             'is_active' => true,
         ]);
     });
@@ -71,24 +71,24 @@ describe('Classroom CRUD Management', function () {
         $response = $this->actingAs($this->admin)->post(route('admin.manage.classrooms.store'), [
             'nama_kelas' => '',
             'jurusan_id' => '',
-            'tahun_ajaran_id' => '',
+            'tahun_akademik_id' => '',
         ]);
 
-        $response->assertSessionHasErrors(['nama_kelas', 'jurusan_id', 'tahun_ajaran_id']);
+        $response->assertSessionHasErrors(['nama_kelas', 'jurusan_id', 'tahun_akademik_id']);
     });
 
     it('updates an existing classroom details and allows toggling status', function () {
         $classroom = Classroom::create([
             'nama_kelas' => 'X RPL 1',
             'jurusan_id' => $this->jurusan->id,
-            'tahun_ajaran_id' => $this->tahunAjaran->id,
+            'tahun_akademik_id' => $this->tahunAkademik->id,
             'is_active' => true,
         ]);
 
         $response = $this->actingAs($this->admin)->put(route('admin.manage.classrooms.update', $classroom->id), [
             'nama_kelas' => 'X RPL 2',
             'jurusan_id' => $this->jurusan->id,
-            'tahun_ajaran_id' => $this->tahunAjaran->id,
+            'tahun_akademik_id' => $this->tahunAkademik->id,
             'is_active' => '0', // deactivate
         ]);
 
@@ -107,7 +107,7 @@ describe('Classroom CRUD Management', function () {
         $classroom = Classroom::create([
             'nama_kelas' => 'XII RPL 2',
             'jurusan_id' => $this->jurusan->id,
-            'tahun_ajaran_id' => $this->tahunAjaran->id,
+            'tahun_akademik_id' => $this->tahunAkademik->id,
             'is_active' => true,
         ]);
 
@@ -125,14 +125,14 @@ describe('Classroom CRUD Management', function () {
         Classroom::create([
             'nama_kelas' => 'XII RPL 1',
             'jurusan_id' => $this->jurusan->id,
-            'tahun_ajaran_id' => $this->tahunAjaran->id,
+            'tahun_akademik_id' => $this->tahunAkademik->id,
             'is_active' => true,
         ]);
 
         $response = $this->actingAs($this->admin)->post(route('admin.manage.classrooms.store'), [
             'nama_kelas' => 'XII RPL 1',
             'jurusan_id' => $this->jurusan->id,
-            'tahun_ajaran_id' => $this->tahunAjaran->id,
+            'tahun_akademik_id' => $this->tahunAkademik->id,
         ]);
 
         $response->assertSessionHasErrors('nama_kelas');
@@ -142,20 +142,20 @@ describe('Classroom CRUD Management', function () {
         Classroom::create([
             'nama_kelas' => 'XII RPL 1',
             'jurusan_id' => $this->jurusan->id,
-            'tahun_ajaran_id' => $this->tahunAjaran->id,
+            'tahun_akademik_id' => $this->tahunAkademik->id,
             'is_active' => true,
         ]);
 
         $response = $this->actingAs($this->admin)->post(route('admin.manage.classrooms.store'), [
             'nama_kelas' => 'XII RPL 1',
             'jurusan_id' => $this->jurusan->id,
-            'tahun_ajaran_id' => $this->tahunAjaran2->id,
+            'tahun_akademik_id' => $this->tahunAkademik2->id,
         ]);
 
         $response->assertSessionHasNoErrors();
         $this->assertDatabaseHas('classrooms', [
             'nama_kelas' => 'XII RPL 1',
-            'tahun_ajaran_id' => $this->tahunAjaran2->id,
+            'tahun_akademik_id' => $this->tahunAkademik2->id,
         ]);
     });
 
@@ -163,7 +163,7 @@ describe('Classroom CRUD Management', function () {
         $classroom = Classroom::create([
             'nama_kelas' => 'XII RPL 1',
             'jurusan_id' => $this->jurusan->id,
-            'tahun_ajaran_id' => $this->tahunAjaran->id,
+            'tahun_akademik_id' => $this->tahunAkademik->id,
             'is_active' => true,
         ]);
         $classroom->delete();
@@ -171,7 +171,7 @@ describe('Classroom CRUD Management', function () {
         $response = $this->actingAs($this->admin)->post(route('admin.manage.classrooms.store'), [
             'nama_kelas' => 'XII RPL 1',
             'jurusan_id' => $this->jurusan->id,
-            'tahun_ajaran_id' => $this->tahunAjaran->id,
+            'tahun_akademik_id' => $this->tahunAkademik->id,
         ]);
 
         $response->assertSessionHasNoErrors();

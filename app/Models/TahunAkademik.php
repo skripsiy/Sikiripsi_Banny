@@ -8,9 +8,11 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 #[Fillable(['tahun_ajaran', 'is_active'])]
-class AcademicYear extends Model
+class TahunAkademik extends Model
 {
     use HasFactory, SoftDeletes;
+
+    protected $table = 'tahun_akademiks';
 
     protected $casts = [
         'is_active' => 'boolean',
@@ -18,18 +20,18 @@ class AcademicYear extends Model
 
     public function classrooms()
     {
-        return $this->hasMany(Classroom::class, 'tahun_ajaran_id');
+        return $this->hasMany(Classroom::class, 'tahun_akademik_id');
     }
 
-    public function tahunAjarans()
+    public function semesters()
     {
-        return $this->hasMany(TahunAjaran::class, 'academic_year_id');
+        return $this->hasMany(Semester::class, 'tahun_akademik_id');
     }
 
     public function getSemesterAttribute()
     {
-        return $this->tahunAjarans()->where('is_active', true)->value('semester') 
-            ?? $this->tahunAjarans()->value('semester') 
+        return $this->semesters()->where('is_active', true)->value('semester') 
+            ?? $this->semesters()->value('semester') 
             ?? 'ganjil';
     }
 }

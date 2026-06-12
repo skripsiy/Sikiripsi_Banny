@@ -22,7 +22,7 @@
             <div class="absolute -right-10 -top-10 w-40 h-40 bg-blue-50 rounded-full opacity-50 select-none pointer-events-none"></div>
             
             <span class="inline-flex px-3 py-1 bg-blue-50 text-[#0c2b4d] rounded-full text-[10px] font-bold border border-blue-100 uppercase tracking-widest mb-4">
-                {{ $learningModule->subject->nama_pelajaran }}
+                {{ $learningModule->mataPelajaran->nama_pelajaran }}
             </span>
             
             <h2 class="text-lg font-extrabold text-gray-800 mb-1">Hasil Ujian - {{ $quiz->title }}</h2>

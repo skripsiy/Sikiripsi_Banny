@@ -111,8 +111,8 @@ class TugasController extends Controller
 
         $learningModule->load('subject');
         
-        $jurusanId = $learningModule->subject->jurusan_id;
-        $query = Classroom::where('tahun_ajaran_id', $learningModule->tahun_ajaran_id)
+        $jurusanId = $learningModule->mataPelajaran->jurusan_id;
+        $query = Classroom::where('tahun_akademik_id', $learningModule->tahun_akademik_id)
             ->where('is_active', true);
         if ($jurusanId) {
             $query->where('jurusan_id', $jurusanId);

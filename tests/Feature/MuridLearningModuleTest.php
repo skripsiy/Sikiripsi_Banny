@@ -4,7 +4,7 @@ use App\Models\User;
 use App\Models\Guru;
 use App\Models\Murid;
 use App\Models\Classroom;
-use App\Models\Subject;
+use App\Models\MataPelajaran;
 use App\Models\LearningModule;
 use App\Models\LearningModuleMateri;
 use App\Models\LearningModuleTugas;
@@ -12,7 +12,7 @@ use App\Models\LearningModuleQuiz;
 use App\Models\LearningModuleUjian;
 use App\Models\LearningModuleAbsensi;
 use App\Models\Jurusan;
-use App\Models\TahunAjaran;
+use App\Models\Semester;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
 uses(RefreshDatabase::class);
@@ -27,12 +27,12 @@ describe('Murid Learning Module Access', function () {
         ]);
 
         // Setup Jurusan & Tahun Ajaran
-        $this->tahunAjaran = TahunAjaran::create([
+        $this->tahunAkademik = Semester::create([
             'tahun_ajaran' => '2025/2026',
             'semester' => 'ganjil',
             'is_active' => true,
         ]);
-        $this->academicYear = $this->tahunAjaran->academicYear;
+        $this->academicYear = $this->tahunAkademik->tahunAkademik;
 
         $this->jurusanRpl = Jurusan::create([
             'kode_jurusan' => 'RPL',
@@ -47,21 +47,21 @@ describe('Murid Learning Module Access', function () {
         ]);
 
         // Subjects
-        $this->subjectGeneral = Subject::create([
+        $this->mataPelajaranGeneral = MataPelajaran::create([
             'kode_pelajaran' => 'INDO01',
             'nama_pelajaran' => 'Bahasa Indonesia',
             'jurusan_id' => null, // General
             'is_active' => true,
         ]);
 
-        $this->subjectRpl = Subject::create([
+        $this->mataPelajaranRpl = MataPelajaran::create([
             'kode_pelajaran' => 'RPL01',
             'nama_pelajaran' => 'Pemrograman Web',
             'jurusan_id' => $this->jurusanRpl->id,
             'is_active' => true,
         ]);
 
-        $this->subjectTkj = Subject::create([
+        $this->mataPelajaranTkj = MataPelajaran::create([
             'kode_pelajaran' => 'TKJ01',
             'nama_pelajaran' => 'Jaringan Dasar',
             'jurusan_id' => $this->jurusanTkj->id,
@@ -72,7 +72,7 @@ describe('Murid Learning Module Access', function () {
         $this->classroomRpl = Classroom::create([
             'nama_kelas' => 'XII RPL 1',
             'jurusan_id' => $this->jurusanRpl->id,
-            'tahun_ajaran_id' => $this->academicYear->id,
+            'tahun_akademik_id' => $this->academicYear->id,
             'is_active' => true,
         ]);
 
@@ -88,24 +88,24 @@ describe('Murid Learning Module Access', function () {
         // Modules
         $this->moduleGeneral = LearningModule::create([
             'guru_id' => $this->guru->id,
-            'subject_id' => $this->subjectGeneral->id,
-            'tahun_ajaran_id' => $this->academicYear->id,
+            'mata_pelajaran_id' => $this->mataPelajaranGeneral->id,
+            'tahun_akademik_id' => $this->academicYear->id,
             'title' => 'Bahasa Indonesia Modul',
             'description' => 'Materi umum.',
         ]);
 
         $this->moduleRpl = LearningModule::create([
             'guru_id' => $this->guru->id,
-            'subject_id' => $this->subjectRpl->id,
-            'tahun_ajaran_id' => $this->academicYear->id,
+            'mata_pelajaran_id' => $this->mataPelajaranRpl->id,
+            'tahun_akademik_id' => $this->academicYear->id,
             'title' => 'Web Dev Modul',
             'description' => 'Materi RPL.',
         ]);
 
         $this->moduleTkj = LearningModule::create([
             'guru_id' => $this->guru->id,
-            'subject_id' => $this->subjectTkj->id,
-            'tahun_ajaran_id' => $this->academicYear->id,
+            'mata_pelajaran_id' => $this->mataPelajaranTkj->id,
+            'tahun_akademik_id' => $this->academicYear->id,
             'title' => 'Cisco Jaringan Modul',
             'description' => 'Materi TKJ.',
         ]);
@@ -227,7 +227,7 @@ describe('Murid Learning Module Access', function () {
         ]);
 
         $soal = \App\Models\BankSoal::create([
-            'subject_id' => $this->subjectRpl->id,
+            'mata_pelajaran_id' => $this->mataPelajaranRpl->id,
             'guru_id' => $this->guru->id,
             'tipe' => 'pg',
             'pertanyaan' => 'Apa tag untuk link?',
@@ -282,7 +282,7 @@ describe('Murid Learning Module Access', function () {
         ]);
 
         $soal = \App\Models\BankSoal::create([
-            'subject_id' => $this->subjectRpl->id,
+            'mata_pelajaran_id' => $this->mataPelajaranRpl->id,
             'guru_id' => $this->guru->id,
             'tipe' => 'essay',
             'pertanyaan' => 'Jelaskan konsep OOP.',

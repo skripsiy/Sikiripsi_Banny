@@ -27,7 +27,7 @@
         <div class="bg-[#0c2b4d] text-white p-6 rounded-2xl shadow-lg border border-gray-150 mb-6">
             <div class="flex flex-wrap gap-2">
                 <span class="bg-blue-500/20 text-blue-200 border border-blue-500/30 text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wider">
-                    {{ $learningModule->subject->nama_pelajaran }}
+                    {{ $learningModule->mataPelajaran->nama_pelajaran }}
                 </span>
                 <span class="bg-emerald-500/20 text-emerald-200 border border-emerald-500/30 text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wider">
                     Kelola Perizinan Digital

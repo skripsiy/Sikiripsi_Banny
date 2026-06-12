@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
-#[Fillable(['nama_kelas', 'jurusan_id', 'tahun_ajaran_id', 'is_active'])]
+#[Fillable(['nama_kelas', 'jurusan_id', 'tahun_akademik_id', 'is_active'])]
 class Classroom extends Model
 {
     use HasFactory, SoftDeletes;
@@ -21,9 +21,9 @@ class Classroom extends Model
         return $this->belongsTo(Jurusan::class);
     }
 
-    public function tahunAjaran()
+    public function tahunAkademik()
     {
-        return $this->belongsTo(AcademicYear::class, 'tahun_ajaran_id');
+        return $this->belongsTo(TahunAkademik::class, 'tahun_akademik_id');
     }
 
     public function murids()
@@ -34,24 +34,24 @@ class Classroom extends Model
     protected static function booted()
     {
         static::creating(function ($classroom) {
-            if ($classroom->tahun_ajaran_id) {
-                $exists = AcademicYear::where('id', $classroom->tahun_ajaran_id)->exists();
+            if ($classroom->tahun_akademik_id) {
+                $exists = TahunAkademik::where('id', $classroom->tahun_akademik_id)->exists();
                 if (!$exists) {
-                    $ta = TahunAjaran::find($classroom->tahun_ajaran_id);
-                    if ($ta) {
-                        $classroom->tahun_ajaran_id = $ta->academic_year_id;
+                    $sem = Semester::find($classroom->tahun_akademik_id);
+                    if ($sem) {
+                        $classroom->tahun_akademik_id = $sem->tahun_akademik_id;
                     }
                 }
             }
         });
 
         static::updating(function ($classroom) {
-            if ($classroom->isDirty('tahun_ajaran_id') && $classroom->tahun_ajaran_id) {
-                $exists = AcademicYear::where('id', $classroom->tahun_ajaran_id)->exists();
+            if ($classroom->isDirty('tahun_akademik_id') && $classroom->tahun_akademik_id) {
+                $exists = TahunAkademik::where('id', $classroom->tahun_akademik_id)->exists();
                 if (!$exists) {
-                    $ta = TahunAjaran::find($classroom->tahun_ajaran_id);
-                    if ($ta) {
-                        $classroom->tahun_ajaran_id = $ta->academic_year_id;
+                    $sem = Semester::find($classroom->tahun_akademik_id);
+                    if ($sem) {
+                        $classroom->tahun_akademik_id = $sem->tahun_akademik_id;
                     }
                 }
             }

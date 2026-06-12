@@ -14,8 +14,8 @@ return new class extends Migration
         Schema::create('learning_modules', function (Blueprint $table) {
             $table->id();
             $table->foreignId('guru_id')->constrained()->cascadeOnDelete();
-            $table->foreignId('subject_id')->constrained()->cascadeOnDelete();
-            $table->foreignId('tahun_ajaran_id')->constrained('tahun_ajarans')->cascadeOnDelete();
+            $table->foreignId('mata_pelajaran_id')->constrained('mata_pelajarans')->cascadeOnDelete();
+            $table->foreignId('tahun_akademik_id')->constrained('tahun_akademiks')->cascadeOnDelete();
             $table->string('title');
             $table->text('description');
             $table->string('file_path')->nullable();

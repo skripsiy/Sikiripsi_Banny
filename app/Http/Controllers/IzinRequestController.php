@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\LearningModule;
 use App\Models\IzinRequest;
 use App\Models\LearningModuleAbsensi;
+use App\Models\TahunAkademik;
 use Illuminate\Http\Request;
 use Carbon\Carbon;
 
@@ -22,12 +23,12 @@ class IzinRequestController extends Controller
             abort(403, 'Kelas Anda tidak aktif atau tidak ditemukan.');
         }
 
-        $activeTahunAjaran = \App\Models\TahunAjaran::where('is_active', true)->first();
-        if (!$activeTahunAjaran || $learningModule->tahun_ajaran_id !== $activeTahunAjaran->id || $classroom->tahun_ajaran_id !== $activeTahunAjaran->academic_year_id) {
-            abort(403, 'Aksi tidak diizinkan. Modul tidak sesuai dengan tahun ajaran kelas Anda.');
+        $activeTahunAkademik = TahunAkademik::where('is_active', true)->first();
+        if (!$activeTahunAkademik || $learningModule->tahun_akademik_id !== $activeTahunAkademik->id || $classroom->tahun_akademik_id !== $activeTahunAkademik->id) {
+            abort(403, 'Aksi tidak diizinkan. Modul tidak sesuai dengan tahun akademik kelas Anda.');
         }
 
-        $subject = $learningModule->subject;
+        $subject = $learningModule->mataPelajaran;
         if (!$subject || !$subject->is_active) {
             abort(403, 'Mata pelajaran tidak aktif atau tidak ditemukan.');
         }
@@ -42,7 +43,7 @@ class IzinRequestController extends Controller
         $this->authorizeMuridModule($learningModule);
 
         $murid = auth()->user()->murid;
-        $learningModule->load('subject');
+        $learningModule->load('mataPelajaran');
 
         $izinRequests = IzinRequest::where('learning_module_id', $learningModule->id)
             ->where('murid_id', $murid->id)
@@ -55,7 +56,7 @@ class IzinRequestController extends Controller
     public function create(LearningModule $learningModule)
     {
         $this->authorizeMuridModule($learningModule);
-        $learningModule->load('subject');
+        $learningModule->load('mataPelajaran');
 
         return view('murid.learning_modules.izin.create', compact('learningModule'));
     }
@@ -107,7 +108,7 @@ class IzinRequestController extends Controller
             abort(403, 'Aksi tidak diizinkan.');
         }
 
-        $learningModule->load('subject');
+        $learningModule->load('mataPelajaran');
 
         $izinRequests = IzinRequest::where('learning_module_id', $learningModule->id)
             ->with('murid.user', 'murid.classroom')

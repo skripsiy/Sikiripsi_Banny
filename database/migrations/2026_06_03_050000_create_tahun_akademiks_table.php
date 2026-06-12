@@ -11,13 +11,12 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('subject_guru', function (Blueprint $table) {
+        Schema::create('tahun_akademiks', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('subject_id')->constrained('subjects')->cascadeOnDelete();
-            $table->foreignId('guru_id')->constrained('gurus')->cascadeOnDelete();
+            $table->string('tahun_ajaran', 9)->unique();
+            $table->boolean('is_active')->default(false);
             $table->timestamps();
-
-            $table->unique(['subject_id', 'guru_id']);
+            $table->softDeletes();
         });
     }
 
@@ -26,6 +25,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('subject_guru');
+        Schema::dropIfExists('tahun_akademiks');
     }
 };

@@ -4,7 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Classroom;
 use App\Models\Jurusan;
-use App\Models\TahunAjaran;
+use App\Models\TahunAkademik;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
 
@@ -12,11 +12,11 @@ class ClassroomManagementController extends Controller
 {
     public function index()
     {
-        $classrooms = Classroom::with(['jurusan', 'tahunAjaran'])->latest()->get();
+        $classrooms = Classroom::with(['jurusan', 'tahunAkademik'])->latest()->get();
         $jurusans = Jurusan::where('is_active', true)->orderBy('nama_jurusan')->get();
-        $tahunAjarans = \App\Models\AcademicYear::where('is_active', true)->latest()->get();
+        $semesters = TahunAkademik::where('is_active', true)->latest()->get();
 
-        return view('admin.manage.classrooms.index', compact('classrooms', 'jurusans', 'tahunAjarans'));
+        return view('admin.manage.classrooms.index', compact('classrooms', 'jurusans', 'semesters'));
     }
 
     public function store(Request $request)
@@ -27,22 +27,22 @@ class ClassroomManagementController extends Controller
                 'string',
                 'max:50',
                 Rule::unique('classrooms')->where(function ($query) use ($request) {
-                    return $query->where('tahun_ajaran_id', $request->tahun_ajaran_id)
+                    return $query->where('tahun_akademik_id', $request->tahun_akademik_id)
                                  ->whereNull('deleted_at');
                 }),
             ],
             'jurusan_id' => ['required', 'exists:jurusans,id'],
-            'tahun_ajaran_id' => ['required', 'exists:academic_years,id'],
+            'tahun_akademik_id' => ['required', 'exists:tahun_akademiks,id'],
         ], [
-            'nama_kelas.unique' => 'Nama kelas ini sudah terdaftar pada tahun ajaran tersebut.',
+            'nama_kelas.unique' => 'Nama kelas ini sudah terdaftar pada tahun akademik tersebut.',
             'jurusan_id.exists' => 'Jurusan yang dipilih tidak valid.',
-            'tahun_ajaran_id.exists' => 'Tahun ajaran yang dipilih tidak valid.',
+            'tahun_akademik_id.exists' => 'Tahun akademik yang dipilih tidak valid.',
         ]);
 
         Classroom::create([
             'nama_kelas' => strtoupper($request->nama_kelas),
             'jurusan_id' => $request->jurusan_id,
-            'tahun_ajaran_id' => $request->tahun_ajaran_id,
+            'tahun_akademik_id' => $request->tahun_akademik_id,
             'is_active' => true,
         ]);
 
@@ -58,23 +58,23 @@ class ClassroomManagementController extends Controller
                 'string',
                 'max:50',
                 Rule::unique('classrooms')->where(function ($query) use ($request) {
-                    return $query->where('tahun_ajaran_id', $request->tahun_ajaran_id)
+                    return $query->where('tahun_akademik_id', $request->tahun_akademik_id)
                                  ->whereNull('deleted_at');
                 })->ignore($classroom->id),
             ],
             'jurusan_id' => ['required', 'exists:jurusans,id'],
-            'tahun_ajaran_id' => ['required', 'exists:academic_years,id'],
+            'tahun_akademik_id' => ['required', 'exists:tahun_akademiks,id'],
             'is_active' => ['required', 'boolean'],
         ], [
-            'nama_kelas.unique' => 'Nama kelas ini sudah terdaftar pada tahun ajaran tersebut.',
+            'nama_kelas.unique' => 'Nama kelas ini sudah terdaftar pada tahun akademik tersebut.',
             'jurusan_id.exists' => 'Jurusan yang dipilih tidak valid.',
-            'tahun_ajaran_id.exists' => 'Tahun ajaran yang dipilih tidak valid.',
+            'tahun_akademik_id.exists' => 'Tahun akademik yang dipilih tidak valid.',
         ]);
 
         $classroom->update([
             'nama_kelas' => strtoupper($request->nama_kelas),
             'jurusan_id' => $request->jurusan_id,
-            'tahun_ajaran_id' => $request->tahun_ajaran_id,
+            'tahun_akademik_id' => $request->tahun_akademik_id,
             'is_active' => (bool)$request->is_active,
         ]);
 

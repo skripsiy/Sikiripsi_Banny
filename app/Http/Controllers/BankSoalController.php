@@ -4,7 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\BankSoal;
 use App\Models\BankSoalOption;
-use App\Models\Subject;
+use App\Models\MataPelajaran;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 
@@ -17,18 +17,18 @@ class BankSoalController extends Controller
             abort(403, 'Profil Guru tidak ditemukan.');
         }
 
-        $subjects = $guru->subjects()->where('is_active', true)->orderBy('nama_pelajaran')->get();
-        $selectedSubjectId = $request->input('subject_id');
+        $mata_pelajarans = $guru->mataPelajarans()->where('is_active', true)->orderBy('nama_pelajaran')->get();
+        $selectedSubjectId = $request->input('mata_pelajaran_id') ?? $request->input('mata_pelajaran_id');
 
         $soals = BankSoal::where('guru_id', $guru->id)
             ->when($selectedSubjectId, function($q) use ($selectedSubjectId) {
-                return $q->where('subject_id', $selectedSubjectId);
+                return $q->where('mata_pelajaran_id', $selectedSubjectId);
             })
-            ->with(['subject', 'options'])
+            ->with(['mataPelajaran', 'options'])
             ->latest()
             ->paginate(15);
 
-        return view('guru.bank_soal.index', compact('subjects', 'soals', 'selectedSubjectId'));
+        return view('guru.bank_soal.index', compact('mata_pelajarans', 'soals', 'selectedSubjectId'));
     }
 
     public function store(Request $request)
@@ -38,8 +38,12 @@ class BankSoalController extends Controller
             abort(403, 'Profil Guru tidak ditemukan.');
         }
 
+        $request->merge([
+            'mata_pelajaran_id' => $request->input('mata_pelajaran_id') ?? $request->input('mata_pelajaran_id')
+        ]);
+
         $rules = [
-            'subject_id' => ['required', 'exists:subjects,id'],
+            'mata_pelajaran_id' => ['required', 'exists:mata_pelajarans,id'],
             'tipe' => ['required', 'in:pg,essay'],
             'pertanyaan' => ['required', 'string'],
             'gambar' => ['nullable', 'image', 'max:2048'],
@@ -63,7 +67,7 @@ class BankSoalController extends Controller
         }
 
         $request->validate($rules, [
-            'subject_id.required' => 'Mata pelajaran wajib dipilih.',
+            'mata_pelajaran_id.required' => 'Mata pelajaran wajib dipilih.',
             'tipe.required' => 'Tipe soal wajib dipilih.',
             'pertanyaan.required' => 'Pertanyaan wajib diisi.',
             'teks_opsi.A.required' => 'Opsi A wajib diisi untuk soal Pilihan Ganda.',
@@ -74,9 +78,9 @@ class BankSoalController extends Controller
         ]);
 
         // Authorize that the teacher is assigned to this subject
-        if (!$guru->subjects()->where('subjects.id', $request->subject_id)->exists()) {
+        if (!$guru->mataPelajarans()->where('mata_pelajarans.id', $request->mata_pelajaran_id)->exists()) {
             return redirect()->back()
-                ->withErrors(['subject_id' => 'Mata pelajaran yang dipilih tidak ditugaskan kepada Anda.'])
+                ->withErrors(['mata_pelajaran_id' => 'Mata pelajaran yang dipilih tidak ditugaskan kepada Anda.'])
                 ->withInput();
         }
 
@@ -86,7 +90,7 @@ class BankSoalController extends Controller
         }
 
         $soal = BankSoal::create([
-            'subject_id' => $request->subject_id,
+            'mata_pelajaran_id' => $request->mata_pelajaran_id,
             'guru_id' => $guru->id,
             'tipe' => $request->tipe,
             'pertanyaan' => $request->pertanyaan,
@@ -105,7 +109,7 @@ class BankSoalController extends Controller
             }
         }
 
-        return redirect()->route('guru.bank-soal.index', ['subject_id' => $request->subject_id])
+        return redirect()->route('guru.bank-soal.index', ['mata_pelajaran_id' => $request->mata_pelajaran_id])
             ->with('status', 'Soal berhasil ditambahkan ke Bank Soal.');
     }
 
@@ -116,8 +120,12 @@ class BankSoalController extends Controller
             abort(403, 'Aksi tidak diizinkan.');
         }
 
+        $request->merge([
+            'mata_pelajaran_id' => $request->input('mata_pelajaran_id') ?? $request->input('mata_pelajaran_id')
+        ]);
+
         $rules = [
-            'subject_id' => ['required', 'exists:subjects,id'],
+            'mata_pelajaran_id' => ['required', 'exists:mata_pelajarans,id'],
             'pertanyaan' => ['required', 'string'],
             'gambar' => ['nullable', 'image', 'max:2048'],
             'pembahasan' => ['nullable', 'string'],
@@ -140,7 +148,7 @@ class BankSoalController extends Controller
         }
 
         $request->validate($rules, [
-            'subject_id.required' => 'Mata pelajaran wajib dipilih.',
+            'mata_pelajaran_id.required' => 'Mata pelajaran wajib dipilih.',
             'pertanyaan.required' => 'Pertanyaan wajib diisi.',
             'teks_opsi.A.required' => 'Opsi A wajib diisi untuk soal Pilihan Ganda.',
             'teks_opsi.B.required' => 'Opsi B wajib diisi untuk soal Pilihan Ganda.',
@@ -149,9 +157,9 @@ class BankSoalController extends Controller
             'correct_option.required' => 'Jawaban benar wajib dipilih untuk soal Pilihan Ganda.',
         ]);
 
-        if (!$guru->subjects()->where('subjects.id', $request->subject_id)->exists()) {
+        if (!$guru->mataPelajarans()->where('mata_pelajarans.id', $request->mata_pelajaran_id)->exists()) {
             return redirect()->back()
-                ->withErrors(['subject_id' => 'Mata pelajaran yang dipilih tidak ditugaskan kepada Anda.'])
+                ->withErrors(['mata_pelajaran_id' => 'Mata pelajaran yang dipilih tidak ditugaskan kepada Anda.'])
                 ->withInput();
         }
 
@@ -164,7 +172,7 @@ class BankSoalController extends Controller
         }
 
         $bankSoal->update([
-            'subject_id' => $request->subject_id,
+            'mata_pelajaran_id' => $request->mata_pelajaran_id,
             'pertanyaan' => $request->pertanyaan,
             'gambar_path' => $gambarPath,
             'pembahasan' => $request->pembahasan,
@@ -183,7 +191,7 @@ class BankSoalController extends Controller
             }
         }
 
-        return redirect()->route('guru.bank-soal.index', ['subject_id' => $request->subject_id])
+        return redirect()->route('guru.bank-soal.index', ['mata_pelajaran_id' => $request->mata_pelajaran_id])
             ->with('status', 'Soal berhasil diperbarui.');
     }
 
@@ -194,8 +202,6 @@ class BankSoalController extends Controller
             abort(403, 'Aksi tidak diizinkan.');
         }
 
-        // Keep the image file for potential softDeletes restoration, or delete it if we want full delete.
-        // Let's keep it for SoftDeletes support.
         $bankSoal->delete();
 
         return redirect()->back()->with('status', 'Soal berhasil dihapus.');

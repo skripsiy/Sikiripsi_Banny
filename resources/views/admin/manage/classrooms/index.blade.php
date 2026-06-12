@@ -10,7 +10,7 @@
             id: '{{ old('id') ?? '' }}',
             nama_kelas: {{ json_encode(old('nama_kelas') ?? '') }},
             jurusan_id: '{{ old('jurusan_id') ?? '' }}',
-            tahun_ajaran_id: '{{ old('tahun_ajaran_id') ?? '' }}',
+            tahun_akademik_id: '{{ old('tahun_akademik_id') ?? '' }}',
             is_active: '{{ old('is_active') !== null ? (old('is_active') ? '1' : '0') : '' }}'
         },
         editUrl: '{{ old('id') ? route('admin.manage.classrooms.update', old('id')) : '' }}'
@@ -61,7 +61,7 @@
                                             {{ $classroom->jurusan->nama_jurusan ?? '-' }} ({{ $classroom->jurusan->kode_jurusan ?? '-' }})
                                         </td>
                                         <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                                            {{ $classroom->tahunAjaran->tahun_ajaran ?? '-' }} - Semester {{ ucfirst($classroom->tahunAjaran->semester ?? '') }}
+                                            {{ $classroom->tahunAkademik->tahun_ajaran ?? '-' }} - Semester {{ ucfirst($classroom->tahunAkademik->semester ?? '') }}
                                         </td>
                                         <td class="px-6 py-4 whitespace-nowrap text-sm">
                                             @if ($classroom->is_active)
@@ -84,7 +84,7 @@
                                                         id: '{{ $classroom->id }}',
                                                         nama_kelas: {{ json_encode($classroom->nama_kelas) }},
                                                         jurusan_id: '{{ $classroom->jurusan_id }}',
-                                                        tahun_ajaran_id: '{{ $classroom->tahun_ajaran_id }}',
+                                                        tahun_akademik_id: '{{ $classroom->tahun_akademik_id }}',
                                                         is_active: '{{ $classroom->is_active ? '1' : '0' }}'
                                                     };
                                                     editUrl = '{{ route('admin.manage.classrooms.update', $classroom->id) }}';

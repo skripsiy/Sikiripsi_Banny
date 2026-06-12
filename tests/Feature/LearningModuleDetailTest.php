@@ -4,7 +4,7 @@ use App\Models\User;
 use App\Models\Guru;
 use App\Models\Murid;
 use App\Models\Classroom;
-use App\Models\Subject;
+use App\Models\MataPelajaran;
 use App\Models\LearningModule;
 use App\Models\LearningModuleMateri;
 use App\Models\LearningModuleTugas;
@@ -12,7 +12,7 @@ use App\Models\LearningModuleQuiz;
 use App\Models\LearningModuleUjian;
 use App\Models\LearningModuleAbsensi;
 use App\Models\Jurusan;
-use App\Models\TahunAjaran;
+use App\Models\Semester;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
@@ -36,12 +36,12 @@ describe('Learning Module Details and Sub-content', function () {
         ]);
 
         // Setup Jurusan & Tahun Ajaran
-        $this->tahunAjaran = TahunAjaran::create([
+        $this->tahunAkademik = Semester::create([
             'tahun_ajaran' => '2025/2026',
             'semester' => 'ganjil',
             'is_active' => true,
         ]);
-        $this->academicYear = $this->tahunAjaran->academicYear;
+        $this->academicYear = $this->tahunAkademik->tahunAkademik;
 
         $this->jurusan = Jurusan::create([
             'kode_jurusan' => 'RPL',
@@ -50,17 +50,17 @@ describe('Learning Module Details and Sub-content', function () {
         ]);
 
         // Subject & Classroom setup
-        $this->subject = Subject::create([
+        $this->mataPelajaran = MataPelajaran::create([
             'kode_pelajaran' => 'MTK01',
             'nama_pelajaran' => 'Matematika Peminatan',
             'is_active' => true,
         ]);
-        $this->subject->gurus()->sync([$this->guru1->id]);
+        $this->mataPelajaran->gurus()->sync([$this->guru1->id]);
 
         $this->classroom = Classroom::create([
             'nama_kelas' => 'XII RPL 1',
             'jurusan_id' => $this->jurusan->id,
-            'tahun_ajaran_id' => $this->academicYear->id,
+            'tahun_akademik_id' => $this->academicYear->id,
             'is_active' => true,
         ]);
 
@@ -76,8 +76,8 @@ describe('Learning Module Details and Sub-content', function () {
         // Learning module owned by teacher 1
         $this->learningModule = LearningModule::create([
             'guru_id' => $this->guru1->id,
-            'subject_id' => $this->subject->id,
-            'tahun_ajaran_id' => $this->academicYear->id,
+            'mata_pelajaran_id' => $this->mataPelajaran->id,
+            'tahun_akademik_id' => $this->academicYear->id,
             'title' => 'Aljabar Modul',
             'description' => 'Materi Aljabar.',
         ]);

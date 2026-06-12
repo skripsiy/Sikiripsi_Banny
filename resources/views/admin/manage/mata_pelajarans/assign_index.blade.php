@@ -8,7 +8,7 @@
         isEdit: false,
         formData: {
             id: '',
-            subject_id: '',
+            mata_pelajaran_id: '',
             guru_id: ''
         },
         submitUrl: ''
@@ -18,7 +18,7 @@
             <h3 class="text-base font-bold text-gray-800">Daftar Penugasan Guru Pengampu</h3>
             <button @click="
                 isEdit = false;
-                formData = { id: '', subject_id: '', guru_id: '' };
+                formData = { id: '', mata_pelajaran_id: '', guru_id: '' };
                 submitUrl = '{{ route('admin.manage.penugasan-guru.store') }}';
                 showModal = true;
             " class="bg-[#0c2b4d] hover:bg-[#07192d] text-white px-4 py-2.5 rounded-xl text-xs font-bold transition-all shadow-md cursor-pointer select-none">
@@ -64,12 +64,12 @@
                                 @foreach ($assignments as $index => $assignment)
                                     <tr class="hover:bg-gray-50/50 transition-all duration-150">
                                         <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ $index + 1 }}</td>
-                                        <td class="px-6 py-4 whitespace-nowrap text-sm font-semibold text-gray-900">{{ $assignment->subject->kode_pelajaran }}</td>
-                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700 font-medium">{{ $assignment->subject->nama_pelajaran }}</td>
+                                        <td class="px-6 py-4 whitespace-nowrap text-sm font-semibold text-gray-900">{{ $assignment->mataPelajaran->kode_pelajaran }}</td>
+                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700 font-medium">{{ $assignment->mataPelajaran->nama_pelajaran }}</td>
                                         <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                                            @if($assignment->subject->jurusan)
+                                            @if($assignment->mataPelajaran->jurusan)
                                                 <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-50 text-blue-800 border border-blue-100">
-                                                    {{ $assignment->subject->jurusan->nama_jurusan }} ({{ $assignment->subject->jurusan->kode_jurusan }})
+                                                    {{ $assignment->mataPelajaran->jurusan->nama_jurusan }} ({{ $assignment->mataPelajaran->jurusan->kode_jurusan }})
                                                 </span>
                                             @else
                                                 <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-purple-50 text-purple-800 border border-purple-100">
@@ -87,7 +87,7 @@
                                                     isEdit = true;
                                                     formData = {
                                                         id: '{{ $assignment->id }}',
-                                                        subject_id: '{{ $assignment->subject_id }}',
+                                                        mata_pelajaran_id: '{{ $assignment->mata_pelajaran_id }}',
                                                         guru_id: '{{ $assignment->guru_id }}'
                                                     };
                                                     submitUrl = '{{ route('admin.manage.penugasan-guru.update', $assignment->id) }}';
@@ -159,11 +159,11 @@
 
                         <!-- Subject -->
                         <div>
-                            <label for="subject_id" class="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-2">Mata Pelajaran</label>
-                            <select name="subject_id" id="subject_id" x-model="formData.subject_id" required
+                            <label for="mata_pelajaran_id" class="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-2">Mata Pelajaran</label>
+                            <select name="mata_pelajaran_id" id="mata_pelajaran_id" x-model="formData.mata_pelajaran_id" required
                                     class="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl text-sm text-gray-800 focus:outline-none focus:border-[#0c2b4d] focus:bg-white transition-all">
                                 <option value="">-- Pilih Mata Pelajaran --</option>
-                                @foreach ($subjects as $subject)
+                                @foreach ($mata_pelajarans as $subject)
                                     <option value="{{ $subject->id }}">
                                         {{ $subject->nama_pelajaran }} ({{ $subject->kode_pelajaran }}) 
                                         @if($subject->jurusan)

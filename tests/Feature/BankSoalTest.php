@@ -1,9 +1,9 @@
 <?php
 
 use App\Models\User;
-use App\Models\Subject;
+use App\Models\MataPelajaran;
 use App\Models\Guru;
-use App\Models\SubjectGuru;
+use App\Models\GuruMataPelajaran;
 use App\Models\BankSoal;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
@@ -19,15 +19,15 @@ describe('Bank Soal CRUD and Validation', function () {
         ]);
 
         // Create subject
-        $this->subject = Subject::create([
+        $this->mataPelajaran = MataPelajaran::create([
             'kode_pelajaran' => 'MP001',
             'nama_pelajaran' => 'Matematika',
             'is_active' => true,
         ]);
 
         // Assign subject to teacher
-        SubjectGuru::create([
-            'subject_id' => $this->subject->id,
+        GuruMataPelajaran::create([
+            'mata_pelajaran_id' => $this->mataPelajaran->id,
             'guru_id' => $this->guru->id,
         ]);
     });
@@ -45,7 +45,7 @@ describe('Bank Soal CRUD and Validation', function () {
 
     it('validates and creates a new PG question successfully', function () {
         $response = $this->actingAs($this->guruUser)->post(route('guru.bank-soal.store'), [
-            'subject_id' => $this->subject->id,
+            'mata_pelajaran_id' => $this->mataPelajaran->id,
             'tipe' => 'pg',
             'pertanyaan' => 'Apa hasil dari 1 + 1?',
             'teks_opsi' => [
@@ -59,10 +59,10 @@ describe('Bank Soal CRUD and Validation', function () {
         ]);
 
         $response->assertSessionHasNoErrors();
-        $response->assertRedirect(route('guru.bank-soal.index', ['subject_id' => $this->subject->id]));
+        $response->assertRedirect(route('guru.bank-soal.index', ['mata_pelajaran_id' => $this->mataPelajaran->id]));
 
         $this->assertDatabaseHas('bank_soals', [
-            'subject_id' => $this->subject->id,
+            'mata_pelajaran_id' => $this->mataPelajaran->id,
             'guru_id' => $this->guru->id,
             'tipe' => 'pg',
             'pertanyaan' => 'Apa hasil dari 1 + 1?',
@@ -78,7 +78,7 @@ describe('Bank Soal CRUD and Validation', function () {
     it('validates and creates a new Essay question successfully with empty option fields', function () {
         // Submit options as empty/null which mirrors the frontend hidden form behaviour
         $response = $this->actingAs($this->guruUser)->post(route('guru.bank-soal.store'), [
-            'subject_id' => $this->subject->id,
+            'mata_pelajaran_id' => $this->mataPelajaran->id,
             'tipe' => 'essay',
             'pertanyaan' => 'Jelaskan teori relativitas secara singkat.',
             'teks_opsi' => [
@@ -92,10 +92,10 @@ describe('Bank Soal CRUD and Validation', function () {
         ]);
 
         $response->assertSessionHasNoErrors();
-        $response->assertRedirect(route('guru.bank-soal.index', ['subject_id' => $this->subject->id]));
+        $response->assertRedirect(route('guru.bank-soal.index', ['mata_pelajaran_id' => $this->mataPelajaran->id]));
 
         $this->assertDatabaseHas('bank_soals', [
-            'subject_id' => $this->subject->id,
+            'mata_pelajaran_id' => $this->mataPelajaran->id,
             'guru_id' => $this->guru->id,
             'tipe' => 'essay',
             'pertanyaan' => 'Jelaskan teori relativitas secara singkat.',
@@ -108,7 +108,7 @@ describe('Bank Soal CRUD and Validation', function () {
 
     it('fails validation when creating PG question without options', function () {
         $response = $this->actingAs($this->guruUser)->post(route('guru.bank-soal.store'), [
-            'subject_id' => $this->subject->id,
+            'mata_pelajaran_id' => $this->mataPelajaran->id,
             'tipe' => 'pg',
             'pertanyaan' => 'Siapa presiden pertama Indonesia?',
             'teks_opsi' => [
@@ -125,7 +125,7 @@ describe('Bank Soal CRUD and Validation', function () {
 
     it('updates an existing PG question successfully', function () {
         $soal = BankSoal::create([
-            'subject_id' => $this->subject->id,
+            'mata_pelajaran_id' => $this->mataPelajaran->id,
             'guru_id' => $this->guru->id,
             'tipe' => 'pg',
             'pertanyaan' => 'Pertanyaan PG awal',
@@ -139,7 +139,7 @@ describe('Bank Soal CRUD and Validation', function () {
         }
 
         $response = $this->actingAs($this->guruUser)->put(route('guru.bank-soal.update', $soal->id), [
-            'subject_id' => $this->subject->id,
+            'mata_pelajaran_id' => $this->mataPelajaran->id,
             'pertanyaan' => 'Pertanyaan PG baru',
             'teks_opsi' => [
                 'A' => 'Opsi A baru',
@@ -164,14 +164,14 @@ describe('Bank Soal CRUD and Validation', function () {
 
     it('updates an existing Essay question successfully', function () {
         $soal = BankSoal::create([
-            'subject_id' => $this->subject->id,
+            'mata_pelajaran_id' => $this->mataPelajaran->id,
             'guru_id' => $this->guru->id,
             'tipe' => 'essay',
             'pertanyaan' => 'Pertanyaan Essay awal',
         ]);
 
         $response = $this->actingAs($this->guruUser)->put(route('guru.bank-soal.update', $soal->id), [
-            'subject_id' => $this->subject->id,
+            'mata_pelajaran_id' => $this->mataPelajaran->id,
             'pertanyaan' => 'Pertanyaan Essay baru',
             'teks_opsi' => [
                 'A' => null,

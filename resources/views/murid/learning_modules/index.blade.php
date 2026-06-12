@@ -14,7 +14,7 @@
             </div>
             @if($classroom)
                 <span class="bg-blue-50 text-blue-700 border border-blue-100 px-3.5 py-1.5 rounded-xl text-xs font-bold shadow-sm">
-                    Kelas: {{ $classroom->nama_kelas }} ({{ $classroom->tahunAjaran->tahun_ajaran ?? '-' }})
+                    Kelas: {{ $classroom->nama_kelas }} ({{ $classroom->tahunAkademik->tahun_ajaran ?? '-' }})
                 </span>
             @endif
         </div>
@@ -71,16 +71,16 @@
                                  {{ json_encode(strtolower($module->title)) }}.includes(searchQuery.toLowerCase()) || 
                                  {{ json_encode(strtolower($module->description)) }}.includes(searchQuery.toLowerCase()) || 
                                  {{ json_encode(strtolower($module->guru->user->name ?? '')) }}.includes(searchQuery.toLowerCase()) || 
-                                 {{ json_encode(strtolower($module->subject->nama_pelajaran ?? '')) }}.includes(searchQuery.toLowerCase())"
+                                 {{ json_encode(strtolower($module->mataPelajaran->nama_pelajaran ?? '')) }}.includes(searchQuery.toLowerCase())"
                          @click="window.location.href='{{ route('murid.learning-modules.show', $module->id) }}'">
                         
                         <!-- Gradient Banner Header -->
                         <div class="h-28 bg-gradient-to-br {{ $selectedGradient }} p-4 relative flex flex-col justify-between select-none">
                             <div class="flex items-start justify-between w-full">
                                 <!-- Subject Badge -->
-                                @if($module->subject)
+                                @if($module->mataPelajaran)
                                     <span class="inline-flex items-center px-2.5 py-1 rounded-full text-[10px] font-bold bg-white/20 text-white backdrop-blur-sm border border-white/10 uppercase tracking-wider">
-                                        {{ $module->subject->nama_pelajaran }}
+                                        {{ $module->mataPelajaran->nama_pelajaran }}
                                     </span>
                                 @else
                                     <span class="inline-flex items-center px-2.5 py-1 rounded-full text-[10px] font-bold bg-white/10 text-white/80 backdrop-blur-sm border border-white/5 uppercase tracking-wider">
@@ -92,7 +92,7 @@
                             <!-- Academic Year info -->
                             <div class="mt-auto">
                                 <span class="text-[10px] font-bold text-white/90 bg-white/20 px-2 py-0.5 rounded-md backdrop-blur-sm tracking-wide">
-                                    {{ $module->tahunAjaran->tahun_ajaran ?? '-' }}
+                                    {{ $module->tahunAkademik->tahun_ajaran ?? '-' }}
                                 </span>
                             </div>
                         </div>

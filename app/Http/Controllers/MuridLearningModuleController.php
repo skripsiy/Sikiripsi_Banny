@@ -31,12 +31,12 @@ class MuridLearningModuleController extends Controller
         }
 
         // Check if learning module has the same academic year
-        if ($learningModule->tahun_ajaran_id != $classroom->tahun_ajaran_id) {
-            abort(403, 'Aksi tidak diizinkan. Modul tidak sesuai dengan tahun ajaran kelas Anda.');
+        if ($learningModule->tahun_akademik_id != $classroom->tahun_akademik_id) {
+            abort(403, 'Aksi tidak diizinkan. Modul tidak sesuai dengan tahun akademik kelas Anda.');
         }
 
         // Check if subject is suitable for the student's jurusan
-        $subject = $learningModule->subject;
+        $subject = $learningModule->mataPelajaran;
         if (!$subject || !$subject->is_active) {
             abort(403, 'Mata pelajaran untuk modul ini tidak aktif atau tidak ditemukan.');
         }
@@ -57,15 +57,15 @@ class MuridLearningModuleController extends Controller
         if (!$classroom) {
             $learningModules = collect();
         } else {
-            $learningModules = LearningModule::where('tahun_ajaran_id', $classroom->tahun_ajaran_id)
-                ->whereHas('subject', function ($query) use ($classroom) {
+            $learningModules = LearningModule::where('tahun_akademik_id', $classroom->tahun_akademik_id)
+                ->whereHas('mataPelajaran', function ($query) use ($classroom) {
                     $query->where('is_active', true)
                           ->where(function ($q) use ($classroom) {
                               $q->whereNull('jurusan_id')
                                 ->orWhere('jurusan_id', $classroom->jurusan_id);
                           });
                 })
-                ->with(['guru.user', 'subject', 'tahunAjaran'])
+                ->with(['guru.user', 'mataPelajaran', 'tahunAkademik'])
                 ->withCount(['materis', 'tugas', 'quizzes', 'ujians'])
                 ->latest()
                 ->get();
@@ -78,7 +78,7 @@ class MuridLearningModuleController extends Controller
     {
         $this->authorizeModule($learningModule);
 
-        $learningModule->load(['subject', 'guru.user', 'tahunAjaran']);
+        $learningModule->load(['mataPelajaran', 'guru.user', 'tahunAkademik']);
         $learningModule->loadCount(['materis', 'tugas', 'quizzes', 'ujians']);
 
         // Recent items (latest 10 of each for dashboard timeline)
@@ -156,7 +156,7 @@ class MuridLearningModuleController extends Controller
     {
         $this->authorizeModule($learningModule);
 
-        $learningModule->load('subject');
+        $learningModule->load('mataPelajaran');
         $materis = LearningModuleMateri::where('learning_module_id', $learningModule->id)
             ->latest()
             ->get();
@@ -168,7 +168,7 @@ class MuridLearningModuleController extends Controller
     {
         $this->authorizeModule($learningModule);
 
-        $learningModule->load('subject');
+        $learningModule->load('mataPelajaran');
 
         $murid = auth()->user()->murid;
         $tugas = LearningModuleTugas::where('learning_module_id', $learningModule->id)
@@ -185,7 +185,7 @@ class MuridLearningModuleController extends Controller
     {
         $this->authorizeModule($learningModule);
 
-        $learningModule->load('subject');
+        $learningModule->load('mataPelajaran');
         $murid = auth()->user()->murid;
 
         $quizzes = LearningModuleQuiz::where('learning_module_id', $learningModule->id)
@@ -390,7 +390,7 @@ class MuridLearningModuleController extends Controller
     {
         $this->authorizeModule($learningModule);
 
-        $learningModule->load('subject');
+        $learningModule->load('mataPelajaran');
         $murid = auth()->user()->murid;
 
         $ujians = LearningModuleUjian::where('learning_module_id', $learningModule->id)
@@ -591,7 +591,7 @@ class MuridLearningModuleController extends Controller
     {
         $this->authorizeModule($learningModule);
 
-        $learningModule->load('subject');
+        $learningModule->load('mataPelajaran');
 
         $murid = auth()->user()->murid;
 
@@ -607,7 +607,7 @@ class MuridLearningModuleController extends Controller
     {
         $this->authorizeModule($learningModule);
 
-        $learningModule->load('subject');
+        $learningModule->load('mataPelajaran');
 
         $murid = auth()->user()->murid;
 

@@ -110,8 +110,8 @@
                 </div>
 
                 <!-- 2. Tahun Ajaran -->
-                <a href="{{ route('admin.manage.tahun-ajarans.index') }}" 
-                   class="flex items-center rounded-xl text-sm font-semibold transition-all duration-300 {{ request()->routeIs('admin.manage.tahun-ajarans.*') ? 'bg-[#0c2b4d] text-white shadow-inner font-bold' : 'text-white/80 hover:bg-white/10 hover:text-white' }}"
+                <a href="{{ route('admin.manage.semesters.index') }}" 
+                   class="flex items-center rounded-xl text-sm font-semibold transition-all duration-300 {{ request()->routeIs('admin.manage.semesters.*') ? 'bg-[#0c2b4d] text-white shadow-inner font-bold' : 'text-white/80 hover:bg-white/10 hover:text-white' }}"
                    :class="sidebarOpen ? 'px-4 py-3 justify-start gap-3' : 'px-0 py-3 justify-center gap-0 w-12 mx-auto'">
                     <svg class="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
@@ -140,8 +140,8 @@
                 </a>
 
                 <!-- 5. Mata Pelajaran -->
-                <a href="{{ route('admin.manage.subjects.index') }}" 
-                   class="flex items-center rounded-xl text-sm font-semibold transition-all duration-300 {{ request()->routeIs('admin.manage.subjects.*') && !request()->routeIs('admin.manage.penugasan-guru.*') ? 'bg-[#0c2b4d] text-white shadow-inner font-bold' : 'text-white/80 hover:bg-white/10 hover:text-white' }}"
+                <a href="{{ route('admin.manage.mata_pelajarans.index') }}" 
+                   class="flex items-center rounded-xl text-sm font-semibold transition-all duration-300 {{ request()->routeIs('admin.manage.mata_pelajarans.*') && !request()->routeIs('admin.manage.penugasan-guru.*') ? 'bg-[#0c2b4d] text-white shadow-inner font-bold' : 'text-white/80 hover:bg-white/10 hover:text-white' }}"
                    :class="sidebarOpen ? 'px-4 py-3 justify-start gap-3' : 'px-0 py-3 justify-center gap-0 w-12 mx-auto'">
                     <svg class="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path>

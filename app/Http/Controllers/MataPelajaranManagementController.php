@@ -2,24 +2,24 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Subject;
+use App\Models\MataPelajaran;
 use App\Models\Jurusan;
 use App\Models\Guru;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
 
-class SubjectManagementController extends Controller
+class MataPelajaranManagementController extends Controller
 {
     public function index()
     {
-        $subjects = Subject::with('jurusan')->latest()->get();
+        $mata_pelajarans = MataPelajaran::with('jurusan')->latest()->get();
         $jurusans = Jurusan::where('is_active', true)->orderBy('nama_jurusan')->get();
-        return view('admin.manage.subjects.index', compact('subjects', 'jurusans'));
+        return view('admin.manage.mata_pelajarans.index', compact('mata_pelajarans', 'jurusans'));
     }
 
     public function create()
     {
-        return view('admin.manage.subjects.create');
+        return view('admin.manage.mata_pelajarans.create');
     }
 
     public function store(Request $request)
@@ -28,7 +28,7 @@ class SubjectManagementController extends Controller
             // Generate a unique 6-character random uppercase alphanumeric string
             do {
                 $kode = strtoupper(\Illuminate\Support\Str::random(6));
-            } while (Subject::where('kode_pelajaran', $kode)->whereNull('deleted_at')->exists());
+            } while (MataPelajaran::where('kode_pelajaran', $kode)->whereNull('deleted_at')->exists());
 
             $request->merge([
                 'kode_pelajaran' => $kode
@@ -44,7 +44,7 @@ class SubjectManagementController extends Controller
                 'required',
                 'string',
                 'max:20',
-                Rule::unique('subjects')->whereNull('deleted_at'),
+                Rule::unique('mata_pelajarans')->whereNull('deleted_at'),
             ],
             'nama_pelajaran' => ['required', 'string', 'max:100'],
             'jurusan_id' => ['nullable', 'exists:jurusans,id'],
@@ -55,23 +55,23 @@ class SubjectManagementController extends Controller
             'jurusan_id.exists' => 'Jurusan yang dipilih tidak valid.',
         ]);
 
-        Subject::create([
+        MataPelajaran::create([
             'kode_pelajaran' => $request->kode_pelajaran,
             'nama_pelajaran' => $request->nama_pelajaran,
             'jurusan_id' => $request->jurusan_id,
             'is_active' => true,
         ]);
 
-        return redirect()->route('admin.manage.subjects.index')
+        return redirect()->route('admin.manage.mata_pelajarans.index')
             ->with('status', 'Mata pelajaran berhasil ditambahkan.');
     }
 
-    public function edit(Subject $subject)
+    public function edit(MataPelajaran $mataPelajaran)
     {
-        return view('admin.manage.subjects.edit', compact('subject'));
+        return view('admin.manage.mata_pelajarans.edit', compact('mataPelajaran'));
     }
 
-    public function update(Request $request, Subject $subject)
+    public function update(Request $request, MataPelajaran $mataPelajaran)
     {
         if ($request->has('kode_pelajaran')) {
             $request->merge([
@@ -84,7 +84,7 @@ class SubjectManagementController extends Controller
                 'required',
                 'string',
                 'max:20',
-                Rule::unique('subjects')->whereNull('deleted_at')->ignore($subject->id),
+                Rule::unique('mata_pelajarans')->whereNull('deleted_at')->ignore($mataPelajaran->id),
             ],
             'nama_pelajaran' => ['required', 'string', 'max:100'],
             'jurusan_id' => ['nullable', 'exists:jurusans,id'],
@@ -96,26 +96,26 @@ class SubjectManagementController extends Controller
             'jurusan_id.exists' => 'Jurusan yang dipilih tidak valid.',
         ]);
 
-        $subject->update([
+        $mataPelajaran->update([
             'kode_pelajaran' => strtoupper($request->kode_pelajaran),
             'nama_pelajaran' => $request->nama_pelajaran,
             'jurusan_id' => $request->jurusan_id,
             'is_active' => (bool)$request->is_active,
         ]);
 
-        return redirect()->route('admin.manage.subjects.index')
+        return redirect()->route('admin.manage.mata_pelajarans.index')
             ->with('status', 'Mata pelajaran berhasil diperbarui.');
     }
 
-    public function destroy(Subject $subject)
+    public function destroy(MataPelajaran $mataPelajaran)
     {
-        $subject->delete();
+        $mataPelajaran->delete();
 
-        return redirect()->route('admin.manage.subjects.index')
+        return redirect()->route('admin.manage.mata_pelajarans.index')
             ->with('status', 'Mata pelajaran berhasil dihapus.');
     }
 
-    public function assignTeachers(Request $request, Subject $subject)
+    public function assignTeachers(Request $request, MataPelajaran $mataPelajaran)
     {
         $request->validate([
             'guru_ids' => ['nullable', 'array'],
@@ -124,7 +124,7 @@ class SubjectManagementController extends Controller
             'guru_ids.*.exists' => 'Guru yang dipilih tidak valid.',
         ]);
 
-        $subject->gurus()->sync($request->input('guru_ids', []));
+        $mataPelajaran->gurus()->sync($request->input('guru_ids', []));
 
         return redirect()->route('admin.manage.penugasan-guru.index')
             ->with('status', 'Guru pengampu berhasil diperbarui.');
@@ -132,8 +132,8 @@ class SubjectManagementController extends Controller
 
     public function penugasanGuru()
     {
-        $subjects = Subject::with(['jurusan', 'gurus.user'])->latest()->get();
+        $mata_pelajarans = MataPelajaran::with(['jurusan', 'gurus.user'])->latest()->get();
         $gurus = Guru::with('user')->get()->sortBy(fn($g) => $g->user?->name ?? '')->values();
-        return view('admin.manage.subjects.assign_index', compact('subjects', 'gurus'));
+        return view('admin.manage.mata_pelajarans.assign_index', compact('mata_pelajarans', 'gurus'));
     }
 }

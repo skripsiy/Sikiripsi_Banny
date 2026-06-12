@@ -9,8 +9,8 @@
         searchQuery: '',
         editData: {
             id: '{{ old('id') ?? '' }}',
-            subject_id: '{{ old('subject_id') ?? '' }}',
-            tahun_ajaran_id: '{{ old('tahun_ajaran_id') ?? '' }}',
+            mata_pelajaran_id: '{{ old('mata_pelajaran_id') ?? '' }}',
+            tahun_akademik_id: '{{ old('tahun_akademik_id') ?? '' }}',
             title: {{ json_encode(old('title') ?? '') }},
             description: {{ json_encode(old('description') ?? '') }}
         },
@@ -22,7 +22,7 @@
                 <h3 class="text-base font-bold text-gray-800">Daftar Modul Pembelajaran Anda</h3>
                 <p class="text-xs text-gray-400 mt-0.5">Kelola seluruh materi, tugas, kuis, ujian, dan absensi modul Anda.</p>
             </div>
-            @if ($subjects->isNotEmpty())
+            @if ($mata_pelajarans->isNotEmpty())
                 <button @click="showCreateModal = true" 
                         class="bg-[#0c2b4d] hover:bg-[#07192d] text-white px-4 py-2.5 rounded-xl text-xs font-bold transition-all shadow-sm flex items-center gap-1.5 cursor-pointer select-none">
                     <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
@@ -62,7 +62,7 @@
                         </svg>
                         Tahun Ajaran:
                     </span>
-                    <select name="academic_year_id" id="filter_academic_year_id" onchange="this.form.submit()"
+                    <select name="tahun_akademik_id" id="filter_tahun_akademik_id" onchange="this.form.submit()"
                             class="px-4 py-2.5 bg-gray-50 border border-gray-150 rounded-xl text-xs text-gray-700 font-semibold focus:outline-none focus:bg-white focus:border-[#0c2b4d] transition-all shadow-sm cursor-pointer min-w-[150px]">
                         <option value="all" {{ $selectedAcademicYearId == 'all' ? 'selected' : '' }}>Semua Tahun Ajaran</option>
                         @foreach($academicYears as $ay)
@@ -105,16 +105,16 @@
                          x-show="searchQuery === '' || 
                                  {{ json_encode(strtolower($module->title)) }}.includes(searchQuery.toLowerCase()) || 
                                  {{ json_encode(strtolower($module->description)) }}.includes(searchQuery.toLowerCase()) || 
-                                 {{ json_encode(strtolower($module->subject->nama_pelajaran ?? '')) }}.includes(searchQuery.toLowerCase())"
+                                 {{ json_encode(strtolower($module->mataPelajaran->nama_pelajaran ?? '')) }}.includes(searchQuery.toLowerCase())"
                          @click="window.location.href='{{ route('guru.learning-modules.show', $module->id) }}'">
                         
                         <!-- Gradient Banner Header -->
                         <div class="h-28 bg-gradient-to-br {{ $selectedGradient }} p-4 relative flex flex-col justify-between select-none">
                             <div class="flex items-start justify-between w-full">
                                 <!-- Subject Badge -->
-                                @if($module->subject)
+                                @if($module->mataPelajaran)
                                     <span class="inline-flex items-center px-2.5 py-1 rounded-full text-[10px] font-bold bg-white/20 text-white backdrop-blur-sm border border-white/10 uppercase tracking-wider">
-                                        {{ $module->subject->nama_pelajaran }}
+                                        {{ $module->mataPelajaran->nama_pelajaran }}
                                     </span>
                                 @else
                                     <span class="inline-flex items-center px-2.5 py-1 rounded-full text-[10px] font-bold bg-white/10 text-white/80 backdrop-blur-sm border border-white/5 uppercase tracking-wider">
@@ -129,8 +129,8 @@
                                         showEditModal = true;
                                         editData = {
                                             id: '{{ $module->id }}',
-                                            subject_id: '{{ $module->subject_id }}',
-                                            tahun_ajaran_id: '{{ $module->tahun_ajaran_id }}',
+                                            mata_pelajaran_id: '{{ $module->mata_pelajaran_id }}',
+                                            tahun_akademik_id: '{{ $module->tahun_akademik_id }}',
                                             title: {{ json_encode($module->title) }},
                                             description: {{ json_encode($module->description) }}
                                         };
@@ -160,7 +160,7 @@
 
                             <div class="mt-auto">
                                 <span class="text-[10px] font-bold text-white/90 bg-white/20 px-2 py-0.5 rounded-md backdrop-blur-sm tracking-wide">
-                                    {{ $module->tahunAjaran->tahun_ajaran ?? '-' }}
+                                    {{ $module->tahunAkademik->tahun_ajaran ?? '-' }}
                                 </span>
                             </div>
                         </div>
@@ -197,7 +197,7 @@
                             </svg>
                         </div>
                         <h4 class="text-lg font-bold text-gray-800 mb-1">Belum Ada Modul Pembelajaran</h4>
-                        @if ($subjects->isEmpty())
+                        @if ($mata_pelajarans->isEmpty())
                             <p class="text-sm text-gray-400 max-w-sm mb-6">Anda belum ditugaskan ke mata pelajaran apapun. Silakan hubungi Administrator untuk penugasan mata pelajaran.</p>
                         @else
                             <p class="text-sm text-gray-400 max-w-sm mb-6">Mulai tambahkan modul pembelajaran untuk mata pelajaran yang Anda ampu agar murid dapat mengakses materi.</p>
@@ -211,7 +211,7 @@
             </div>
         @endif
 
-        @if ($subjects->isNotEmpty())
+        @if ($mata_pelajarans->isNotEmpty())
             <!-- Create Modal -->
             <div x-show="showCreateModal" class="fixed inset-0 overflow-y-auto px-4 py-6 sm:px-0 z-50 flex items-center justify-center shadow-2xl" style="display: none;">
                 <div x-show="showCreateModal" x-transition:enter="ease-out duration-300" x-transition:enter-start="opacity-0" x-transition:enter-end="opacity-100" x-transition:leave="ease-in duration-200" x-transition:leave-start="opacity-100" x-transition:leave-end="opacity-0" class="fixed inset-0 transform transition-all">

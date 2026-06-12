@@ -99,7 +99,7 @@
                                     <!-- Urutan Input -->
                                     <div class="flex items-center gap-1.5">
                                         <span class="text-[11px] font-semibold text-gray-400 uppercase">Urutan:</span>
-                                        <input type="number" name="soals[{{ $soal->id }}][urutan]" value="{{ $soal->pivot->urutan }}" required min="0"
+                                        <input type="number" name="soals[{{ $soal->id }}][urutan]" value="{{ $soal->pivot->urutan }}" required min="1"
                                                class="w-14 px-2.5 py-1.5 bg-gray-50 border border-gray-200 rounded-lg text-xs font-bold text-gray-700 text-center focus:outline-none focus:bg-white focus:border-[#0c2b4d]">
                                     </div>
 

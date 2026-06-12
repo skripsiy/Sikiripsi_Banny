@@ -122,7 +122,19 @@ class UjianController extends Controller
             'soal_ids.*' => ['exists:bank_soals,id'],
         ]);
 
-        $ujian->soals()->syncWithoutDetaching($request->soal_ids);
+        $maxUrutan = $ujian->soals()->max('ujian_soals.urutan') ?? 0;
+        $currentOrder = max(1, $maxUrutan + 1);
+        $syncData = [];
+        foreach ($request->soal_ids as $soalId) {
+            if (!$ujian->soals()->where('bank_soal_id', $soalId)->exists()) {
+                $syncData[$soalId] = [
+                    'urutan' => $currentOrder++
+                ];
+            }
+        }
+        if (!empty($syncData)) {
+            $ujian->soals()->syncWithoutDetaching($syncData);
+        }
 
         return redirect()->back()->with('status', 'Soal berhasil ditambahkan ke Ujian.');
     }
@@ -148,7 +160,7 @@ class UjianController extends Controller
 
         $request->validate([
             'soals' => ['required', 'array'],
-            'soals.*.urutan' => ['required', 'integer'],
+            'soals.*.urutan' => ['required', 'integer', 'min:1'],
             'soals.*.bobot' => ['required', 'integer', 'min:1'],
         ]);
 

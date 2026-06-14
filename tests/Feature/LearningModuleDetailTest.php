@@ -83,6 +83,25 @@ describe('Learning Module Details and Sub-content', function () {
         ]);
     });
 
+    it('renders materi create for teacher', function () {
+        $response = $this->actingAs($this->guruUser1)
+            ->get(route('guru.learning-modules.materis.create', $this->learningModule->id));
+        $response->assertOk();
+        $response->assertViewIs('guru.learning_modules.materis.create');
+    });
+
+    it('renders materi edit for teacher', function () {
+        $materi = LearningModuleMateri::create([
+            'learning_module_id' => $this->learningModule->id,
+            'title' => 'Materi Edit',
+            'content' => 'Konten Edit',
+        ]);
+        $response = $this->actingAs($this->guruUser1)
+            ->get(route('guru.learning-modules.materis.edit', [$this->learningModule->id, $materi->id]));
+        $response->assertOk();
+        $response->assertViewIs('guru.learning_modules.materis.edit');
+    });
+
     it('allows teacher to add a materi successfully', function () {
         $response = $this->actingAs($this->guruUser1)
             ->post(route('guru.learning-modules.materis.store', $this->learningModule->id), [
@@ -145,6 +164,26 @@ describe('Learning Module Details and Sub-content', function () {
         ]);
     });
 
+    it('renders tugas create for teacher', function () {
+        $response = $this->actingAs($this->guruUser1)
+            ->get(route('guru.learning-modules.tugas.create', $this->learningModule->id));
+        $response->assertOk();
+        $response->assertViewIs('guru.learning_modules.tugas.create');
+    });
+
+    it('renders tugas edit for teacher', function () {
+        $tugas = LearningModuleTugas::create([
+            'learning_module_id' => $this->learningModule->id,
+            'title' => 'Tugas Edit',
+            'instructions' => 'Instruksi Edit',
+            'due_date' => '2026-06-10 23:59:00',
+        ]);
+        $response = $this->actingAs($this->guruUser1)
+            ->get(route('guru.learning-modules.tugas.edit', [$this->learningModule->id, $tugas->id]));
+        $response->assertOk();
+        $response->assertViewIs('guru.learning_modules.tugas.edit');
+    });
+
     it('allows teacher to manage tugas successfully', function () {
         // Test Store
         $response = $this->actingAs($this->guruUser1)
@@ -182,6 +221,27 @@ describe('Learning Module Details and Sub-content', function () {
         $this->assertSoftDeleted('learning_module_tugas', [
             'id' => $tugas->id,
         ]);
+    });
+
+    it('renders quizzes create for teacher', function () {
+        $response = $this->actingAs($this->guruUser1)
+            ->get(route('guru.learning-modules.quizzes.create', $this->learningModule->id));
+        $response->assertOk();
+        $response->assertViewIs('guru.learning_modules.quizzes.create');
+    });
+
+    it('renders quizzes edit for teacher', function () {
+        $quiz = LearningModuleQuiz::create([
+            'learning_module_id' => $this->learningModule->id,
+            'title' => 'Quiz Edit',
+            'instructions' => 'Instruksi Edit',
+            'duration_minutes' => 15,
+            'due_date' => '2026-06-10 23:59:00',
+        ]);
+        $response = $this->actingAs($this->guruUser1)
+            ->get(route('guru.learning-modules.quizzes.edit', [$this->learningModule->id, $quiz->id]));
+        $response->assertOk();
+        $response->assertViewIs('guru.learning_modules.quizzes.edit');
     });
 
     it('allows teacher to manage quizzes successfully', function () {
@@ -224,6 +284,27 @@ describe('Learning Module Details and Sub-content', function () {
         $this->assertSoftDeleted('learning_module_quizzes', [
             'id' => $quiz->id,
         ]);
+    });
+
+    it('renders ujian create for teacher', function () {
+        $response = $this->actingAs($this->guruUser1)
+            ->get(route('guru.learning-modules.ujians.create', $this->learningModule->id));
+        $response->assertOk();
+        $response->assertViewIs('guru.learning_modules.ujians.create');
+    });
+
+    it('renders ujian edit for teacher', function () {
+        $ujian = LearningModuleUjian::create([
+            'learning_module_id' => $this->learningModule->id,
+            'title' => 'Ujian Edit',
+            'instructions' => 'Instruksi Edit',
+            'duration_minutes' => 90,
+            'due_date' => '2026-06-10 23:59:00',
+        ]);
+        $response = $this->actingAs($this->guruUser1)
+            ->get(route('guru.learning-modules.ujians.edit', [$this->learningModule->id, $ujian->id]));
+        $response->assertOk();
+        $response->assertViewIs('guru.learning_modules.ujians.edit');
     });
 
     it('allows teacher to manage ujian successfully', function () {

@@ -19,6 +19,14 @@ class ClassroomManagementController extends Controller
         return view('admin.manage.classrooms.index', compact('classrooms', 'jurusans', 'semesters'));
     }
 
+    public function create()
+    {
+        $jurusans = Jurusan::where('is_active', true)->orderBy('nama_jurusan')->get();
+        $semesters = TahunAkademik::where('is_active', true)->latest()->get();
+
+        return view('admin.manage.classrooms.create', compact('jurusans', 'semesters'));
+    }
+
     public function store(Request $request)
     {
         $request->validate([
@@ -48,6 +56,14 @@ class ClassroomManagementController extends Controller
 
         return redirect()->route('admin.manage.classrooms.index')
             ->with('status', 'Kelas berhasil ditambahkan.');
+    }
+
+    public function edit(Classroom $classroom)
+    {
+        $jurusans = Jurusan::where('is_active', true)->orderBy('nama_jurusan')->get();
+        $semesters = TahunAkademik::where('is_active', true)->latest()->get();
+
+        return view('admin.manage.classrooms.edit', compact('classroom', 'jurusans', 'semesters'));
     }
 
     public function update(Request $request, Classroom $classroom)

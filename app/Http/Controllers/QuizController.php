@@ -24,6 +24,18 @@ class QuizController extends Controller
         return view('guru.learning_modules.quizzes.index', compact('learningModule', 'quizzes'));
     }
 
+    public function create(LearningModule $learningModule)
+    {
+        $guru = auth()->user()->guru;
+        if (!$guru || $learningModule->guru_id !== $guru->id) {
+            abort(403, 'Aksi tidak diizinkan.');
+        }
+
+        $learningModule->load('mataPelajaran');
+
+        return view('guru.learning_modules.quizzes.create', compact('learningModule'));
+    }
+
     public function store(Request $request, LearningModule $learningModule)
     {
         $guru = auth()->user()->guru;
@@ -73,6 +85,18 @@ class QuizController extends Controller
 
         return redirect()->route('guru.learning-modules.quizzes.index', $learningModule->id)
             ->with('status', 'Kuis berhasil diperbarui.');
+    }
+
+    public function edit(LearningModule $learningModule, LearningModuleQuiz $quiz)
+    {
+        $guru = auth()->user()->guru;
+        if (!$guru || $learningModule->guru_id !== $guru->id || $quiz->learning_module_id !== $learningModule->id) {
+            abort(403, 'Aksi tidak diizinkan.');
+        }
+
+        $learningModule->load('mataPelajaran');
+
+        return view('guru.learning_modules.quizzes.edit', compact('learningModule', 'quiz'));
     }
 
     public function destroy(LearningModule $learningModule, LearningModuleQuiz $quiz)

@@ -72,6 +72,26 @@ describe('Learning Module Management', function () {
         $response->assertViewIs('guru.learning_modules.index');
     });
 
+    it('renders the learning module create page for teachers', function () {
+        $response = $this->actingAs($this->guruUser1)->get(route('guru.learning-modules.create'));
+        $response->assertOk();
+        $response->assertViewIs('guru.learning_modules.create');
+    });
+
+    it('renders the learning module edit page for teachers', function () {
+        $module = LearningModule::create([
+            'guru_id' => $this->guru1->id,
+            'mata_pelajaran_id' => $this->mataPelajaran1->id,
+            'tahun_akademik_id' => $this->academicYear->id,
+            'title' => 'Modul Edit',
+            'description' => 'Materi edit.',
+        ]);
+
+        $response = $this->actingAs($this->guruUser1)->get(route('guru.learning-modules.edit', $module->id));
+        $response->assertOk();
+        $response->assertViewIs('guru.learning_modules.edit');
+    });
+
     it('creates a learning module successfully', function () {
         $response = $this->actingAs($this->guruUser1)->post(route('guru.learning-modules.store'), [
             'mata_pelajaran_id' => $this->mataPelajaran1->id,

@@ -55,6 +55,27 @@ class LearningModuleController extends Controller
         return view('guru.learning_modules.index', compact('learningModules', 'mata_pelajarans', 'semesters', 'academicYears', 'selectedAcademicYearId', 'selectedSemester', 'selectedTahunAkademikId'));
     }
 
+    public function create()
+    {
+        $guru = auth()->user()->guru;
+        if (!$guru) {
+            abort(403, 'Profil Guru tidak ditemukan.');
+        }
+
+        $academicYears = TahunAkademik::orderBy('tahun_ajaran', 'desc')->get();
+        $activeAcademicYear = TahunAkademik::where('is_active', true)->first();
+
+        $mata_pelajarans = $guru->mataPelajarans()
+            ->where('is_active', true)
+            ->orderBy('nama_pelajaran')
+            ->get();
+
+        $semesters = $academicYears;
+        $selectedTahunAkademikId = $activeAcademicYear?->id;
+
+        return view('guru.learning_modules.create', compact('mata_pelajarans', 'semesters', 'selectedTahunAkademikId'));
+    }
+
     public function store(Request $request)
     {
         $guru = auth()->user()->guru;
@@ -156,6 +177,25 @@ class LearningModuleController extends Controller
 
         return redirect()->route('guru.learning-modules.index')
             ->with('status', 'Modul pembelajaran berhasil diperbarui.');
+    }
+
+    public function edit(LearningModule $learningModule)
+    {
+        $guru = auth()->user()->guru;
+        if (!$guru || $learningModule->guru_id !== $guru->id) {
+            abort(403, 'Aksi tidak diizinkan.');
+        }
+
+        $academicYears = TahunAkademik::orderBy('tahun_ajaran', 'desc')->get();
+
+        $mata_pelajarans = $guru->mataPelajarans()
+            ->where('is_active', true)
+            ->orderBy('nama_pelajaran')
+            ->get();
+
+        $semesters = $academicYears;
+
+        return view('guru.learning_modules.edit', compact('learningModule', 'mata_pelajarans', 'semesters'));
     }
 
     public function destroy(LearningModule $learningModule)

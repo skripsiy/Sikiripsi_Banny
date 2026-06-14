@@ -43,6 +43,24 @@ describe('Bank Soal CRUD and Validation', function () {
         $response->assertOk();
     });
 
+    it('renders bank soal create for teacher', function () {
+        $response = $this->actingAs($this->guruUser)->get(route('guru.bank-soal.create'));
+        $response->assertOk();
+        $response->assertViewIs('guru.bank_soal.create');
+    });
+
+    it('renders bank soal edit for teacher', function () {
+        $soal = BankSoal::create([
+            'mata_pelajaran_id' => $this->mataPelajaran->id,
+            'guru_id' => $this->guru->id,
+            'tipe' => 'essay',
+            'pertanyaan' => 'Pertanyaan Essay awal',
+        ]);
+        $response = $this->actingAs($this->guruUser)->get(route('guru.bank-soal.edit', $soal->id));
+        $response->assertOk();
+        $response->assertViewIs('guru.bank_soal.edit');
+    });
+
     it('validates and creates a new PG question successfully', function () {
         $response = $this->actingAs($this->guruUser)->post(route('guru.bank-soal.store'), [
             'mata_pelajaran_id' => $this->mataPelajaran->id,

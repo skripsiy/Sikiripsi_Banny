@@ -161,7 +161,7 @@ class MuridLearningModuleController extends Controller
             ->latest()
             ->get();
 
-        return view('murid.learning_modules.materis', compact('learningModule', 'materis'));
+        return view('murid.learning_modules.materis.index', compact('learningModule', 'materis'));
     }
 
     public function tugas(LearningModule $learningModule)
@@ -178,7 +178,7 @@ class MuridLearningModuleController extends Controller
             ->latest()
             ->get();
 
-        return view('murid.learning_modules.tugas', compact('learningModule', 'tugas'));
+        return view('murid.learning_modules.tugas.index', compact('learningModule', 'tugas'));
     }
 
     public function quizzes(LearningModule $learningModule)
@@ -198,7 +198,7 @@ class MuridLearningModuleController extends Controller
             ->get()
             ->keyBy('learning_module_quiz_id');
 
-        return view('murid.learning_modules.quizzes', compact('learningModule', 'quizzes', 'attempts'));
+        return view('murid.learning_modules.quizzes.index', compact('learningModule', 'quizzes', 'attempts'));
     }
 
     public function startQuiz(LearningModule $learningModule, LearningModuleQuiz $quiz)
@@ -403,7 +403,7 @@ class MuridLearningModuleController extends Controller
             ->get()
             ->keyBy('learning_module_ujian_id');
 
-        return view('murid.learning_modules.ujians', compact('learningModule', 'ujians', 'attempts'));
+        return view('murid.learning_modules.ujians.index', compact('learningModule', 'ujians', 'attempts'));
     }
 
     public function startUjian(LearningModule $learningModule, LearningModuleUjian $ujian)
@@ -600,7 +600,7 @@ class MuridLearningModuleController extends Controller
             ->orderBy('date', 'desc')
             ->get();
 
-        return view('murid.learning_modules.absensi', compact('learningModule', 'absensis'));
+        return view('murid.learning_modules.absensi.index', compact('learningModule', 'absensis'));
     }
 
     public function rekapNilai(LearningModule $learningModule)
@@ -618,6 +618,6 @@ class MuridLearningModuleController extends Controller
             ->latest()
             ->get();
 
-        return view('murid.learning_modules.rekap_nilai', compact('learningModule', 'tugas'));
+        return view('murid.learning_modules.rekap_nilai.index', compact('learningModule', 'tugas'));
     }
 }

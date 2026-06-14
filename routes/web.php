@@ -87,10 +87,6 @@ Route::get('/dashboard', function () {
 })->middleware(['auth', 'verified'])->name('dashboard');
 
 Route::middleware('auth')->group(function () {
-    Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
-    Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
-    Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
-
     Route::get('/change-password', [\App\Http\Controllers\ChangePasswordController::class, 'show'])->name('password.change');
     Route::post('/change-password', [\App\Http\Controllers\ChangePasswordController::class, 'update'])->name('password.update');
 });
@@ -117,7 +113,7 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin/manage')->name('admin.m
 
     // Mata Pelajaran
     Route::resource('mata-pelajarans', MataPelajaranManagementController::class)->names('mata_pelajarans');
-    Route::resource('penugasan-guru', PenugasanGuruController::class)->except(['create', 'show', 'edit']);
+    Route::resource('penugasan-guru', PenugasanGuruController::class)->except(['show']);
 
     Route::resource('admins', AdminManagementController::class);
 });
@@ -130,7 +126,7 @@ Route::middleware(['auth', 'role:guru'])->prefix('guru')->name('guru.')->group(f
     Route::post('learning-modules/{learning_module}/tugas/submissions/{submission}/grade', [\App\Http\Controllers\TugasController::class, 'grade'])->name('learning-modules.tugas.grade');
     
     // Bank Soal
-    Route::resource('bank-soal', \App\Http\Controllers\BankSoalController::class)->except(['show', 'create', 'edit']);
+    Route::resource('bank-soal', \App\Http\Controllers\BankSoalController::class)->except(['show']);
 
     // Quiz management
     Route::resource('learning-modules.quizzes', \App\Http\Controllers\QuizController::class)->except(['show']);

@@ -6,17 +6,22 @@
     <div class="max-w-7xl mx-auto font-sans" x-data="{
         showCreateModal: {{ $errors->any() && !old('_method') ? 'true' : 'false' }},
         showEditModal: {{ $errors->any() && old('_method') === 'PUT' ? 'true' : 'false' }},
-        formTipe: 'pg',
+        formTipe: '{{ old('tipe') ?? 'pg' }}',
         editData: {
-            id: '',
-            mata_pelajaran_id: '',
-            tipe: 'pg',
-            pertanyaan: '',
-            pembahasan: '',
-            teks_opsi: { A: '', B: '', C: '', D: '' },
-            correct_option: ''
+            id: '{{ old('id') ?? '' }}',
+            mata_pelajaran_id: '{{ old('mata_pelajaran_id') ?? '' }}',
+            tipe: '{{ old('tipe') ?? 'pg' }}',
+            pertanyaan: {{ json_encode(old('pertanyaan') ?? '') }},
+            pembahasan: {{ json_encode(old('pembahasan') ?? '') }},
+            teks_opsi: {
+                A: {{ json_encode(old('teks_opsi.A') ?? '') }},
+                B: {{ json_encode(old('teks_opsi.B') ?? '') }},
+                C: {{ json_encode(old('teks_opsi.C') ?? '') }},
+                D: {{ json_encode(old('teks_opsi.D') ?? '') }}
+            },
+            correct_option: '{{ old('correct_option') ?? '' }}'
         },
-        editUrl: ''
+        editUrl: '{{ old('id') ? route('guru.bank-soal.update', old('id')) : '' }}'
     }">
 
         <!-- Banner Info -->
@@ -188,84 +193,7 @@
             <div x-show="showCreateModal" x-transition:enter="ease-out duration-300" x-transition:enter-start="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95" x-transition:enter-end="opacity-100 translate-y-0 sm:scale-100" x-transition:leave="ease-in duration-200" x-transition:leave-start="opacity-100 translate-y-0 sm:scale-100" x-transition:leave-end="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95" class="bg-white rounded-2xl overflow-hidden shadow-2xl transform transition-all w-full max-w-xl mx-auto z-10 border border-gray-100">
                 <div class="h-1.5 bg-gradient-to-r from-[#0c2b4d] to-[#1a4a7d]"></div>
                 <div class="p-8 max-h-[85vh] overflow-y-auto">
-                    <h3 class="text-base font-bold text-gray-800 mb-6">Tambah Soal Baru</h3>
-                    
-                    <form action="{{ route('guru.bank-soal.store') }}" method="POST" enctype="multipart/form-data" class="space-y-4">
-                        @csrf
-                        
-                        <!-- Mapel -->
-                        <div>
-                            <label class="block text-xs font-bold text-gray-500 uppercase tracking-wide mb-1.5">Mata Pelajaran</label>
-                            <select name="mata_pelajaran_id" required
-                                    class="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-xs text-gray-700 font-semibold focus:outline-none focus:bg-white focus:border-[#0c2b4d] transition-all">
-                                <option value="" disabled selected>Pilih Mata Pelajaran</option>
-                                @foreach($mata_pelajarans as $sub)
-                                    <option value="{{ $sub->id }}" {{ old('mata_pelajaran_id', $selectedSubjectId) == $sub->id ? 'selected' : '' }}>
-                                        {{ $sub->nama_pelajaran }}
-                                    </option>
-                                @endforeach
-                            </select>
-                        </div>
-
-                        <!-- Tipe -->
-                        <div>
-                            <label class="block text-xs font-bold text-gray-500 uppercase tracking-wide mb-1.5">Tipe Soal</label>
-                            <select name="tipe" x-model="formTipe" required
-                                    class="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-xs text-gray-700 font-semibold focus:outline-none focus:bg-white focus:border-[#0c2b4d] transition-all">
-                                <option value="pg">Pilihan Ganda</option>
-                                <option value="essay">Essay</option>
-                            </select>
-                        </div>
-
-                        <!-- Pertanyaan -->
-                        <div>
-                            <label class="block text-xs font-bold text-gray-500 uppercase tracking-wide mb-1.5">Pertanyaan</label>
-                            <textarea name="pertanyaan" required rows="3" placeholder="Ketik soal disini..."
-                                      class="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-xs text-gray-800 focus:outline-none focus:bg-white focus:border-[#0c2b4d] transition-all placeholder-gray-400">{{ old('pertanyaan') }}</textarea>
-                        </div>
-
-                        <!-- Gambar -->
-                        <div>
-                            <label class="block text-xs font-bold text-gray-500 uppercase tracking-wide mb-1.5">Gambar Pendukung (Opsional)</label>
-                            <input type="file" name="gambar" accept="image/*"
-                                   class="w-full px-4 py-2 bg-gray-50 border border-gray-200 rounded-xl text-xs text-gray-600 focus:outline-none focus:bg-white transition-all">
-                            <p class="text-[10px] text-gray-400 mt-1">Hanya gambar (.jpg, .jpeg, .png), maks 2MB.</p>
-                        </div>
-
-                        <!-- Form PG options -->
-                        <div x-show="formTipe === 'pg'" class="space-y-3 p-4 bg-gray-50/50 rounded-xl border border-gray-100">
-                            <h4 class="text-xs font-bold text-gray-700 mb-1">Opsi Jawaban & Kunci PG</h4>
-                            
-                            @foreach(['A', 'B', 'C', 'D'] as $label)
-                                <div class="flex items-center gap-2">
-                                    <input type="radio" name="correct_option" value="{{ $label }}" required x-bind:required="formTipe === 'pg'"
-                                           class="w-4 h-4 text-[#0c2b4d] focus:ring-[#0c2b4d] border-gray-300">
-                                    <span class="text-xs font-bold text-gray-500 w-4">{{ $label }}.</span>
-                                    <input type="text" name="teks_opsi[{{ $label }}]" placeholder="Isi opsi {{ $label }}" x-bind:required="formTipe === 'pg'"
-                                           class="flex-grow px-3 py-2 bg-white border border-gray-200 rounded-lg text-xs text-gray-800 focus:outline-none focus:border-[#0c2b4d] transition-all">
-                                </div>
-                            @endforeach
-                        </div>
-
-                        <!-- Pembahasan -->
-                        <div>
-                            <label class="block text-xs font-bold text-gray-500 uppercase tracking-wide mb-1.5">Kunci / Pembahasan (Opsional)</label>
-                            <textarea name="pembahasan" rows="2" placeholder="Catatan pembahasan atau kunci..."
-                                      class="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-xs text-gray-800 focus:outline-none focus:bg-white focus:border-[#0c2b4d] transition-all placeholder-gray-400">{{ old('pembahasan') }}</textarea>
-                        </div>
-
-                        <!-- Submit Buttons -->
-                        <div class="flex justify-end gap-3 pt-4 border-t border-gray-100">
-                            <button type="button" @click="showCreateModal = false"
-                                    class="px-4 py-2.5 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-xl text-xs font-bold transition-all cursor-pointer">
-                                Batal
-                            </button>
-                            <button type="submit"
-                                    class="px-4 py-2.5 bg-[#0c2b4d] hover:bg-[#07192d] text-white rounded-xl text-xs font-bold transition-all shadow-sm cursor-pointer">
-                                Simpan Soal
-                            </button>
-                        </div>
-                    </form>
+                    @include('guru.bank_soal.create')
                 </div>
             </div>
         </div>
@@ -278,80 +206,7 @@
             <div x-show="showEditModal" x-transition:enter="ease-out duration-300" x-transition:enter-start="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95" x-transition:enter-end="opacity-100 translate-y-0 sm:scale-100" x-transition:leave="ease-in duration-200" x-transition:leave-start="opacity-100 translate-y-0 sm:scale-100" x-transition:leave-end="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95" class="bg-white rounded-2xl overflow-hidden shadow-2xl transform transition-all w-full max-w-xl mx-auto z-10 border border-gray-100">
                 <div class="h-1.5 bg-gradient-to-r from-[#0c2b4d] to-[#1a4a7d]"></div>
                 <div class="p-8 max-h-[85vh] overflow-y-auto">
-                    <h3 class="text-base font-bold text-gray-800 mb-6">Ubah Soal</h3>
-                    
-                    <form x-bind:action="editUrl" method="POST" enctype="multipart/form-data" class="space-y-4">
-                        @csrf
-                        @method('PUT')
-                        
-                        <!-- Mapel -->
-                        <div>
-                            <label class="block text-xs font-bold text-gray-500 uppercase tracking-wide mb-1.5">Mata Pelajaran</label>
-                            <select name="mata_pelajaran_id" required x-model="editData.mata_pelajaran_id"
-                                    class="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-xs text-gray-700 font-semibold focus:outline-none focus:bg-white focus:border-[#0c2b4d] transition-all">
-                                @foreach($mata_pelajarans as $sub)
-                                    <option value="{{ $sub->id }}">
-                                        {{ $sub->nama_pelajaran }}
-                                    </option>
-                                @endforeach
-                            </select>
-                        </div>
-
-                        <!-- Tipe (Readonly on Edit to prevent schema mismatch) -->
-                        <div>
-                            <label class="block text-xs font-bold text-gray-500 uppercase tracking-wide mb-1.5">Tipe Soal (Tidak Dapat Diubah)</label>
-                            <input type="text" readonly x-bind:value="editData.tipe === 'pg' ? 'Pilihan Ganda' : 'Essay'"
-                                   class="w-full px-4 py-2.5 bg-gray-100 border border-gray-200 rounded-xl text-xs text-gray-500 font-semibold focus:outline-none">
-                        </div>
-
-                        <!-- Pertanyaan -->
-                        <div>
-                            <label class="block text-xs font-bold text-gray-500 uppercase tracking-wide mb-1.5">Pertanyaan</label>
-                            <textarea name="pertanyaan" required rows="3" x-model="editData.pertanyaan"
-                                      class="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-xs text-gray-800 focus:outline-none focus:bg-white focus:border-[#0c2b4d] transition-all"></textarea>
-                        </div>
-
-                        <!-- Gambar -->
-                        <div>
-                            <label class="block text-xs font-bold text-gray-500 uppercase tracking-wide mb-1.5">Ubah Gambar Pendukung (Opsional)</label>
-                            <input type="file" name="gambar" accept="image/*"
-                                   class="w-full px-4 py-2 bg-gray-50 border border-gray-200 rounded-xl text-xs text-gray-600 focus:outline-none focus:bg-white transition-all">
-                        </div>
-
-                        <!-- Form PG options -->
-                        <div x-show="formTipe === 'pg'" class="space-y-3 p-4 bg-gray-50/50 rounded-xl border border-gray-100">
-                            <h4 class="text-xs font-bold text-gray-700 mb-1">Opsi Jawaban & Kunci PG</h4>
-                            
-                            @foreach(['A', 'B', 'C', 'D'] as $label)
-                                <div class="flex items-center gap-2">
-                                    <input type="radio" name="correct_option" value="{{ $label }}" x-bind:required="formTipe === 'pg'" x-model="editData.correct_option"
-                                           class="w-4 h-4 text-[#0c2b4d] focus:ring-[#0c2b4d] border-gray-300">
-                                    <span class="text-xs font-bold text-gray-500 w-4">{{ $label }}.</span>
-                                    <input type="text" name="teks_opsi[{{ $label }}]" x-model="editData.teks_opsi.{{ $label }}" x-bind:required="formTipe === 'pg'"
-                                           class="flex-grow px-3 py-2 bg-white border border-gray-200 rounded-lg text-xs text-gray-800 focus:outline-none focus:border-[#0c2b4d] transition-all">
-                                </div>
-                            @endforeach
-                        </div>
-
-                        <!-- Pembahasan -->
-                        <div>
-                            <label class="block text-xs font-bold text-gray-500 uppercase tracking-wide mb-1.5">Kunci / Pembahasan (Opsional)</label>
-                            <textarea name="pembahasan" rows="2" x-model="editData.pembahasan"
-                                      class="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-xs text-gray-800 focus:outline-none focus:bg-white focus:border-[#0c2b4d] transition-all"></textarea>
-                        </div>
-
-                        <!-- Submit Buttons -->
-                        <div class="flex justify-end gap-3 pt-4 border-t border-gray-100">
-                            <button type="button" @click="showEditModal = false"
-                                    class="px-4 py-2.5 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-xl text-xs font-bold transition-all cursor-pointer">
-                                Batal
-                            </button>
-                            <button type="submit"
-                                    class="px-4 py-2.5 bg-[#0c2b4d] hover:bg-[#07192d] text-white rounded-xl text-xs font-bold transition-all shadow-sm cursor-pointer">
-                                Simpan Perubahan
-                            </button>
-                        </div>
-                    </form>
+                    @include('guru.bank_soal.edit')
                 </div>
             </div>
         </div>

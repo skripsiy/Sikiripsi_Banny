@@ -31,6 +31,19 @@ class BankSoalController extends Controller
         return view('guru.bank_soal.index', compact('mata_pelajarans', 'soals', 'selectedSubjectId'));
     }
 
+    public function create(Request $request)
+    {
+        $guru = auth()->user()->guru;
+        if (!$guru) {
+            abort(403, 'Profil Guru tidak ditemukan.');
+        }
+
+        $mata_pelajarans = $guru->mataPelajarans()->where('is_active', true)->orderBy('nama_pelajaran')->get();
+        $selectedSubjectId = $request->input('mata_pelajaran_id');
+
+        return view('guru.bank_soal.create', compact('mata_pelajarans', 'selectedSubjectId'));
+    }
+
     public function store(Request $request)
     {
         $guru = auth()->user()->guru;
@@ -193,6 +206,19 @@ class BankSoalController extends Controller
 
         return redirect()->route('guru.bank-soal.index', ['mata_pelajaran_id' => $request->mata_pelajaran_id])
             ->with('status', 'Soal berhasil diperbarui.');
+    }
+
+    public function edit(BankSoal $bankSoal)
+    {
+        $guru = auth()->user()->guru;
+        if (!$guru || $bankSoal->guru_id !== $guru->id) {
+            abort(403, 'Aksi tidak diizinkan.');
+        }
+
+        $mata_pelajarans = $guru->mataPelajarans()->where('is_active', true)->orderBy('nama_pelajaran')->get();
+        $bankSoal->load('options');
+
+        return view('guru.bank_soal.edit', compact('bankSoal', 'mata_pelajarans'));
     }
 
     public function destroy(BankSoal $bankSoal)

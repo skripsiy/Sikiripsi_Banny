@@ -25,6 +25,18 @@ class TugasController extends Controller
         return view('guru.learning_modules.tugas.index', compact('learningModule', 'tugas'));
     }
 
+    public function create(LearningModule $learningModule)
+    {
+        $guru = auth()->user()->guru;
+        if (!$guru || $learningModule->guru_id !== $guru->id) {
+            abort(403, 'Aksi tidak diizinkan.');
+        }
+
+        $learningModule->load('mataPelajaran');
+
+        return view('guru.learning_modules.tugas.create', compact('learningModule'));
+    }
+
     public function store(Request $request, LearningModule $learningModule)
     {
         $guru = auth()->user()->guru;
@@ -87,6 +99,18 @@ class TugasController extends Controller
 
         return redirect()->route('guru.learning-modules.tugas.index', $learningModule->id)
             ->with('status', 'Tugas berhasil diperbarui.');
+    }
+
+    public function edit(LearningModule $learningModule, LearningModuleTugas $tuga)
+    {
+        $guru = auth()->user()->guru;
+        if (!$guru || $learningModule->guru_id !== $guru->id || $tuga->learning_module_id !== $learningModule->id) {
+            abort(403, 'Aksi tidak diizinkan.');
+        }
+
+        $learningModule->load('mataPelajaran');
+
+        return view('guru.learning_modules.tugas.edit', compact('learningModule', 'tuga'));
     }
 
     public function destroy(LearningModule $learningModule, LearningModuleTugas $tuga)

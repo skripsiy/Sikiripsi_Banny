@@ -178,7 +178,36 @@ describe('Subject CRUD Management', function () {
     it('renders the assign index page for admins', function () {
         $response = $this->actingAs($this->admin)->get(route('admin.manage.penugasan-guru.index'));
         $response->assertOk();
-        $response->assertViewIs('admin.manage.mata_pelajarans.assign_index');
+        $response->assertViewIs('admin.manage.penugasan_guru.index');
+    });
+
+    it('renders the assign create page for admins', function () {
+        $response = $this->actingAs($this->admin)->get(route('admin.manage.penugasan-guru.create'));
+        $response->assertOk();
+        $response->assertViewIs('admin.manage.penugasan_guru.create');
+    });
+
+    it('renders the assign edit page for admins', function () {
+        $subject = MataPelajaran::create([
+            'kode_pelajaran' => 'MP001',
+            'nama_pelajaran' => 'Matematika',
+            'is_active' => true,
+        ]);
+
+        $guruUser = User::factory()->create(['role' => 'guru']);
+        $guru = Guru::create([
+            'user_id' => $guruUser->id,
+            'nuptk' => '1234567890123456',
+        ]);
+
+        $assignment = GuruMataPelajaran::create([
+            'mata_pelajaran_id' => $subject->id,
+            'guru_id' => $guru->id,
+        ]);
+
+        $response = $this->actingAs($this->admin)->get(route('admin.manage.penugasan-guru.edit', $assignment->id));
+        $response->assertOk();
+        $response->assertViewIs('admin.manage.penugasan_guru.edit');
     });
 
     it('creates a new penugasan-guru successfully', function () {

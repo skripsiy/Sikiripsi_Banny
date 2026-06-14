@@ -114,26 +114,4 @@ class MataPelajaranManagementController extends Controller
         return redirect()->route('admin.manage.mata_pelajarans.index')
             ->with('status', 'Mata pelajaran berhasil dihapus.');
     }
-
-    public function assignTeachers(Request $request, MataPelajaran $mataPelajaran)
-    {
-        $request->validate([
-            'guru_ids' => ['nullable', 'array'],
-            'guru_ids.*' => ['exists:gurus,id'],
-        ], [
-            'guru_ids.*.exists' => 'Guru yang dipilih tidak valid.',
-        ]);
-
-        $mataPelajaran->gurus()->sync($request->input('guru_ids', []));
-
-        return redirect()->route('admin.manage.penugasan-guru.index')
-            ->with('status', 'Guru pengampu berhasil diperbarui.');
-    }
-
-    public function penugasanGuru()
-    {
-        $mata_pelajarans = MataPelajaran::with(['jurusan', 'gurus.user'])->latest()->get();
-        $gurus = Guru::with('user')->get()->sortBy(fn($g) => $g->user?->name ?? '')->values();
-        return view('admin.manage.mata_pelajarans.assign_index', compact('mata_pelajarans', 'gurus'));
-    }
 }

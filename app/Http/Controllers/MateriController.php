@@ -22,6 +22,18 @@ class MateriController extends Controller
         return view('guru.learning_modules.materis.index', compact('learningModule', 'materis'));
     }
 
+    public function create(LearningModule $learningModule)
+    {
+        $guru = auth()->user()->guru;
+        if (!$guru || $learningModule->guru_id !== $guru->id) {
+            abort(403, 'Aksi tidak diizinkan.');
+        }
+
+        $learningModule->load('mataPelajaran');
+
+        return view('guru.learning_modules.materis.create', compact('learningModule'));
+    }
+
     public function store(Request $request, LearningModule $learningModule)
     {
         $guru = auth()->user()->guru;
@@ -80,6 +92,18 @@ class MateriController extends Controller
 
         return redirect()->route('guru.learning-modules.materis.index', $learningModule->id)
             ->with('status', 'Materi berhasil diperbarui.');
+    }
+
+    public function edit(LearningModule $learningModule, LearningModuleMateri $materi)
+    {
+        $guru = auth()->user()->guru;
+        if (!$guru || $learningModule->guru_id !== $guru->id || $materi->learning_module_id !== $learningModule->id) {
+            abort(403, 'Aksi tidak diizinkan.');
+        }
+
+        $learningModule->load('mataPelajaran');
+
+        return view('guru.learning_modules.materis.edit', compact('learningModule', 'materi'));
     }
 
     public function destroy(LearningModule $learningModule, LearningModuleMateri $materi)

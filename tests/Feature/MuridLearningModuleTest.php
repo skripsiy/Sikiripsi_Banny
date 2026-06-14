@@ -213,7 +213,7 @@ describe('Murid Learning Module Access', function () {
         $response = $this->actingAs($this->muridUserRpl)->get(route('murid.learning-modules.absensi.index', $this->moduleRpl->id));
         
         $response->assertOk();
-        $response->assertViewIs('murid.learning_modules.absensi');
+        $response->assertViewIs('murid.learning_modules.absensi.index');
         $response->assertSee('Hadir');
     });
 

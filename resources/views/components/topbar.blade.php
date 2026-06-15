@@ -1,9 +1,9 @@
-<header class="h-16 bg-white border-b border-gray-100 flex items-center justify-end px-6 sticky top-0 z-20">
+<header class="h-16 bg-transparent flex items-center justify-end px-6 sticky top-0 z-20">
     <!-- Right Side: User Dropdown -->
     <div class="flex items-center">
         <x-dropdown align="right" width="48">
             <x-slot name="trigger">
-                <button class="inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md text-gray-500 bg-white hover:text-gray-700 focus:outline-none transition ease-in-out duration-150">
+                <button class="inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md text-gray-500 bg-transparent hover:text-gray-700 focus:outline-none transition ease-in-out duration-150">
                     <div class="text-right mr-2 select-none">
                         <div class="font-semibold text-gray-700 text-sm leading-tight">{{ Auth::user()->name }}</div>
                         <div class="text-xs text-gray-400 font-light mt-0.5 leading-tight">{{ Auth::user()->email }}</div>

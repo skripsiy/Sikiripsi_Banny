@@ -56,9 +56,9 @@ class IzinRequestController extends Controller
     public function create(LearningModule $learningModule)
     {
         $this->authorizeMuridModule($learningModule);
-        $learningModule->load('mataPelajaran');
-
-        return view('murid.learning_modules.izin.create', compact('learningModule'));
+        
+        return redirect()->route('murid.learning-modules.izin.index', $learningModule->id)
+            ->with('open_create_modal', true);
     }
 
     public function store(Request $request, LearningModule $learningModule)

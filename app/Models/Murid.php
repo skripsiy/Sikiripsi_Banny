@@ -7,10 +7,15 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
-#[Fillable(['user_id', 'nisn', 'classroom_id', 'no_telepon_orang_tua'])]
+#[Fillable(['user_id', 'nisn', 'classroom_id', 'no_telepon_orang_tua', 'admin_id'])]
 class Murid extends Model
 {
     use HasFactory, SoftDeletes;
+
+    public function admin()
+    {
+        return $this->belongsTo(Admin::class);
+    }
 
     public function user()
     {

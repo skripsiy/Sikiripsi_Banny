@@ -103,6 +103,7 @@ class MuridManagementController extends Controller
             'nisn' => $request->nisn,
             'classroom_id' => $request->classroom_id,
             'no_telepon_orang_tua' => $request->no_telepon_orang_tua,
+            'admin_id' => auth()->user()->admin?->id,
         ]);
 
         return redirect()->route('admin.manage.murids.index')

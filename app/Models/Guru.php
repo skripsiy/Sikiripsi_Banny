@@ -7,10 +7,15 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
-#[Fillable(['user_id', 'nuptk'])]
+#[Fillable(['user_id', 'nuptk', 'admin_id'])]
 class Guru extends Model
 {
     use HasFactory, SoftDeletes;
+
+    public function admin()
+    {
+        return $this->belongsTo(Admin::class);
+    }
 
     public function user()
     {

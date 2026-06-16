@@ -60,6 +60,7 @@ class MataPelajaranManagementController extends Controller
             'nama_pelajaran' => $request->nama_pelajaran,
             'jurusan_id' => $request->jurusan_id,
             'is_active' => true,
+            'admin_id' => auth()->user()->admin?->id,
         ]);
 
         return redirect()->route('admin.manage.mata_pelajarans.index')

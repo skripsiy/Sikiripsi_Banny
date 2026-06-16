@@ -78,6 +78,7 @@ class SemesterManagementController extends Controller
                 'tahun_ajaran' => $request->tahun_ajaran,
                 'semester' => 'ganjil',
                 'is_active' => true,
+                'admin_id' => auth()->user()->admin?->id,
             ]);
         }
 
@@ -94,6 +95,7 @@ class SemesterManagementController extends Controller
                 'tahun_ajaran' => $request->tahun_ajaran,
                 'semester' => 'genap',
                 'is_active' => true,
+                'admin_id' => auth()->user()->admin?->id,
             ]);
         }
 

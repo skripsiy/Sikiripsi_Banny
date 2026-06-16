@@ -47,6 +47,7 @@ class PenugasanGuruController extends Controller
         GuruMataPelajaran::create([
             'mata_pelajaran_id' => $request->mata_pelajaran_id,
             'guru_id' => $request->guru_id,
+            'admin_id' => auth()->user()->admin?->id,
         ]);
 
         return redirect()->route('admin.manage.penugasan-guru.index')

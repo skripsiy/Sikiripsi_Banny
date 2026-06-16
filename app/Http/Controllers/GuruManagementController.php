@@ -94,6 +94,7 @@ class GuruManagementController extends Controller
         Guru::create([
             'user_id' => $user->id,
             'nuptk' => $request->nuptk,
+            'admin_id' => auth()->user()->admin?->id,
         ]);
 
         return redirect()->route('admin.manage.gurus.index')

@@ -38,6 +38,7 @@ class MuridsImport implements ToCollection, WithHeadingRow, WithValidation
                     'nisn'         => $row['nisn'],
                     'classroom_id' => $classroom->id,
                     'no_telepon_orang_tua' => $row['no_telepon_orang_tua'] ?? null,
+                    'admin_id'     => auth()->user()?->admin?->id,
                 ]);
             }
         });

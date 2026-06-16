@@ -7,10 +7,15 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
-#[Fillable(['tahun_akademik_id', 'tahun_ajaran', 'semester', 'is_active'])]
+#[Fillable(['tahun_akademik_id', 'tahun_ajaran', 'semester', 'is_active', 'admin_id'])]
 class Semester extends Model
 {
     use HasFactory, SoftDeletes;
+
+    public function admin()
+    {
+        return $this->belongsTo(Admin::class);
+    }
 
     protected $table = 'semesters';
 

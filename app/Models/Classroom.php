@@ -7,10 +7,15 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
-#[Fillable(['nama_kelas', 'jurusan_id', 'tahun_akademik_id', 'is_active'])]
+#[Fillable(['nama_kelas', 'jurusan_id', 'tahun_akademik_id', 'is_active', 'admin_id'])]
 class Classroom extends Model
 {
     use HasFactory, SoftDeletes;
+
+    public function admin()
+    {
+        return $this->belongsTo(Admin::class);
+    }
 
     protected $casts = [
         'is_active' => 'boolean',

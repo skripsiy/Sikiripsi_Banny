@@ -52,6 +52,7 @@ class ClassroomManagementController extends Controller
             'jurusan_id' => $request->jurusan_id,
             'tahun_akademik_id' => $request->tahun_akademik_id,
             'is_active' => true,
+            'admin_id' => auth()->user()->admin?->id,
         ]);
 
         return redirect()->route('admin.manage.classrooms.index')

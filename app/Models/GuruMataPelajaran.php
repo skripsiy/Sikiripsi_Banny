@@ -6,10 +6,15 @@ use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-#[Fillable(['mata_pelajaran_id', 'guru_id'])]
+#[Fillable(['mata_pelajaran_id', 'guru_id', 'admin_id'])]
 class GuruMataPelajaran extends Model
 {
     use HasFactory;
+
+    public function admin()
+    {
+        return $this->belongsTo(Admin::class);
+    }
 
     protected $table = 'guru_mata_pelajaran';
 

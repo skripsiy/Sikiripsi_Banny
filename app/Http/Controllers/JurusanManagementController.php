@@ -42,6 +42,7 @@ class JurusanManagementController extends Controller
             'nama_jurusan' => $request->nama_jurusan,
             'deskripsi' => $request->deskripsi,
             'is_active' => true,
+            'admin_id' => auth()->user()->admin?->id,
         ]);
 
         return redirect()->route('admin.manage.jurusans.index')

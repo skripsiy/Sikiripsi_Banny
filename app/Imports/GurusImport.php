@@ -28,6 +28,7 @@ class GurusImport implements ToCollection, WithHeadingRow, WithValidation
                 Guru::create([
                     'user_id'           => $user->id,
                     'nuptk'             => $row['nuptk'],
+                    'admin_id'          => auth()->user()?->admin?->id,
                 ]);
             }
         });

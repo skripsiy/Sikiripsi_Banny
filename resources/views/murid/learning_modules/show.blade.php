@@ -42,7 +42,7 @@
             </div>
             <div class="flex items-center gap-2">
                 <!-- Absensi Saya Button -->
-                <a href="{{ route('murid.learning-modules.absensi.index', $learningModule->id) }}"
+                <a href="{{ route('murid.learning-modules.absensi.index', [$learningModule->id, 'semester_id' => $selectedSemester?->id]) }}"
                    class="inline-flex items-center gap-1.5 font-bold px-4 py-2.5 rounded-xl text-xs bg-white/10 hover:bg-white/20 text-white transition-all border border-white/10 select-none cursor-pointer">
                     <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"></path>
@@ -50,7 +50,7 @@
                     Absensi Saya
                 </a>
                 <!-- Rekap Nilai Saya Button -->
-                <a href="{{ route('murid.learning-modules.rekap-nilai', $learningModule->id) }}"
+                <a href="{{ route('murid.learning-modules.rekap-nilai', [$learningModule->id, 'semester_id' => $selectedSemester?->id]) }}"
                    class="inline-flex items-center gap-1.5 font-bold px-4 py-2.5 rounded-xl text-xs bg-emerald-650 hover:bg-emerald-700 text-white transition-all border border-emerald-600 select-none cursor-pointer">
                     <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2"></path>
@@ -60,10 +60,25 @@
             </div>
         </div>
 
+        <!-- Semester Selection Tabs -->
+        @if($semesters->isNotEmpty())
+            <div class="mb-6 bg-white border border-gray-150 p-1.5 rounded-2xl flex flex-wrap gap-1 shadow-sm">
+                @foreach($semesters as $sem)
+                    <a href="{{ route('murid.learning-modules.show', [$learningModule->id, 'semester_id' => $sem->id]) }}"
+                       class="px-4 py-2 rounded-xl text-xs font-bold transition-all select-none cursor-pointer flex items-center gap-2 {{ $selectedSemester?->id === $sem->id ? 'bg-[#0c2b4d] text-white shadow-sm' : 'text-gray-600 hover:bg-gray-50' }}">
+                        <span>Semester {{ ucfirst($sem->semester) }}</span>
+                        @if($sem->is_active)
+                            <span class="w-1.5 h-1.5 rounded-full bg-green-400 animate-pulse"></span>
+                        @endif
+                    </a>
+                @endforeach
+            </div>
+        @endif
+
         <!-- Statistics / Overview Cards Grid -->
         <div class="grid grid-cols-2 md:grid-cols-6 gap-4 mb-6">
             <!-- Absensi Saya Card -->
-            <a href="{{ route('murid.learning-modules.absensi.index', $learningModule->id) }}"
+            <a href="{{ route('murid.learning-modules.absensi.index', [$learningModule->id, 'semester_id' => $selectedSemester?->id]) }}"
                class="group/card bg-white border border-gray-100 hover:border-blue-200 hover:shadow-md rounded-2xl p-4 transition-all duration-200 cursor-pointer select-none">
                 <div class="flex items-center gap-3">
                     <div class="w-10 h-10 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center flex-shrink-0">
@@ -82,7 +97,7 @@
             </a>
 
             <!-- Rekap Nilai Card -->
-            <a href="{{ route('murid.learning-modules.rekap-nilai', $learningModule->id) }}"
+            <a href="{{ route('murid.learning-modules.rekap-nilai', [$learningModule->id, 'semester_id' => $selectedSemester?->id]) }}"
                class="group/card bg-white border border-gray-100 hover:border-emerald-200 hover:shadow-md rounded-2xl p-4 transition-all duration-200 cursor-pointer select-none">
                 <div class="flex items-center gap-3">
                     <div class="w-10 h-10 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center flex-shrink-0">
@@ -101,7 +116,7 @@
             </a>
 
             <!-- Materi Card -->
-            <a href="{{ route('murid.learning-modules.materis.index', $learningModule->id) }}"
+            <a href="{{ route('murid.learning-modules.materis.index', [$learningModule->id, 'semester_id' => $selectedSemester?->id]) }}"
                class="group/card bg-white border border-gray-100 hover:border-indigo-200 hover:shadow-md rounded-2xl p-4 transition-all duration-200 cursor-pointer select-none">
                 <div class="flex items-center gap-3">
                     <div class="w-10 h-10 rounded-xl bg-indigo-50 text-indigo-600 flex items-center justify-center flex-shrink-0">
@@ -120,7 +135,7 @@
             </a>
 
             <!-- Tugas Card -->
-            <a href="{{ route('murid.learning-modules.tugas.index', $learningModule->id) }}"
+            <a href="{{ route('murid.learning-modules.tugas.index', [$learningModule->id, 'semester_id' => $selectedSemester?->id]) }}"
                class="group/card bg-white border border-gray-100 hover:border-rose-200 hover:shadow-md rounded-2xl p-4 transition-all duration-200 cursor-pointer select-none">
                 <div class="flex items-center gap-3">
                     <div class="w-10 h-10 rounded-xl bg-rose-50 text-rose-600 flex items-center justify-center flex-shrink-0">
@@ -139,7 +154,7 @@
             </a>
 
             <!-- Kuis Card -->
-            <a href="{{ route('murid.learning-modules.quizzes.index', $learningModule->id) }}"
+            <a href="{{ route('murid.learning-modules.quizzes.index', [$learningModule->id, 'semester_id' => $selectedSemester?->id]) }}"
                class="group/card bg-white border border-gray-100 hover:border-amber-200 hover:shadow-md rounded-2xl p-4 transition-all duration-200 cursor-pointer select-none">
                 <div class="flex items-center gap-3">
                     <div class="w-10 h-10 rounded-xl bg-amber-50 text-amber-600 flex items-center justify-center flex-shrink-0">
@@ -158,7 +173,7 @@
             </a>
 
             <!-- Ujian Card -->
-            <a href="{{ route('murid.learning-modules.ujians.index', $learningModule->id) }}"
+            <a href="{{ route('murid.learning-modules.ujians.index', [$learningModule->id, 'semester_id' => $selectedSemester?->id]) }}"
                class="group/card bg-white border border-gray-100 hover:border-purple-200 hover:shadow-md rounded-2xl p-4 transition-all duration-200 cursor-pointer select-none">
                 <div class="flex items-center gap-3">
                     <div class="w-10 h-10 rounded-xl bg-purple-50 text-purple-600 flex items-center justify-center flex-shrink-0">

@@ -11,141 +11,88 @@ class SemesterManagementController extends Controller
 {
     public function index()
     {
-        $semesters = Semester::latest()->get();
-        return view('admin.manage.semesters.index', compact('semesters'));
+        $semesters = Semester::with('tahunAkademik')->latest()->get();
+        $academicYears = TahunAkademik::orderBy('tahun_ajaran', 'desc')->get();
+        return view('admin.manage.semesters.index', compact('semesters', 'academicYears'));
     }
 
     public function create()
     {
-        return view('admin.manage.semesters.create');
+        $academicYears = TahunAkademik::orderBy('tahun_ajaran', 'desc')->get();
+        return view('admin.manage.semesters.create', compact('academicYears'));
     }
 
     public function store(Request $request)
     {
         $request->validate([
-            'tahun_ajaran' => [
-                'required',
-                'string',
-                'size:9',
-                'regex:/^\d{4}\/\d{4}$/',
-                function ($attribute, $value, $fail) {
-                    $parts = explode('/', $value);
-                    if (count($parts) === 2) {
-                        $year1 = (int) $parts[0];
-                        $year2 = (int) $parts[1];
-                        if ($year2 !== $year1 + 1) {
-                            $fail('Format tahun ajaran tidak valid. Tahun kedua harus tepat 1 tahun setelah tahun pertama (misal: 2025/2026).');
-                        }
-                    }
-                },
-                Rule::unique('tahun_akademiks')->whereNull('deleted_at'),
+            'tahun_akademik_id' => ['required', 'exists:tahun_akademiks,id'],
+            'semester' => [
+                'required', 
+                'string', 
+                Rule::in(['ganjil', 'genap']),
+                Rule::unique('semesters')
+                    ->where('tahun_akademik_id', $request->tahun_akademik_id)
+                    ->whereNull('deleted_at')
             ],
-            'semester' => ['required', 'string', Rule::in(['ganjil', 'genap'])],
+            'start_date' => ['required', 'date'],
+            'end_date' => ['required', 'date', 'after_or_equal:start_date'],
             'is_active' => ['required', 'boolean'],
         ], [
-            'tahun_ajaran.regex' => 'Format tahun ajaran harus YYYY/YYYY (contoh: 2025/2026).',
-            'tahun_ajaran.size' => 'Tahun ajaran harus tepat 9 karakter.',
-            'tahun_ajaran.unique' => 'Tahun Ajaran ini sudah terdaftar.',
+            'semester.unique' => 'Semester ini sudah terdaftar pada tahun akademik yang dipilih.',
+            'end_date.after_or_equal' => 'Tanggal selesai tidak boleh mendahului tanggal mulai.',
         ]);
 
-        $ay = TahunAkademik::withTrashed()
-            ->where('tahun_ajaran', $request->tahun_ajaran)
-            ->first();
+        $ay = TahunAkademik::findOrFail($request->tahun_akademik_id);
 
-        if ($ay) {
-            if ($ay->trashed()) {
-                $ay->restore();
-            }
-            $ay->update(['is_active' => true]);
-            $ay->semesters()->withTrashed()->restore();
-        } else {
-            $ay = TahunAkademik::create([
-                'tahun_ajaran' => $request->tahun_ajaran,
-                'is_active' => true,
-            ]);
-        }
-
-        // Now find or create ganjil semester
-        $ganjil = $ay->semesters()->where('semester', 'ganjil')->first();
-        if ($ganjil) {
-            $ganjil->update([
-                'tahun_ajaran' => $request->tahun_ajaran,
-                'is_active' => true,
-            ]);
-        } else {
-            Semester::create([
-                'tahun_akademik_id' => $ay->id,
-                'tahun_ajaran' => $request->tahun_ajaran,
-                'semester' => 'ganjil',
-                'is_active' => true,
-                'admin_id' => auth()->user()->admin?->id,
-            ]);
-        }
-
-        // Now find or create genap semester
-        $genap = $ay->semesters()->where('semester', 'genap')->first();
-        if ($genap) {
-            $genap->update([
-                'tahun_ajaran' => $request->tahun_ajaran,
-                'is_active' => true,
-            ]);
-        } else {
-            Semester::create([
-                'tahun_akademik_id' => $ay->id,
-                'tahun_ajaran' => $request->tahun_ajaran,
-                'semester' => 'genap',
-                'is_active' => true,
-                'admin_id' => auth()->user()->admin?->id,
-            ]);
-        }
+        Semester::create([
+            'tahun_akademik_id' => $ay->id,
+            'tahun_ajaran' => $ay->tahun_ajaran,
+            'semester' => $request->semester,
+            'start_date' => $request->start_date,
+            'end_date' => $request->end_date,
+            'is_active' => (bool)$request->is_active,
+            'admin_id' => auth()->user()->admin?->id,
+        ]);
 
         return redirect()->route('admin.manage.semesters.index')
-            ->with('status', 'Semester berhasil ditambahkan beserta semester Ganjil & Genap.');
+            ->with('status', 'Semester berhasil ditambahkan.');
     }
 
     public function edit(Semester $semester)
     {
-        return view('admin.manage.semesters.edit', compact('semester'));
+        $academicYears = TahunAkademik::orderBy('tahun_ajaran', 'desc')->get();
+        return view('admin.manage.semesters.edit', compact('semester', 'academicYears'));
     }
 
     public function update(Request $request, Semester $semester)
     {
         $request->validate([
-            'tahun_ajaran' => [
-                'required',
-                'string',
-                'size:9',
-                'regex:/^\d{4}\/\d{4}$/',
-                function ($attribute, $value, $fail) {
-                    $parts = explode('/', $value);
-                    if (count($parts) === 2) {
-                        $year1 = (int) $parts[0];
-                        $year2 = (int) $parts[1];
-                        if ($year2 !== $year1 + 1) {
-                            $fail('Format tahun ajaran tidak valid. Tahun kedua harus tepat 1 tahun setelah tahun pertama (misal: 2025/2026).');
-                        }
-                    }
-                },
-                Rule::unique('tahun_akademiks')->whereNull('deleted_at')->ignore($semester->tahun_akademik_id),
+            'tahun_akademik_id' => ['required', 'exists:tahun_akademiks,id'],
+            'semester' => [
+                'required', 
+                'string', 
+                Rule::in(['ganjil', 'genap']),
+                Rule::unique('semesters')
+                    ->where('tahun_akademik_id', $request->tahun_akademik_id)
+                    ->whereNull('deleted_at')
+                    ->ignore($semester->id)
             ],
-            'semester' => ['required', 'string', Rule::in(['ganjil', 'genap'])],
+            'start_date' => ['required', 'date'],
+            'end_date' => ['required', 'date', 'after_or_equal:start_date'],
             'is_active' => ['required', 'boolean'],
         ], [
-            'tahun_ajaran.regex' => 'Format tahun ajaran harus YYYY/YYYY (contoh: 2025/2026).',
-            'tahun_ajaran.size' => 'Tahun ajaran harus tepat 9 karakter.',
-            'tahun_ajaran.unique' => 'Tahun Ajaran ini sudah terdaftar.',
+            'semester.unique' => 'Semester ini sudah terdaftar pada tahun akademik yang dipilih.',
+            'end_date.after_or_equal' => 'Tanggal selesai tidak boleh mendahului tanggal mulai.',
         ]);
 
-        $ay = $semester->tahunAkademik;
-        if ($ay) {
-            $ay->update([
-                'tahun_ajaran' => $request->tahun_ajaran,
-            ]);
-            $ay->semesters()->update(['tahun_ajaran' => $request->tahun_ajaran]);
-        }
+        $ay = TahunAkademik::findOrFail($request->tahun_akademik_id);
 
         $semester->update([
+            'tahun_akademik_id' => $ay->id,
+            'tahun_ajaran' => $ay->tahun_ajaran,
             'semester' => $request->semester,
+            'start_date' => $request->start_date,
+            'end_date' => $request->end_date,
             'is_active' => (bool)$request->is_active,
         ]);
 
@@ -155,12 +102,7 @@ class SemesterManagementController extends Controller
 
     public function destroy(Semester $semester)
     {
-        $ay = $semester->tahunAkademik;
         $semester->delete();
-
-        if ($ay && $ay->semesters()->count() === 0) {
-            $ay->delete();
-        }
 
         return redirect()->route('admin.manage.semesters.index')
             ->with('status', 'Semester berhasil dihapus.');

@@ -7,11 +7,12 @@ use App\Models\LearningModuleQuiz;
 use App\Models\BankSoal;
 use App\Models\QuizAttempt;
 use App\Models\QuizAnswer;
+use App\Models\Semester;
 use Illuminate\Http\Request;
 
 class QuizController extends Controller
 {
-    public function index(LearningModule $learningModule)
+    public function index(Request $request, LearningModule $learningModule)
     {
         $guru = auth()->user()->guru;
         if (!$guru || $learningModule->guru_id !== $guru->id) {
@@ -19,12 +20,26 @@ class QuizController extends Controller
         }
 
         $learningModule->load('mataPelajaran');
-        $quizzes = LearningModuleQuiz::where('learning_module_id', $learningModule->id)->latest()->get();
 
-        return view('guru.learning_modules.quizzes.index', compact('learningModule', 'quizzes'));
+        $selectedSemesterId = $request->query('semester_id');
+        if (!$selectedSemesterId) {
+            $selectedSemesterId = Semester::where('tahun_akademik_id', $learningModule->tahun_akademik_id)
+                ->where('is_active', true)
+                ->value('id')
+                ?? Semester::where('tahun_akademik_id', $learningModule->tahun_akademik_id)->value('id');
+        }
+
+        $quizzes = LearningModuleQuiz::where('learning_module_id', $learningModule->id)
+            ->where('semester_id', $selectedSemesterId)
+            ->latest()
+            ->get();
+
+        $semesters = Semester::where('tahun_akademik_id', $learningModule->tahun_akademik_id)->get();
+
+        return view('guru.learning_modules.quizzes.index', compact('learningModule', 'quizzes', 'selectedSemesterId', 'semesters'));
     }
 
-    public function create(LearningModule $learningModule)
+    public function create(Request $request, LearningModule $learningModule)
     {
         $guru = auth()->user()->guru;
         if (!$guru || $learningModule->guru_id !== $guru->id) {
@@ -32,8 +47,9 @@ class QuizController extends Controller
         }
 
         $learningModule->load('mataPelajaran');
+        $selectedSemesterId = $request->query('semester_id');
 
-        return view('guru.learning_modules.quizzes.create', compact('learningModule'));
+        return view('guru.learning_modules.quizzes.create', compact('learningModule', 'selectedSemesterId'));
     }
 
     public function store(Request $request, LearningModule $learningModule)
@@ -44,6 +60,7 @@ class QuizController extends Controller
         }
 
         $request->validate([
+            'semester_id' => ['required', 'exists:semesters,id'],
             'title' => ['required', 'string', 'max:255'],
             'instructions' => ['required', 'string'],
             'duration_minutes' => ['required', 'integer', 'min:1'],
@@ -52,13 +69,14 @@ class QuizController extends Controller
 
         LearningModuleQuiz::create([
             'learning_module_id' => $learningModule->id,
+            'semester_id' => $request->semester_id,
             'title' => $request->title,
             'instructions' => $request->instructions,
             'duration_minutes' => $request->duration_minutes,
             'due_date' => $request->due_date,
         ]);
 
-        return redirect()->route('guru.learning-modules.quizzes.index', $learningModule->id)
+        return redirect()->route('guru.learning-modules.show', [$learningModule->id, 'semester_id' => $request->semester_id])
             ->with('status', 'Kuis berhasil ditambahkan.');
     }
 
@@ -70,6 +88,7 @@ class QuizController extends Controller
         }
 
         $request->validate([
+            'semester_id' => ['required', 'exists:semesters,id'],
             'title' => ['required', 'string', 'max:255'],
             'instructions' => ['required', 'string'],
             'duration_minutes' => ['required', 'integer', 'min:1'],
@@ -77,13 +96,14 @@ class QuizController extends Controller
         ]);
 
         $quiz->update([
+            'semester_id' => $request->semester_id,
             'title' => $request->title,
             'instructions' => $request->instructions,
             'duration_minutes' => $request->duration_minutes,
             'due_date' => $request->due_date,
         ]);
 
-        return redirect()->route('guru.learning-modules.quizzes.index', $learningModule->id)
+        return redirect()->route('guru.learning-modules.show', [$learningModule->id, 'semester_id' => $request->semester_id])
             ->with('status', 'Kuis berhasil diperbarui.');
     }
 
@@ -95,20 +115,22 @@ class QuizController extends Controller
         }
 
         $learningModule->load('mataPelajaran');
+        $selectedSemesterId = $quiz->semester_id;
 
-        return view('guru.learning_modules.quizzes.edit', compact('learningModule', 'quiz'));
+        return view('guru.learning_modules.quizzes.edit', compact('learningModule', 'quiz', 'selectedSemesterId'));
     }
 
-    public function destroy(LearningModule $learningModule, LearningModuleQuiz $quiz)
+    public function destroy(Request $request, LearningModule $learningModule, LearningModuleQuiz $quiz)
     {
         $guru = auth()->user()->guru;
         if (!$guru || $learningModule->guru_id !== $guru->id || $quiz->learning_module_id !== $learningModule->id) {
             abort(403, 'Aksi tidak diizinkan.');
         }
 
+        $semesterId = $quiz->semester_id;
         $quiz->delete();
 
-        return redirect()->route('guru.learning-modules.quizzes.index', $learningModule->id)
+        return redirect()->route('guru.learning-modules.show', [$learningModule->id, 'semester_id' => $semesterId])
             ->with('status', 'Kuis berhasil dihapus.');
     }
 

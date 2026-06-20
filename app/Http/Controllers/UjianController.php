@@ -7,11 +7,12 @@ use App\Models\LearningModuleUjian;
 use App\Models\BankSoal;
 use App\Models\UjianAttempt;
 use App\Models\UjianAnswer;
+use App\Models\Semester;
 use Illuminate\Http\Request;
 
 class UjianController extends Controller
 {
-    public function index(LearningModule $learningModule)
+    public function index(Request $request, LearningModule $learningModule)
     {
         $guru = auth()->user()->guru;
         if (!$guru || $learningModule->guru_id !== $guru->id) {
@@ -19,12 +20,26 @@ class UjianController extends Controller
         }
 
         $learningModule->load('mataPelajaran');
-        $ujians = LearningModuleUjian::where('learning_module_id', $learningModule->id)->latest()->get();
 
-        return view('guru.learning_modules.ujians.index', compact('learningModule', 'ujians'));
+        $selectedSemesterId = $request->query('semester_id');
+        if (!$selectedSemesterId) {
+            $selectedSemesterId = Semester::where('tahun_akademik_id', $learningModule->tahun_akademik_id)
+                ->where('is_active', true)
+                ->value('id')
+                ?? Semester::where('tahun_akademik_id', $learningModule->tahun_akademik_id)->value('id');
+        }
+
+        $ujians = LearningModuleUjian::where('learning_module_id', $learningModule->id)
+            ->where('semester_id', $selectedSemesterId)
+            ->latest()
+            ->get();
+
+        $semesters = Semester::where('tahun_akademik_id', $learningModule->tahun_akademik_id)->get();
+
+        return view('guru.learning_modules.ujians.index', compact('learningModule', 'ujians', 'selectedSemesterId', 'semesters'));
     }
 
-    public function create(LearningModule $learningModule)
+    public function create(Request $request, LearningModule $learningModule)
     {
         $guru = auth()->user()->guru;
         if (!$guru || $learningModule->guru_id !== $guru->id) {
@@ -32,8 +47,9 @@ class UjianController extends Controller
         }
 
         $learningModule->load('mataPelajaran');
+        $selectedSemesterId = $request->query('semester_id');
 
-        return view('guru.learning_modules.ujians.create', compact('learningModule'));
+        return view('guru.learning_modules.ujians.create', compact('learningModule', 'selectedSemesterId'));
     }
 
     public function store(Request $request, LearningModule $learningModule)
@@ -44,6 +60,7 @@ class UjianController extends Controller
         }
 
         $request->validate([
+            'semester_id' => ['required', 'exists:semesters,id'],
             'title' => ['required', 'string', 'max:255'],
             'instructions' => ['required', 'string'],
             'duration_minutes' => ['required', 'integer', 'min:1'],
@@ -52,13 +69,14 @@ class UjianController extends Controller
 
         LearningModuleUjian::create([
             'learning_module_id' => $learningModule->id,
+            'semester_id' => $request->semester_id,
             'title' => $request->title,
             'instructions' => $request->instructions,
             'duration_minutes' => $request->duration_minutes,
             'due_date' => $request->due_date,
         ]);
 
-        return redirect()->route('guru.learning-modules.ujians.index', $learningModule->id)
+        return redirect()->route('guru.learning-modules.show', [$learningModule->id, 'semester_id' => $request->semester_id])
             ->with('status', 'Ujian berhasil ditambahkan.');
     }
 
@@ -70,6 +88,7 @@ class UjianController extends Controller
         }
 
         $request->validate([
+            'semester_id' => ['required', 'exists:semesters,id'],
             'title' => ['required', 'string', 'max:255'],
             'instructions' => ['required', 'string'],
             'duration_minutes' => ['required', 'integer', 'min:1'],
@@ -77,13 +96,14 @@ class UjianController extends Controller
         ]);
 
         $ujian->update([
+            'semester_id' => $request->semester_id,
             'title' => $request->title,
             'instructions' => $request->instructions,
             'duration_minutes' => $request->duration_minutes,
             'due_date' => $request->due_date,
         ]);
 
-        return redirect()->route('guru.learning-modules.ujians.index', $learningModule->id)
+        return redirect()->route('guru.learning-modules.show', [$learningModule->id, 'semester_id' => $request->semester_id])
             ->with('status', 'Ujian berhasil diperbarui.');
     }
 
@@ -95,20 +115,22 @@ class UjianController extends Controller
         }
 
         $learningModule->load('mataPelajaran');
+        $selectedSemesterId = $ujian->semester_id;
 
-        return view('guru.learning_modules.ujians.edit', compact('learningModule', 'ujian'));
+        return view('guru.learning_modules.ujians.edit', compact('learningModule', 'ujian', 'selectedSemesterId'));
     }
 
-    public function destroy(LearningModule $learningModule, LearningModuleUjian $ujian)
+    public function destroy(Request $request, LearningModule $learningModule, LearningModuleUjian $ujian)
     {
         $guru = auth()->user()->guru;
         if (!$guru || $learningModule->guru_id !== $guru->id || $ujian->learning_module_id !== $learningModule->id) {
             abort(403, 'Aksi tidak diizinkan.');
         }
 
+        $semesterId = $ujian->semester_id;
         $ujian->delete();
 
-        return redirect()->route('guru.learning-modules.ujians.index', $learningModule->id)
+        return redirect()->route('guru.learning-modules.show', [$learningModule->id, 'semester_id' => $semesterId])
             ->with('status', 'Ujian berhasil dihapus.');
     }
 

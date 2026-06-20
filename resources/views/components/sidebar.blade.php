@@ -4,8 +4,13 @@
                 if ({{ request()->routeIs('admin.manage.admins.*') || request()->routeIs('admin.manage.gurus.*') || request()->routeIs('admin.manage.murids.*') ? 'true' : 'false' }}) {
                     this.kelolaOpen = true;
                 }
+                // Keep Tahun & Semester submenu open if active
+                if ({{ request()->routeIs('admin.manage.semesters.*') || request()->routeIs('admin.manage.tahun_akademiks.*') ? 'true' : 'false' }}) {
+                    this.akademikOpen = true;
+                }
             },
-            kelolaOpen: false
+            kelolaOpen: false,
+            akademikOpen: false
        }"
        @click.outside="sidebarOpen = false"
        :class="sidebarOpen ? 'w-64' : 'w-20'" 
@@ -109,15 +114,44 @@
                     </div>
                 </div>
 
-                <!-- 2. Tahun Ajaran -->
-                <a href="{{ route('admin.manage.semesters.index') }}" 
-                   class="flex items-center rounded-xl text-sm font-semibold transition-all duration-300 {{ request()->routeIs('admin.manage.semesters.*') ? 'bg-[#0c2b4d] text-white shadow-inner font-bold' : 'text-white/80 hover:bg-white/10 hover:text-white' }}"
-                   :class="sidebarOpen ? 'px-4 py-3 justify-start gap-3' : 'px-0 py-3 justify-center gap-0 w-12 mx-auto'">
-                    <svg class="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
-                    </svg>
-                    <span x-show="sidebarOpen" class="whitespace-nowrap">Tahun Ajaran</span>
-                </a>
+                <!-- 2. Tahun & Semester Dropdown Group -->
+                <div class="flex flex-col">
+                    <button @click="if (!sidebarOpen) { sidebarOpen = true; akademikOpen = true; } else { akademikOpen = !akademikOpen; }" 
+                            class="rounded-xl text-sm font-semibold hover:bg-white/10 hover:text-white transition-all duration-300 focus:outline-none"
+                            :class="[
+                                sidebarOpen ? 'w-full flex items-center justify-between px-4 py-3 gap-3' : 'w-12 mx-auto flex items-center justify-center py-3',
+                                ({{ request()->routeIs('admin.manage.semesters.*') || request()->routeIs('admin.manage.tahun_akademiks.*') ? 'true' : 'false' }}) ? 'text-white' : 'text-white/80'
+                            ]">
+                        <div class="flex items-center" :class="sidebarOpen ? 'gap-3' : 'gap-0'">
+                            <svg class="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+                            </svg>
+                            <span x-show="sidebarOpen" class="whitespace-nowrap">Tahun & Semester</span>
+                        </div>
+                        <svg x-show="sidebarOpen" 
+                             class="w-4 h-4 transition-transform duration-200" 
+                             :class="akademikOpen ? 'rotate-180' : ''" 
+                             fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"></path>
+                        </svg>
+                    </button>
+                    
+                    <!-- Submenu Items -->
+                    <div x-show="akademikOpen && sidebarOpen" 
+                         x-transition:enter="transition ease-out duration-150"
+                         x-transition:enter-start="opacity-0 transform -translate-y-2"
+                         x-transition:enter-end="opacity-100 transform translate-y-0"
+                         class="pl-4 mt-1 mb-1 space-y-1.5 overflow-hidden flex flex-col text-left border-l border-white/10 ml-6">
+                        <a href="{{ route('admin.manage.tahun_akademiks.index') }}" 
+                           class="block py-2 px-3 text-xs rounded-lg transition-colors {{ request()->routeIs('admin.manage.tahun_akademiks.*') ? 'bg-[#0c2b4d] text-white font-bold' : 'text-blue-100/70 hover:text-white hover:bg-white/5' }}">
+                            Tahun Akademik
+                        </a>
+                        <a href="{{ route('admin.manage.semesters.index') }}" 
+                           class="block py-2 px-3 text-xs rounded-lg transition-colors {{ request()->routeIs('admin.manage.semesters.*') ? 'bg-[#0c2b4d] text-white font-bold' : 'text-blue-100/70 hover:text-white hover:bg-white/5' }}">
+                            Semester
+                        </a>
+                    </div>
+                </div>
 
                 <!-- 3. Jurusan -->
                 <a href="{{ route('admin.manage.jurusans.index') }}" 

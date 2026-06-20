@@ -105,6 +105,9 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin/manage')->name('admin.m
     // Semester
     Route::resource('semesters', SemesterManagementController::class);
 
+    // Tahun Akademik
+    Route::resource('tahun-akademiks', \App\Http\Controllers\TahunAkademikManagementController::class)->names('tahun_akademiks');
+
     // Jurusan
     Route::resource('jurusans', JurusanManagementController::class);
 

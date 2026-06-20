@@ -7,12 +7,13 @@ use App\Models\LearningModuleTugas;
 use App\Models\TugasSubmission;
 use App\Models\Classroom;
 use App\Models\Murid;
+use App\Models\Semester;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 
 class TugasController extends Controller
 {
-    public function index(LearningModule $learningModule)
+    public function index(Request $request, LearningModule $learningModule)
     {
         $guru = auth()->user()->guru;
         if (!$guru || $learningModule->guru_id !== $guru->id) {
@@ -20,12 +21,26 @@ class TugasController extends Controller
         }
 
         $learningModule->load('mataPelajaran');
-        $tugas = LearningModuleTugas::where('learning_module_id', $learningModule->id)->latest()->get();
 
-        return view('guru.learning_modules.tugas.index', compact('learningModule', 'tugas'));
+        $selectedSemesterId = $request->query('semester_id');
+        if (!$selectedSemesterId) {
+            $selectedSemesterId = Semester::where('tahun_akademik_id', $learningModule->tahun_akademik_id)
+                ->where('is_active', true)
+                ->value('id')
+                ?? Semester::where('tahun_akademik_id', $learningModule->tahun_akademik_id)->value('id');
+        }
+
+        $tugas = LearningModuleTugas::where('learning_module_id', $learningModule->id)
+            ->where('semester_id', $selectedSemesterId)
+            ->latest()
+            ->get();
+
+        $semesters = Semester::where('tahun_akademik_id', $learningModule->tahun_akademik_id)->get();
+
+        return view('guru.learning_modules.tugas.index', compact('learningModule', 'tugas', 'selectedSemesterId', 'semesters'));
     }
 
-    public function create(LearningModule $learningModule)
+    public function create(Request $request, LearningModule $learningModule)
     {
         $guru = auth()->user()->guru;
         if (!$guru || $learningModule->guru_id !== $guru->id) {
@@ -33,8 +48,9 @@ class TugasController extends Controller
         }
 
         $learningModule->load('mataPelajaran');
+        $selectedSemesterId = $request->query('semester_id');
 
-        return view('guru.learning_modules.tugas.create', compact('learningModule'));
+        return view('guru.learning_modules.tugas.create', compact('learningModule', 'selectedSemesterId'));
     }
 
     public function store(Request $request, LearningModule $learningModule)
@@ -45,6 +61,7 @@ class TugasController extends Controller
         }
 
         $request->validate([
+            'semester_id' => ['required', 'exists:semesters,id'],
             'title' => ['required', 'string', 'max:255'],
             'instructions' => ['required', 'string'],
             'due_date' => ['required', 'date'],
@@ -58,13 +75,14 @@ class TugasController extends Controller
 
         LearningModuleTugas::create([
             'learning_module_id' => $learningModule->id,
+            'semester_id' => $request->semester_id,
             'title' => $request->title,
             'instructions' => $request->instructions,
             'due_date' => $request->due_date,
             'file_path' => $filePath,
         ]);
 
-        return redirect()->route('guru.learning-modules.tugas.index', $learningModule->id)
+        return redirect()->route('guru.learning-modules.show', [$learningModule->id, 'semester_id' => $request->semester_id])
             ->with('status', 'Tugas berhasil ditambahkan.');
     }
 
@@ -76,6 +94,7 @@ class TugasController extends Controller
         }
 
         $request->validate([
+            'semester_id' => ['required', 'exists:semesters,id'],
             'title' => ['required', 'string', 'max:255'],
             'instructions' => ['required', 'string'],
             'due_date' => ['required', 'date'],
@@ -83,6 +102,7 @@ class TugasController extends Controller
         ]);
 
         $data = [
+            'semester_id' => $request->semester_id,
             'title' => $request->title,
             'instructions' => $request->instructions,
             'due_date' => $request->due_date,
@@ -97,7 +117,7 @@ class TugasController extends Controller
 
         $tuga->update($data);
 
-        return redirect()->route('guru.learning-modules.tugas.index', $learningModule->id)
+        return redirect()->route('guru.learning-modules.show', [$learningModule->id, 'semester_id' => $request->semester_id])
             ->with('status', 'Tugas berhasil diperbarui.');
     }
 
@@ -105,24 +125,26 @@ class TugasController extends Controller
     {
         $guru = auth()->user()->guru;
         if (!$guru || $learningModule->guru_id !== $guru->id || $tuga->learning_module_id !== $learningModule->id) {
-            abort(403, 'Aksi tidak diizinkan.');
+            abort(403, 'Aksi otonom tidak diizinkan.');
         }
 
         $learningModule->load('mataPelajaran');
+        $selectedSemesterId = $tuga->semester_id;
 
-        return view('guru.learning_modules.tugas.edit', compact('learningModule', 'tuga'));
+        return view('guru.learning_modules.tugas.edit', compact('learningModule', 'tuga', 'selectedSemesterId'));
     }
 
-    public function destroy(LearningModule $learningModule, LearningModuleTugas $tuga)
+    public function destroy(Request $request, LearningModule $learningModule, LearningModuleTugas $tuga)
     {
         $guru = auth()->user()->guru;
         if (!$guru || $learningModule->guru_id !== $guru->id || $tuga->learning_module_id !== $learningModule->id) {
             abort(403, 'Aksi tidak diizinkan.');
         }
 
+        $semesterId = $tuga->semester_id;
         $tuga->delete();
 
-        return redirect()->route('guru.learning-modules.tugas.index', $learningModule->id)
+        return redirect()->route('guru.learning-modules.show', [$learningModule->id, 'semester_id' => $semesterId])
             ->with('status', 'Tugas berhasil dihapus.');
     }
 

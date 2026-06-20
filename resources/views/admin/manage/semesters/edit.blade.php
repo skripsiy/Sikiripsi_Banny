@@ -5,8 +5,8 @@
         </svg>
     </div>
     <div>
-        <h3 class="text-lg font-bold text-gray-800">Edit Tahun Ajaran</h3>
-        <p class="text-xs text-gray-400 mt-0.5">Silakan perbarui detail data tahun ajaran sekolah.</p>
+        <h3 class="text-lg font-bold text-gray-800">Edit Semester</h3>
+        <p class="text-xs text-gray-400 mt-0.5">Silakan perbarui detail data semester sekolah.</p>
     </div>
 </div>
 
@@ -16,13 +16,16 @@
     <input type="hidden" name="id" :value="editData.id">
 
     <div>
-        <label for="edit_tahun_ajaran" class="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-1.5">Tahun Ajaran</label>
-        <input type="text" name="tahun_ajaran" id="edit_tahun_ajaran" x-model="editData.tahun_ajaran" required
-               placeholder="Contoh: 2025/2026"
-               class="w-full px-4 py-2.5 bg-white border border-gray-200 rounded-xl focus:outline-none focus:border-[#0c2b4d] focus:ring-1 focus:ring-[#0c2b4d] text-sm text-gray-800 transition-all shadow-sm">
-        <p class="text-[10px] text-gray-400 mt-1">Harus tepat 9 karakter dengan format YYYY/YYYY.</p>
+        <label for="edit_tahun_akademik_id" class="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-1.5">Tahun Akademik</label>
+        <select name="tahun_akademik_id" id="edit_tahun_akademik_id" x-model="editData.tahun_akademik_id" required
+                class="w-full px-4 py-2.5 bg-white border border-gray-200 rounded-xl focus:outline-none focus:border-[#0c2b4d] focus:ring-1 focus:ring-[#0c2b4d] text-sm text-gray-800 transition-all shadow-sm">
+            <option value="" disabled>Pilih Tahun Akademik</option>
+            @foreach($academicYears as $year)
+                <option value="{{ $year->id }}">{{ $year->tahun_ajaran }}</option>
+            @endforeach
+        </select>
         @if(old('_method') === 'PUT')
-            @error('tahun_ajaran') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
+            @error('tahun_akademik_id') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
         @endif
     </div>
 
@@ -38,6 +41,25 @@
         @endif
     </div>
 
+    <div class="grid grid-cols-2 gap-4">
+        <div>
+            <label for="edit_start_date" class="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-1.5">Tanggal Mulai</label>
+            <input type="date" name="start_date" id="edit_start_date" x-model="editData.start_date" required
+                   class="w-full px-4 py-2.5 bg-white border border-gray-200 rounded-xl focus:outline-none focus:border-[#0c2b4d] focus:ring-1 focus:ring-[#0c2b4d] text-sm text-gray-800 transition-all shadow-sm">
+            @if(old('_method') === 'PUT')
+                @error('start_date') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
+            @endif
+        </div>
+        <div>
+            <label for="edit_end_date" class="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-1.5">Tanggal Selesai</label>
+            <input type="date" name="end_date" id="edit_end_date" x-model="editData.end_date" required
+                   class="w-full px-4 py-2.5 bg-white border border-gray-200 rounded-xl focus:outline-none focus:border-[#0c2b4d] focus:ring-1 focus:ring-[#0c2b4d] text-sm text-gray-800 transition-all shadow-sm">
+            @if(old('_method') === 'PUT')
+                @error('end_date') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
+            @endif
+        </div>
+    </div>
+
     <div>
         <label for="edit_is_active" class="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-1.5">Status Aktif</label>
         <select name="is_active" id="edit_is_active" x-model="editData.is_active" required
@@ -45,7 +67,6 @@
             <option value="1">Aktif</option>
             <option value="0">Tidak Aktif</option>
         </select>
-        <p class="text-[10px] text-gray-400 mt-1">Jika diset Aktif, tahun ajaran aktif lainnya akan otomatis dinonaktifkan.</p>
         @if(old('_method') === 'PUT')
             @error('is_active') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
         @endif

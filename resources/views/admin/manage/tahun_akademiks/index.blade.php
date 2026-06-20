@@ -1,6 +1,6 @@
 <x-app-layout>
     <x-slot name="header">
-        {{ __('Kelola Semester') }}
+        {{ __('Kelola Tahun Akademik') }}
     </x-slot>
 
     <div class="max-w-7xl mx-auto font-sans" x-data="{
@@ -8,20 +8,17 @@
         showEditModal: {{ $errors->any() && old('_method') === 'PUT' ? 'true' : 'false' }},
         editData: {
             id: '{{ old('id') ?? '' }}',
-            tahun_akademik_id: '{{ old('tahun_akademik_id') ?? '' }}',
-            semester: {{ json_encode(old('semester') ?? '') }},
-            start_date: '{{ old('start_date') ?? '' }}',
-            end_date: '{{ old('end_date') ?? '' }}',
+            tahun_ajaran: {{ json_encode(old('tahun_ajaran') ?? '') }},
             is_active: '{{ old('is_active') !== null ? (old('is_active') ? '1' : '0') : '' }}'
         },
-        editUrl: '{{ old('id') ? route('admin.manage.semesters.update', old('id')) : '' }}'
+        editUrl: '{{ old('id') ? route('admin.manage.tahun-akademiks.update', old('id')) : '' }}'
     }">
         <!-- Header Actions -->
         <div class="flex justify-between items-center mb-6">
-            <h3 class="text-base font-bold text-gray-800">Daftar Semester</h3>
+            <h3 class="text-base font-bold text-gray-800">Daftar Tahun Akademik</h3>
             <button @click="showCreateModal = true" 
                     class="bg-[#0c2b4d] hover:bg-[#07192d] text-white px-4 py-2.5 rounded-lg text-sm font-semibold transition-colors shadow-sm cursor-pointer select-none">
-                + Tambah Semester
+                + Tambah Tahun Akademik
             </button>
         </div>
         <!-- Status Notification -->
@@ -42,27 +39,21 @@
 
             <div class="p-6">
                 <div class="overflow-x-auto font-sans">
-                    @if ($semesters->isNotEmpty())
+                    @if ($academicYears->isNotEmpty())
                         <table class="min-w-full divide-y divide-gray-100">
                             <thead class="bg-gray-50/75">
                                 <tr>
-                                    <th class="px-6 py-4 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">Tahun Akademik</th>
-                                    <th class="px-6 py-4 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">Semester</th>
-                                    <th class="px-6 py-4 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">Tanggal Mulai</th>
-                                    <th class="px-6 py-4 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">Tanggal Selesai</th>
+                                    <th class="px-6 py-4 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">Tahun Ajaran</th>
                                     <th class="px-6 py-4 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">Status</th>
                                     <th class="px-6 py-4 text-center text-xs font-bold text-gray-500 uppercase tracking-wider w-36">Aksi</th>
                                 </tr>
                             </thead>
                             <tbody class="bg-white divide-y divide-gray-100">
-                                @foreach ($semesters as $ta)
+                                @foreach ($academicYears as $year)
                                     <tr class="hover:bg-gray-50/50 transition-all duration-150">
-                                        <td class="px-6 py-4 whitespace-nowrap text-sm font-semibold text-gray-900">{{ $ta->tahunAkademik->tahun_ajaran ?? '-' }}</td>
-                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 capitalize">{{ $ta->semester }}</td>
-                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ $ta->start_date ? $ta->start_date->format('d M Y') : '-' }}</td>
-                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ $ta->end_date ? $ta->end_date->format('d M Y') : '-' }}</td>
+                                        <td class="px-6 py-4 whitespace-nowrap text-sm font-semibold text-gray-900">{{ $year->tahun_ajaran }}</td>
                                         <td class="px-6 py-4 whitespace-nowrap text-sm">
-                                            @if ($ta->is_active)
+                                            @if ($year->is_active)
                                                 <span class="inline-flex items-center gap-1.5 px-3 py-1 text-xs font-bold rounded-full bg-green-50 text-green-700 border border-green-200 shadow-sm">
                                                     <span class="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse"></span>
                                                     Aktif
@@ -79,20 +70,17 @@
                                                 <button @click="
                                                     showEditModal = true;
                                                     editData = {
-                                                        id: '{{ $ta->id }}',
-                                                        tahun_akademik_id: '{{ $ta->tahun_akademik_id }}',
-                                                        semester: {{ json_encode($ta->semester) }},
-                                                        start_date: '{{ $ta->start_date ? $ta->start_date->format('Y-m-d') : '' }}',
-                                                        end_date: '{{ $ta->end_date ? $ta->end_date->format('Y-m-d') : '' }}',
-                                                        is_active: '{{ $ta->is_active ? '1' : '0' }}'
+                                                        id: '{{ $year->id }}',
+                                                        tahun_ajaran: {{ json_encode($year->tahun_ajaran) }},
+                                                        is_active: '{{ $year->is_active ? '1' : '0' }}'
                                                     };
-                                                    editUrl = '{{ route('admin.manage.semesters.update', $ta->id) }}';
+                                                    editUrl = '{{ route('admin.manage.tahun-akademiks.update', $year->id) }}';
                                                  " 
                                                  class="text-blue-600 hover:text-blue-900 bg-blue-50 hover:bg-blue-100 px-3 py-1.5 rounded-lg text-xs font-bold transition-all duration-150 cursor-pointer select-none">
                                                     Edit
                                                 </button>
                                                 
-                                                <form action="{{ route('admin.manage.semesters.destroy', $ta->id) }}" method="POST" onsubmit="return confirm('Apakah Anda yakin ingin menghapus semester ini?');" class="inline">
+                                                <form action="{{ route('admin.manage.tahun-akademiks.destroy', $year->id) }}" method="POST" onsubmit="return confirm('Apakah Anda yakin ingin menghapus tahun akademik ini?');" class="inline">
                                                     @csrf
                                                     @method('DELETE')
                                                     <button type="submit" 
@@ -114,11 +102,11 @@
                                     <path stroke-linecap="round" stroke-linejoin="round" d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 012.25-2.25h13.5A2.25 2.25 0 0121 7.5v11.25m-18 0A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75m-18 0v-7.5A2.25 2.25 0 015.25 9h13.5A2.25 2.25 0 0121 11.25v7.5"></path>
                                 </svg>
                             </div>
-                            <h4 class="text-lg font-bold text-gray-800 mb-1">Belum Ada Semester</h4>
-                            <p class="text-sm text-gray-400 max-w-sm mb-6">Data semester yang Anda tambahkan untuk keperluan akademik sekolah akan muncul di sini.</p>
+                            <h4 class="text-lg font-bold text-gray-800 mb-1">Belum Ada Tahun Akademik</h4>
+                            <p class="text-sm text-gray-400 max-w-sm mb-6">Data tahun akademik yang Anda tambahkan untuk keperluan akademik sekolah akan muncul di sini.</p>
                             <button @click="showCreateModal = true" 
                                     class="inline-flex items-center gap-2 bg-[#0c2b4d] hover:bg-[#07192d] text-white px-4 py-2.5 rounded-xl text-sm font-semibold transition-colors shadow-sm cursor-pointer select-none">
-                                + Tambah Semester
+                                + Tambah Tahun Akademik
                             </button>
                         </div>
                     @endif
@@ -135,7 +123,7 @@
             <div x-show="showCreateModal" x-transition:enter="ease-out duration-300" x-transition:enter-start="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95" x-transition:enter-end="opacity-100 translate-y-0 sm:scale-100" x-transition:leave="ease-in duration-200" x-transition:leave-start="opacity-100 translate-y-0 sm:scale-100" x-transition:leave-end="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95" class="bg-white rounded-2xl overflow-hidden shadow-2xl transform transition-all w-full max-w-xl mx-auto z-10 border border-gray-100">
                 <div class="h-1.5 bg-gradient-to-r from-[#0c2b4d] to-[#1a4a7d]"></div>
                 <div class="p-8">
-                    @include('admin.manage.semesters.create')
+                    @include('admin.manage.tahun_akademiks.create')
                 </div>
             </div>
         </div>
@@ -149,7 +137,7 @@
             <div x-show="showEditModal" x-transition:enter="ease-out duration-300" x-transition:enter-start="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95" x-transition:enter-end="opacity-100 translate-y-0 sm:scale-100" x-transition:leave="ease-in duration-200" x-transition:leave-start="opacity-100 translate-y-0 sm:scale-100" x-transition:leave-end="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95" class="bg-white rounded-2xl overflow-hidden shadow-2xl transform transition-all w-full max-w-xl mx-auto z-10 border border-gray-100">
                 <div class="h-1.5 bg-gradient-to-r from-[#0c2b4d] to-[#1a4a7d]"></div>
                 <div class="p-8">
-                    @include('admin.manage.semesters.edit')
+                    @include('admin.manage.tahun_akademiks.edit')
                 </div>
             </div>
         </div>

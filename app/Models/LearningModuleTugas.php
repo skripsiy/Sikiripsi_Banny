@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
-#[Fillable(['learning_module_id', 'title', 'instructions', 'due_date', 'file_path'])]
+#[Fillable(['learning_module_id', 'semester_id', 'title', 'instructions', 'due_date', 'file_path'])]
 class LearningModuleTugas extends Model
 {
     use HasFactory, SoftDeletes;
@@ -19,6 +19,11 @@ class LearningModuleTugas extends Model
     public function learningModule()
     {
         return $this->belongsTo(LearningModule::class);
+    }
+
+    public function semester()
+    {
+        return $this->belongsTo(Semester::class);
     }
 
     public function submissions()

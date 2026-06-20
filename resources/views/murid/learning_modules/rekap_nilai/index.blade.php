@@ -7,7 +7,7 @@
 
         <!-- Back Button -->
         <div class="mb-4">
-            <a href="{{ route('murid.learning-modules.show', $learningModule->id) }}" 
+            <a href="{{ route('murid.learning-modules.show', [$learningModule->id, 'semester_id' => $selectedSemester?->id]) }}" 
                class="inline-flex items-center gap-1.5 text-gray-500 hover:text-gray-800 font-bold text-xs transition-colors select-none">
                 <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7"></path>
@@ -26,6 +26,11 @@
                     <span class="bg-rose-500/20 text-rose-200 border border-rose-500/30 text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wider">
                         Laporan Nilai Tugas
                     </span>
+                    @if($selectedSemester)
+                        <span class="bg-emerald-500/20 text-emerald-200 border border-emerald-500/30 text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wider">
+                            Semester: {{ ucfirst($selectedSemester->semester) }}
+                        </span>
+                    @endif
                 </div>
                 <h2 class="text-xl font-bold mt-2.5">{{ $learningModule->title }}</h2>
                 <p class="text-xs text-blue-100/70 mt-1 max-w-xl">{{ $learningModule->description }}</p>

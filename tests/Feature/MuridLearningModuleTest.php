@@ -153,12 +153,14 @@ describe('Murid Learning Module Access', function () {
         // Create study contents
         $materi = LearningModuleMateri::create([
             'learning_module_id' => $this->moduleRpl->id,
+            'semester_id' => $this->tahunAkademik->id,
             'title' => 'HTML Dasar',
             'content' => 'Pelajari sintaks HTML.',
         ]);
 
         $tugas = LearningModuleTugas::create([
             'learning_module_id' => $this->moduleRpl->id,
+            'semester_id' => $this->tahunAkademik->id,
             'title' => 'Tugas Flexbox',
             'instructions' => 'Buat layout navbar.',
             'due_date' => now()->addDays(2),
@@ -166,6 +168,7 @@ describe('Murid Learning Module Access', function () {
 
         $quiz = LearningModuleQuiz::create([
             'learning_module_id' => $this->moduleRpl->id,
+            'semester_id' => $this->tahunAkademik->id,
             'title' => 'Quiz Tag HTML',
             'instructions' => 'Selesaikan kuis.',
             'duration_minutes' => 10,
@@ -174,6 +177,7 @@ describe('Murid Learning Module Access', function () {
 
         $ujian = LearningModuleUjian::create([
             'learning_module_id' => $this->moduleRpl->id,
+            'semester_id' => $this->tahunAkademik->id,
             'title' => 'Ujian Akhir Semester Web',
             'instructions' => 'Ujian teori web.',
             'duration_minutes' => 95,
@@ -205,6 +209,7 @@ describe('Murid Learning Module Access', function () {
         // Create some attendance log
         LearningModuleAbsensi::create([
             'learning_module_id' => $this->moduleRpl->id,
+            'semester_id' => $this->tahunAkademik->id,
             'murid_id' => $this->muridRpl->id,
             'date' => '2026-06-04',
             'status' => 'hadir',
@@ -220,6 +225,7 @@ describe('Murid Learning Module Access', function () {
     it('autosaves quiz answers and pre-loads them on page refresh', function () {
         $quiz = LearningModuleQuiz::create([
             'learning_module_id' => $this->moduleRpl->id,
+            'semester_id' => $this->tahunAkademik->id,
             'title' => 'Quiz Tag HTML',
             'instructions' => 'Selesaikan kuis.',
             'duration_minutes' => 10,
@@ -275,6 +281,7 @@ describe('Murid Learning Module Access', function () {
     it('autosaves exam answers and pre-loads them on page refresh', function () {
         $ujian = LearningModuleUjian::create([
             'learning_module_id' => $this->moduleRpl->id,
+            'semester_id' => $this->tahunAkademik->id,
             'title' => 'Ujian Akhir',
             'instructions' => 'Selesaikan ujian.',
             'duration_minutes' => 90,

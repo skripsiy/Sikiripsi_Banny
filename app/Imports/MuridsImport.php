@@ -17,12 +17,13 @@ class MuridsImport implements ToCollection, WithHeadingRow, WithValidation
 {
     public function collection(Collection $rows)
     {
-        $activeTa = Semester::where('is_active', true)->first();
+        $activeSemester = Semester::where('is_active', true)->first() ?? Semester::first();
+        $activeTahunAkademikId = $activeSemester?->tahun_akademik_id;
 
-        DB::transaction(function () use ($rows, $activeTa) {
+        DB::transaction(function () use ($rows, $activeTahunAkademikId) {
             foreach ($rows as $row) {
                 $classroom = Classroom::where('nama_kelas', $row['class_room'])
-                    ->where('tahun_akademik_id', $activeTa->id)
+                    ->where('tahun_akademik_id', $activeTahunAkademikId)
                     ->first();
 
                 $user = User::create([
@@ -63,13 +64,14 @@ class MuridsImport implements ToCollection, WithHeadingRow, WithValidation
                 'required',
                 'string',
                 function ($attribute, $value, $fail) {
-                    $activeTa = Semester::where('is_active', true)->first();
-                    if (!$activeTa) {
-                        $fail('Tidak ada Tahun Ajaran aktif saat ini.');
+                    $activeSemester = Semester::where('is_active', true)->first() ?? Semester::first();
+                    if (!$activeSemester) {
+                        $fail('Tidak ada Semester yang tersedia.');
                         return;
                     }
+                    $activeTahunAkademikId = $activeSemester->tahun_akademik_id;
                     $exists = Classroom::where('nama_kelas', $value)
-                        ->where('tahun_akademik_id', $activeTa->id)
+                        ->where('tahun_akademik_id', $activeTahunAkademikId)
                         ->whereNull('deleted_at')
                         ->exists();
                     if (!$exists) {

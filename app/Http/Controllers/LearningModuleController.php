@@ -220,14 +220,27 @@ class LearningModuleController extends Controller
 
         $learningModule->load('mataPelajaran');
 
-        // Load all sub-contents counts
-        $learningModule->loadCount(['materis', 'tugas', 'quizzes', 'ujians']);
+        $semesters = Semester::where('tahun_akademik_id', $learningModule->tahun_akademik_id)->get();
+        $selectedSemester = $semesters->where('id', request('semester_id'))->first() ?? $semesters->where('is_active', true)->first() ?? $semesters->first();
+        $selectedSemesterId = $selectedSemester?->id;
 
-        // Load recent items (latest 10 of each for dashboard timeline)
-        $recentMateris = LearningModuleMateri::where('learning_module_id', $learningModule->id)->latest()->limit(10)->get();
-        $recentTugas = LearningModuleTugas::where('learning_module_id', $learningModule->id)->latest()->limit(10)->get();
-        $recentQuizzes = LearningModuleQuiz::where('learning_module_id', $learningModule->id)->latest()->limit(10)->get();
-        $recentUjians = LearningModuleUjian::where('learning_module_id', $learningModule->id)->latest()->limit(10)->get();
+        // Load all sub-contents counts filtered by selected semester
+        $learningModule->loadCount([
+            'materis' => fn($q) => $q->where('semester_id', $selectedSemesterId),
+            'tugas' => fn($q) => $q->where('semester_id', $selectedSemesterId),
+            'quizzes' => fn($q) => $q->where('semester_id', $selectedSemesterId),
+            'ujians' => fn($q) => $q->where('semester_id', $selectedSemesterId)
+        ]);
+
+        // Load recent items (latest 10 of each for dashboard timeline) filtered by selected semester
+        $recentMateris = LearningModuleMateri::where('learning_module_id', $learningModule->id)
+            ->where('semester_id', $selectedSemesterId)->latest()->limit(10)->get();
+        $recentTugas = LearningModuleTugas::where('learning_module_id', $learningModule->id)
+            ->where('semester_id', $selectedSemesterId)->latest()->limit(10)->get();
+        $recentQuizzes = LearningModuleQuiz::where('learning_module_id', $learningModule->id)
+            ->where('semester_id', $selectedSemesterId)->latest()->limit(10)->get();
+        $recentUjians = LearningModuleUjian::where('learning_module_id', $learningModule->id)
+            ->where('semester_id', $selectedSemesterId)->latest()->limit(10)->get();
 
         // Get student list based on subject's jurusan and module's academic year
         $jurusanId = $learningModule->mataPelajaran->jurusan_id;
@@ -305,7 +318,9 @@ class LearningModuleController extends Controller
         return view('guru.learning_modules.show', compact(
             'learningModule',
             'muridsCount',
-            'activities'
+            'activities',
+            'semesters',
+            'selectedSemester'
         ));
     }
 
@@ -317,6 +332,24 @@ class LearningModuleController extends Controller
         }
 
         $learningModule->load('mataPelajaran');
+
+        // Selected date for attendance
+        $date = request('date', date('Y-m-d'));
+
+        $semesters = Semester::where('tahun_akademik_id', $learningModule->tahun_akademik_id)->get();
+        $selectedSemester = null;
+        if (request()->has('semester_id')) {
+            $selectedSemester = $semesters->where('id', request('semester_id'))->first();
+        }
+        if (!$selectedSemester) {
+            // Find semester by date range
+            $selectedSemester = $semesters->filter(function($s) use ($date) {
+                return $date >= $s->start_date && $date <= $s->end_date;
+            })->first();
+        }
+        if (!$selectedSemester) {
+            $selectedSemester = $semesters->where('is_active', true)->first() ?? $semesters->first();
+        }
 
         // Get student list based on subject's jurusan and module's academic year
         $jurusanId = $learningModule->mataPelajaran->jurusan_id;
@@ -333,11 +366,9 @@ class LearningModuleController extends Controller
             ->sortBy(fn($m) => $m->user?->name ?? '')
             ->values();
 
-        // Selected date for attendance
-        $date = request('date', date('Y-m-d'));
-
         // Load existing attendance
         $absensis = LearningModuleAbsensi::where('learning_module_id', $learningModule->id)
+            ->where('semester_id', $selectedSemester?->id)
             ->where('date', $date)
             ->get()
             ->keyBy('murid_id');
@@ -346,7 +377,9 @@ class LearningModuleController extends Controller
             'learningModule',
             'murids',
             'absensis',
-            'date'
+            'date',
+            'semesters',
+            'selectedSemester'
         ));
     }
 
@@ -359,16 +392,19 @@ class LearningModuleController extends Controller
 
         $request->validate([
             'date' => ['required', 'date'],
+            'semester_id' => ['required', 'exists:semesters,id'],
             'status' => ['required', 'array'],
             'status.*' => ['in:hadir,sakit,izin,alpa'],
         ]);
 
         $date = $request->date;
+        $semesterId = $request->semester_id;
 
         foreach ($request->status as $muridId => $status) {
             $oldAbsensi = LearningModuleAbsensi::where('learning_module_id', $learningModule->id)
                 ->where('murid_id', $muridId)
                 ->where('date', $date)
+                ->where('semester_id', $semesterId)
                 ->first();
 
             $newStatus = $status;
@@ -385,6 +421,7 @@ class LearningModuleController extends Controller
                     'learning_module_id' => $learningModule->id,
                     'murid_id' => $muridId,
                     'date' => $date,
+                    'semester_id' => $semesterId,
                 ],
                 [
                     'status' => $newStatus,
@@ -412,6 +449,7 @@ class LearningModuleController extends Controller
         return redirect()->route('guru.learning-modules.absensi.index', [
             'learning_module' => $learningModule->id,
             'date' => $date,
+            'semester_id' => $semesterId,
         ])->with('status', 'Absensi berhasil disimpan.');
     }
 
@@ -424,6 +462,10 @@ class LearningModuleController extends Controller
 
         $learningModule->load('mataPelajaran');
 
+        $semesters = Semester::where('tahun_akademik_id', $learningModule->tahun_akademik_id)->get();
+        $selectedSemester = $semesters->where('id', request('semester_id'))->first() ?? $semesters->where('is_active', true)->first() ?? $semesters->first();
+
+        // Get student list based on subject's jurusan and module's academic year
         $jurusanId = $learningModule->mataPelajaran->jurusan_id;
         $query = Classroom::where('tahun_akademik_id', $learningModule->tahun_akademik_id)
             ->where('is_active', true);
@@ -438,7 +480,11 @@ class LearningModuleController extends Controller
             ->sortBy(fn($m) => $m->user?->name ?? '')
             ->values();
 
-        $absensis = LearningModuleAbsensi::where('learning_module_id', $learningModule->id)->get();
+        $absensis = LearningModuleAbsensi::where('learning_module_id', $learningModule->id)
+            ->when($selectedSemester, function($q) use ($selectedSemester) {
+                return $q->where('semester_id', $selectedSemester->id);
+            })
+            ->get();
 
         $rekap = $murids->map(function ($murid) use ($absensis) {
             $studentAbsensis = $absensis->where('murid_id', $murid->id);
@@ -461,7 +507,7 @@ class LearningModuleController extends Controller
             ];
         });
 
-        return view('guru.learning_modules.absensi.rekap', compact('learningModule', 'rekap'));
+        return view('guru.learning_modules.absensi.rekap', compact('learningModule', 'rekap', 'semesters', 'selectedSemester'));
     }
 
     public function exportAbsensi(LearningModule $learningModule)
@@ -472,6 +518,9 @@ class LearningModuleController extends Controller
         }
 
         $learningModule->load('mataPelajaran');
+
+        $semesters = Semester::where('tahun_akademik_id', $learningModule->tahun_akademik_id)->get();
+        $selectedSemester = $semesters->where('id', request('semester_id'))->first() ?? $semesters->where('is_active', true)->first() ?? $semesters->first();
 
         $jurusanId = $learningModule->mataPelajaran->jurusan_id;
         $query = Classroom::where('tahun_akademik_id', $learningModule->tahun_akademik_id)
@@ -487,7 +536,11 @@ class LearningModuleController extends Controller
             ->sortBy(fn($m) => $m->user?->name ?? '')
             ->values();
 
-        $absensis = LearningModuleAbsensi::where('learning_module_id', $learningModule->id)->get();
+        $absensis = LearningModuleAbsensi::where('learning_module_id', $learningModule->id)
+            ->when($selectedSemester, function($q) use ($selectedSemester) {
+                return $q->where('semester_id', $selectedSemester->id);
+            })
+            ->get();
 
         $spreadsheet = new \PhpOffice\PhpSpreadsheet\Spreadsheet();
         $sheet = $spreadsheet->getActiveSheet();
@@ -496,20 +549,21 @@ class LearningModuleController extends Controller
         $sheet->setCellValue('A2', 'Modul: ' . $learningModule->title);
         $sheet->setCellValue('A3', 'Mata Pelajaran: ' . $learningModule->mataPelajaran->nama_pelajaran);
         $sheet->setCellValue('A4', 'Tahun Ajaran: ' . ($learningModule->tahunAkademik->tahun_ajaran ?? '-'));
-        $sheet->setCellValue('A5', 'Dicetak pada: ' . date('d F Y H:i'));
+        $sheet->setCellValue('A5', 'Semester: ' . ($selectedSemester ? $selectedSemester->semester : '-'));
+        $sheet->setCellValue('A6', 'Dicetak pada: ' . date('d F Y H:i'));
 
-        $sheet->setCellValue('A7', 'No');
-        $sheet->setCellValue('B7', 'Nama Siswa');
-        $sheet->setCellValue('C7', 'NISN');
-        $sheet->setCellValue('D7', 'Kelas');
-        $sheet->setCellValue('E7', 'Hadir');
-        $sheet->setCellValue('F7', 'Sakit');
-        $sheet->setCellValue('G7', 'Izin');
-        $sheet->setCellValue('H7', 'Alpa');
-        $sheet->setCellValue('I7', 'Total Pertemuan');
-        $sheet->setCellValue('J7', 'Persentase Kehadiran (%)');
+        $sheet->setCellValue('A8', 'No');
+        $sheet->setCellValue('B8', 'Nama Siswa');
+        $sheet->setCellValue('C8', 'NISN');
+        $sheet->setCellValue('D8', 'Kelas');
+        $sheet->setCellValue('E8', 'Hadir');
+        $sheet->setCellValue('F8', 'Sakit');
+        $sheet->setCellValue('G8', 'Izin');
+        $sheet->setCellValue('H8', 'Alpa');
+        $sheet->setCellValue('I8', 'Total Pertemuan');
+        $sheet->setCellValue('J8', 'Persentase Kehadiran (%)');
 
-        $rowNum = 8;
+        $rowNum = 9;
         foreach ($murids as $index => $murid) {
             $studentAbsensis = $absensis->where('murid_id', $murid->id);
             $totalHadir = $studentAbsensis->where('status', 'hadir')->count();
@@ -538,7 +592,7 @@ class LearningModuleController extends Controller
         }
 
         $writer = new \PhpOffice\PhpSpreadsheet\Writer\Xlsx($spreadsheet);
-        $fileName = 'rekap_absensi_' . str_replace(' ', '_', strtolower($learningModule->title)) . '.xlsx';
+        $fileName = 'rekap_absensi_' . str_replace(' ', '_', strtolower($learningModule->title)) . '_' . ($selectedSemester ? str_replace(' ', '_', strtolower($selectedSemester->semester)) : 'all') . '.xlsx';
 
         return response()->streamDownload(function () use ($writer) {
             $writer->save('php://output');

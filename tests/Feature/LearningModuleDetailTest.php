@@ -93,6 +93,7 @@ describe('Learning Module Details and Sub-content', function () {
     it('renders materi edit for teacher', function () {
         $materi = LearningModuleMateri::create([
             'learning_module_id' => $this->learningModule->id,
+            'semester_id' => $this->tahunAkademik->id,
             'title' => 'Materi Edit',
             'content' => 'Konten Edit',
         ]);
@@ -105,13 +106,15 @@ describe('Learning Module Details and Sub-content', function () {
     it('allows teacher to add a materi successfully', function () {
         $response = $this->actingAs($this->guruUser1)
             ->post(route('guru.learning-modules.materis.store', $this->learningModule->id), [
+                'semester_id' => $this->tahunAkademik->id,
                 'title' => 'Pertemuan 1',
                 'content' => 'Isi materi pengenalan aljabar.',
             ]);
 
-        $response->assertRedirect(route('guru.learning-modules.materis.index', $this->learningModule->id));
+        $response->assertRedirect(route('guru.learning-modules.show', [$this->learningModule->id, 'semester_id' => $this->tahunAkademik->id]));
         $this->assertDatabaseHas('learning_module_materis', [
             'learning_module_id' => $this->learningModule->id,
+            'semester_id' => $this->tahunAkademik->id,
             'title' => 'Pertemuan 1',
             'content' => 'Isi materi pengenalan aljabar.',
         ]);
@@ -130,19 +133,22 @@ describe('Learning Module Details and Sub-content', function () {
     it('allows teacher to update their own materi', function () {
         $materi = LearningModuleMateri::create([
             'learning_module_id' => $this->learningModule->id,
+            'semester_id' => $this->tahunAkademik->id,
             'title' => 'Judul Lama',
             'content' => 'Konten Lama',
         ]);
 
         $response = $this->actingAs($this->guruUser1)
             ->put(route('guru.learning-modules.materis.update', [$this->learningModule->id, $materi->id]), [
+                'semester_id' => $this->tahunAkademik->id,
                 'title' => 'Judul Baru',
                 'content' => 'Konten Baru',
             ]);
 
-        $response->assertRedirect(route('guru.learning-modules.materis.index', $this->learningModule->id));
+        $response->assertRedirect(route('guru.learning-modules.show', [$this->learningModule->id, 'semester_id' => $this->tahunAkademik->id]));
         $this->assertDatabaseHas('learning_module_materis', [
             'id' => $materi->id,
+            'semester_id' => $this->tahunAkademik->id,
             'title' => 'Judul Baru',
             'content' => 'Konten Baru',
         ]);
@@ -151,6 +157,7 @@ describe('Learning Module Details and Sub-content', function () {
     it('allows teacher to delete their own materi', function () {
         $materi = LearningModuleMateri::create([
             'learning_module_id' => $this->learningModule->id,
+            'semester_id' => $this->tahunAkademik->id,
             'title' => 'Materi Hapus',
             'content' => 'Konten Hapus',
         ]);
@@ -158,7 +165,7 @@ describe('Learning Module Details and Sub-content', function () {
         $response = $this->actingAs($this->guruUser1)
             ->delete(route('guru.learning-modules.materis.destroy', [$this->learningModule->id, $materi->id]));
 
-        $response->assertRedirect(route('guru.learning-modules.materis.index', $this->learningModule->id));
+        $response->assertRedirect(route('guru.learning-modules.show', [$this->learningModule->id, 'semester_id' => $this->tahunAkademik->id]));
         $this->assertSoftDeleted('learning_module_materis', [
             'id' => $materi->id,
         ]);
@@ -174,6 +181,7 @@ describe('Learning Module Details and Sub-content', function () {
     it('renders tugas edit for teacher', function () {
         $tugas = LearningModuleTugas::create([
             'learning_module_id' => $this->learningModule->id,
+            'semester_id' => $this->tahunAkademik->id,
             'title' => 'Tugas Edit',
             'instructions' => 'Instruksi Edit',
             'due_date' => '2026-06-10 23:59:00',
@@ -188,6 +196,7 @@ describe('Learning Module Details and Sub-content', function () {
         // Test Store
         $response = $this->actingAs($this->guruUser1)
             ->post(route('guru.learning-modules.tugas.store', $this->learningModule->id), [
+                'semester_id' => $this->tahunAkademik->id,
                 'title' => 'Tugas 1',
                 'instructions' => 'Kerjakan halaman 10.',
                 'due_date' => '2026-06-10 23:59:00',
@@ -196,6 +205,7 @@ describe('Learning Module Details and Sub-content', function () {
         $response->assertSessionHasNoErrors();
         $this->assertDatabaseHas('learning_module_tugas', [
             'learning_module_id' => $this->learningModule->id,
+            'semester_id' => $this->tahunAkademik->id,
             'title' => 'Tugas 1',
         ]);
 
@@ -204,6 +214,7 @@ describe('Learning Module Details and Sub-content', function () {
         // Test Update
         $response = $this->actingAs($this->guruUser1)
             ->put(route('guru.learning-modules.tugas.update', [$this->learningModule->id, $tugas->id]), [
+                'semester_id' => $this->tahunAkademik->id,
                 'title' => 'Tugas 1 Baru',
                 'instructions' => 'Kerjakan halaman 12.',
                 'due_date' => '2026-06-12 23:59:00',
@@ -211,6 +222,7 @@ describe('Learning Module Details and Sub-content', function () {
 
         $this->assertDatabaseHas('learning_module_tugas', [
             'id' => $tugas->id,
+            'semester_id' => $this->tahunAkademik->id,
             'title' => 'Tugas 1 Baru',
         ]);
 
@@ -233,6 +245,7 @@ describe('Learning Module Details and Sub-content', function () {
     it('renders quizzes edit for teacher', function () {
         $quiz = LearningModuleQuiz::create([
             'learning_module_id' => $this->learningModule->id,
+            'semester_id' => $this->tahunAkademik->id,
             'title' => 'Quiz Edit',
             'instructions' => 'Instruksi Edit',
             'duration_minutes' => 15,
@@ -248,6 +261,7 @@ describe('Learning Module Details and Sub-content', function () {
         // Test Store
         $response = $this->actingAs($this->guruUser1)
             ->post(route('guru.learning-modules.quizzes.store', $this->learningModule->id), [
+                'semester_id' => $this->tahunAkademik->id,
                 'title' => 'Quiz 1',
                 'instructions' => 'Jawab jujur.',
                 'duration_minutes' => 15,
@@ -257,6 +271,7 @@ describe('Learning Module Details and Sub-content', function () {
         $response->assertSessionHasNoErrors();
         $this->assertDatabaseHas('learning_module_quizzes', [
             'learning_module_id' => $this->learningModule->id,
+            'semester_id' => $this->tahunAkademik->id,
             'title' => 'Quiz 1',
         ]);
 
@@ -265,6 +280,7 @@ describe('Learning Module Details and Sub-content', function () {
         // Test Update
         $response = $this->actingAs($this->guruUser1)
             ->put(route('guru.learning-modules.quizzes.update', [$this->learningModule->id, $quiz->id]), [
+                'semester_id' => $this->tahunAkademik->id,
                 'title' => 'Quiz 1 Baru',
                 'instructions' => 'Jawab jujur baru.',
                 'duration_minutes' => 20,
@@ -273,6 +289,7 @@ describe('Learning Module Details and Sub-content', function () {
 
         $this->assertDatabaseHas('learning_module_quizzes', [
             'id' => $quiz->id,
+            'semester_id' => $this->tahunAkademik->id,
             'title' => 'Quiz 1 Baru',
             'duration_minutes' => 20,
         ]);
@@ -296,6 +313,7 @@ describe('Learning Module Details and Sub-content', function () {
     it('renders ujian edit for teacher', function () {
         $ujian = LearningModuleUjian::create([
             'learning_module_id' => $this->learningModule->id,
+            'semester_id' => $this->tahunAkademik->id,
             'title' => 'Ujian Edit',
             'instructions' => 'Instruksi Edit',
             'duration_minutes' => 90,
@@ -311,6 +329,7 @@ describe('Learning Module Details and Sub-content', function () {
         // Test Store
         $response = $this->actingAs($this->guruUser1)
             ->post(route('guru.learning-modules.ujians.store', $this->learningModule->id), [
+                'semester_id' => $this->tahunAkademik->id,
                 'title' => 'Ujian 1',
                 'instructions' => 'Kamera wajib on.',
                 'duration_minutes' => 90,
@@ -320,6 +339,7 @@ describe('Learning Module Details and Sub-content', function () {
         $response->assertSessionHasNoErrors();
         $this->assertDatabaseHas('learning_module_ujians', [
             'learning_module_id' => $this->learningModule->id,
+            'semester_id' => $this->tahunAkademik->id,
             'title' => 'Ujian 1',
         ]);
 
@@ -328,6 +348,7 @@ describe('Learning Module Details and Sub-content', function () {
         // Test Update
         $response = $this->actingAs($this->guruUser1)
             ->put(route('guru.learning-modules.ujians.update', [$this->learningModule->id, $ujian->id]), [
+                'semester_id' => $this->tahunAkademik->id,
                 'title' => 'Ujian 1 Baru',
                 'instructions' => 'Kamera wajib on baru.',
                 'duration_minutes' => 120,
@@ -336,6 +357,7 @@ describe('Learning Module Details and Sub-content', function () {
 
         $this->assertDatabaseHas('learning_module_ujians', [
             'id' => $ujian->id,
+            'semester_id' => $this->tahunAkademik->id,
             'title' => 'Ujian 1 Baru',
             'duration_minutes' => 120,
         ]);
@@ -359,6 +381,7 @@ describe('Learning Module Details and Sub-content', function () {
         // Save attendance as 'alpa'
         $response = $this->actingAs($this->guruUser1)
             ->post(route('guru.learning-modules.absensi.store', $this->learningModule->id), [
+                'semester_id' => $this->tahunAkademik->id,
                 'date' => '2026-06-04',
                 'status' => [
                     $this->murid->id => 'alpa',
@@ -368,10 +391,12 @@ describe('Learning Module Details and Sub-content', function () {
         $response->assertRedirect(route('guru.learning-modules.absensi.index', [
             'learning_module' => $this->learningModule->id,
             'date' => '2026-06-04',
+            'semester_id' => $this->tahunAkademik->id,
         ]));
 
         $this->assertDatabaseHas('learning_module_absensis', [
             'learning_module_id' => $this->learningModule->id,
+            'semester_id' => $this->tahunAkademik->id,
             'murid_id' => $this->murid->id,
             'date' => '2026-06-04 00:00:00',
             'status' => 'alpa',
@@ -394,6 +419,7 @@ describe('Learning Module Details and Sub-content', function () {
         // Save attendance as 'alpa'
         $response = $this->actingAs($this->guruUser1)
             ->post(route('guru.learning-modules.absensi.store', $this->learningModule->id), [
+                'semester_id' => $this->tahunAkademik->id,
                 'date' => '2026-06-04',
                 'status' => [
                     $this->murid->id => 'alpa',
@@ -413,6 +439,7 @@ describe('Learning Module Details and Sub-content', function () {
         // Save attendance as 'alpa'
         $response = $this->actingAs($this->guruUser1)
             ->post(route('guru.learning-modules.absensi.store', $this->learningModule->id), [
+                'semester_id' => $this->tahunAkademik->id,
                 'date' => '2026-06-04',
                 'status' => [
                     $this->murid->id => 'alpa',

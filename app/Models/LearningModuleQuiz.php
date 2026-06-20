@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
-#[Fillable(['learning_module_id', 'title', 'instructions', 'duration_minutes', 'due_date'])]
+#[Fillable(['learning_module_id', 'semester_id', 'title', 'instructions', 'duration_minutes', 'due_date'])]
 class LearningModuleQuiz extends Model
 {
     use HasFactory, SoftDeletes;
@@ -19,6 +19,11 @@ class LearningModuleQuiz extends Model
     public function learningModule()
     {
         return $this->belongsTo(LearningModule::class);
+    }
+
+    public function semester()
+    {
+        return $this->belongsTo(Semester::class);
     }
 
     public function soals()

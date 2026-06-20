@@ -23,8 +23,7 @@ class IzinRequestController extends Controller
             abort(403, 'Kelas Anda tidak aktif atau tidak ditemukan.');
         }
 
-        $activeTahunAkademik = TahunAkademik::where('is_active', true)->first();
-        if (!$activeTahunAkademik || $learningModule->tahun_akademik_id !== $activeTahunAkademik->id || $classroom->tahun_akademik_id !== $activeTahunAkademik->id) {
+        if ($learningModule->tahun_akademik_id != $classroom->tahun_akademik_id) {
             abort(403, 'Aksi tidak diizinkan. Modul tidak sesuai dengan tahun akademik kelas Anda.');
         }
 
@@ -133,12 +132,25 @@ class IzinRequestController extends Controller
             'status' => 'approved',
         ]);
 
+        // Resolve semester based on date of izin
+        $dateStr = $izinRequest->date->format('Y-m-d');
+        $semester = \App\Models\Semester::where('tahun_akademik_id', $learningModule->tahun_akademik_id)
+            ->where('start_date', '<=', $dateStr)
+            ->where('end_date', '>=', $dateStr)
+            ->first() 
+            ?? \App\Models\Semester::where('tahun_akademik_id', $learningModule->tahun_akademik_id)
+                ->where('is_active', true)
+                ->first() 
+            ?? \App\Models\Semester::where('tahun_akademik_id', $learningModule->tahun_akademik_id)
+                ->first();
+
         // Insert or update attendance record
         LearningModuleAbsensi::updateOrCreate(
             [
                 'learning_module_id' => $izinRequest->learning_module_id,
                 'murid_id' => $izinRequest->murid_id,
-                'date' => $izinRequest->date->format('Y-m-d'),
+                'date' => $dateStr,
+                'semester_id' => $semester?->id,
             ],
             [
                 'status' => $izinRequest->jenis_izin,

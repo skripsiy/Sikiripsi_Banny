@@ -5,8 +5,8 @@
         </svg>
     </div>
     <div>
-        <h3 class="text-lg font-bold text-gray-800">Tambah Tahun Ajaran</h3>
-        <p class="text-xs text-gray-400 mt-0.5">Silakan isi detail data tahun ajaran baru sekolah.</p>
+        <h3 class="text-lg font-bold text-gray-800">Tambah Semester</h3>
+        <p class="text-xs text-gray-400 mt-0.5">Silakan isi detail data semester baru sekolah.</p>
     </div>
 </div>
 
@@ -14,19 +14,63 @@
     @csrf
 
     <div>
-        <label for="create_tahun_ajaran" class="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-1.5">Tahun Ajaran</label>
-        <input type="text" name="tahun_ajaran" id="create_tahun_ajaran" value="{{ !old('_method') ? old('tahun_ajaran') : '' }}" required autofocus
-               placeholder="Contoh: 2025/2026"
-               class="w-full px-4 py-2.5 bg-white border border-gray-200 rounded-xl focus:outline-none focus:border-[#0c2b4d] focus:ring-1 focus:ring-[#0c2b4d] text-sm text-gray-800 transition-all shadow-sm">
-        <p class="text-[10px] text-gray-400 mt-1">Harus tepat 9 karakter dengan format YYYY/YYYY.</p>
+        <label for="create_tahun_akademik_id" class="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-1.5">Tahun Akademik</label>
+        <select name="tahun_akademik_id" id="create_tahun_akademik_id" required autofocus
+                class="w-full px-4 py-2.5 bg-white border border-gray-200 rounded-xl focus:outline-none focus:border-[#0c2b4d] focus:ring-1 focus:ring-[#0c2b4d] text-sm text-gray-800 transition-all shadow-sm">
+            <option value="" disabled selected>Pilih Tahun Akademik</option>
+            @foreach($academicYears as $year)
+                <option value="{{ $year->id }}" {{ (!old('_method') && old('tahun_akademik_id') == $year->id) ? 'selected' : '' }}>
+                    {{ $year->tahun_ajaran }}
+                </option>
+            @endforeach
+        </select>
         @if(!old('_method'))
-            @error('tahun_ajaran') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
+            @error('tahun_akademik_id') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
         @endif
     </div>
 
-    <input type="hidden" name="semester" value="ganjil">
+    <div>
+        <label for="create_semester" class="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-1.5">Semester</label>
+        <select name="semester" id="create_semester" required
+                class="w-full px-4 py-2.5 bg-white border border-gray-200 rounded-xl focus:outline-none focus:border-[#0c2b4d] focus:ring-1 focus:ring-[#0c2b4d] text-sm text-gray-800 transition-all shadow-sm">
+            <option value="ganjil" {{ (!old('_method') && old('semester') === 'ganjil') ? 'selected' : '' }}>Ganjil</option>
+            <option value="genap" {{ (!old('_method') && old('semester') === 'genap') ? 'selected' : '' }}>Genap</option>
+        </select>
+        @if(!old('_method'))
+            @error('semester') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
+        @endif
+    </div>
 
-    <input type="hidden" name="is_active" value="1">
+    <div class="grid grid-cols-2 gap-4">
+        <div>
+            <label for="create_start_date" class="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-1.5">Tanggal Mulai</label>
+            <input type="date" name="start_date" id="create_start_date" value="{{ !old('_method') ? old('start_date') : '' }}" required
+                   class="w-full px-4 py-2.5 bg-white border border-gray-200 rounded-xl focus:outline-none focus:border-[#0c2b4d] focus:ring-1 focus:ring-[#0c2b4d] text-sm text-gray-800 transition-all shadow-sm">
+            @if(!old('_method'))
+                @error('start_date') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
+            @endif
+        </div>
+        <div>
+            <label for="create_end_date" class="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-1.5">Tanggal Selesai</label>
+            <input type="date" name="end_date" id="create_end_date" value="{{ !old('_method') ? old('end_date') : '' }}" required
+                   class="w-full px-4 py-2.5 bg-white border border-gray-200 rounded-xl focus:outline-none focus:border-[#0c2b4d] focus:ring-1 focus:ring-[#0c2b4d] text-sm text-gray-800 transition-all shadow-sm">
+            @if(!old('_method'))
+                @error('end_date') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
+            @endif
+        </div>
+    </div>
+
+    <div>
+        <label for="create_is_active" class="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-1.5">Status Aktif</label>
+        <select name="is_active" id="create_is_active" required
+                class="w-full px-4 py-2.5 bg-white border border-gray-200 rounded-xl focus:outline-none focus:border-[#0c2b4d] focus:ring-1 focus:ring-[#0c2b4d] text-sm text-gray-800 transition-all shadow-sm">
+            <option value="1" {{ (!old('_method') && old('is_active') === '1') ? 'selected' : '' }}>Aktif</option>
+            <option value="0" {{ (!old('_method') && old('is_active') === '0') ? 'selected' : '' }}>Tidak Aktif</option>
+        </select>
+        @if(!old('_method'))
+            @error('is_active') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
+        @endif
+    </div>
 
     <div class="mt-8 flex justify-end gap-3 pt-4 border-t border-gray-100">
         <button type="button" @click="showCreateModal = false"
@@ -35,7 +79,7 @@
         </button>
         <button type="submit"
                 class="bg-gradient-to-r from-[#0c2b4d] to-[#1a4a7d] hover:from-[#081b30] hover:to-[#0c2b4d] text-white font-bold px-5 py-2.5 rounded-xl text-xs transition-colors shadow-sm cursor-pointer select-none">
-            Simpan Tahun Ajaran
+            Simpan Semester
         </button>
     </div>
 </form>

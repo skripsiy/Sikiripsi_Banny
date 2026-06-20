@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
-#[Fillable(['tahun_akademik_id', 'tahun_ajaran', 'semester', 'is_active', 'admin_id'])]
+#[Fillable(['tahun_akademik_id', 'tahun_ajaran', 'semester', 'start_date', 'end_date', 'is_active', 'admin_id'])]
 class Semester extends Model
 {
     use HasFactory, SoftDeletes;
@@ -21,6 +21,8 @@ class Semester extends Model
 
     protected $casts = [
         'is_active' => 'boolean',
+        'start_date' => 'date',
+        'end_date' => 'date',
     ];
 
     public function tahunAkademik()

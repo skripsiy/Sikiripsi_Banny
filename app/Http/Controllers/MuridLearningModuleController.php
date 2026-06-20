@@ -79,13 +79,24 @@ class MuridLearningModuleController extends Controller
         $this->authorizeModule($learningModule);
 
         $learningModule->load(['mataPelajaran', 'guru.user', 'tahunAkademik']);
-        $learningModule->loadCount(['materis', 'tugas', 'quizzes', 'ujians']);
+        
+        $semesters = \App\Models\Semester::where('tahun_akademik_id', $learningModule->tahun_akademik_id)->get();
+        $selectedSemester = $semesters->where('id', request('semester_id'))->first() ?? $semesters->where('is_active', true)->first() ?? $semesters->first();
+        $selectedSemesterId = $selectedSemester?->id;
 
-        // Recent items (latest 10 of each for dashboard timeline)
-        $recentMateris = $learningModule->materis()->latest()->limit(10)->get();
-        $recentTugas = $learningModule->tugas()->latest()->limit(10)->get();
-        $recentQuizzes = $learningModule->quizzes()->latest()->limit(10)->get();
-        $recentUjians = $learningModule->ujians()->latest()->limit(10)->get();
+        // Load all sub-contents counts filtered by selected semester
+        $learningModule->loadCount([
+            'materis' => fn($q) => $q->where('semester_id', $selectedSemesterId),
+            'tugas' => fn($q) => $q->where('semester_id', $selectedSemesterId),
+            'quizzes' => fn($q) => $q->where('semester_id', $selectedSemesterId),
+            'ujians' => fn($q) => $q->where('semester_id', $selectedSemesterId)
+        ]);
+
+        // Recent items (latest 10 of each for dashboard timeline) filtered by selected semester
+        $recentMateris = $learningModule->materis()->where('semester_id', $selectedSemesterId)->latest()->limit(10)->get();
+        $recentTugas = $learningModule->tugas()->where('semester_id', $selectedSemesterId)->latest()->limit(10)->get();
+        $recentQuizzes = $learningModule->quizzes()->where('semester_id', $selectedSemesterId)->latest()->limit(10)->get();
+        $recentUjians = $learningModule->ujians()->where('semester_id', $selectedSemesterId)->latest()->limit(10)->get();
 
         // Map them to a unified activity feed for the timeline
         $materisMapped = $recentMateris->map(fn($item) => [
@@ -98,7 +109,7 @@ class MuridLearningModuleController extends Controller
             'due_date_formatted' => null,
             'is_recent' => $item->created_at->diffInDays(now()) <= 7,
             'is_upcoming' => false,
-            'url' => route('murid.learning-modules.materis.index', $learningModule->id),
+            'url' => route('murid.learning-modules.materis.index', [$learningModule->id, 'semester_id' => $selectedSemesterId]),
         ]);
 
         $tugasMapped = $recentTugas->map(fn($item) => [
@@ -111,7 +122,7 @@ class MuridLearningModuleController extends Controller
             'due_date_formatted' => $item->due_date ? $item->due_date->translatedFormat('d F Y H:i') : null,
             'is_recent' => $item->created_at->diffInDays(now()) <= 7,
             'is_upcoming' => $item->due_date ? $item->due_date->isFuture() : false,
-            'url' => route('murid.learning-modules.tugas.index', $learningModule->id),
+            'url' => route('murid.learning-modules.tugas.index', [$learningModule->id, 'semester_id' => $selectedSemesterId]),
         ]);
 
         $quizzesMapped = $recentQuizzes->map(fn($item) => [
@@ -124,7 +135,7 @@ class MuridLearningModuleController extends Controller
             'due_date_formatted' => $item->due_date ? $item->due_date->translatedFormat('d F Y H:i') : null,
             'is_recent' => $item->created_at->diffInDays(now()) <= 7,
             'is_upcoming' => $item->due_date ? $item->due_date->isFuture() : false,
-            'url' => route('murid.learning-modules.quizzes.index', $learningModule->id),
+            'url' => route('murid.learning-modules.quizzes.index', [$learningModule->id, 'semester_id' => $selectedSemesterId]),
         ]);
 
         $ujiansMapped = $recentUjians->map(fn($item) => [
@@ -137,7 +148,7 @@ class MuridLearningModuleController extends Controller
             'due_date_formatted' => $item->due_date ? $item->due_date->translatedFormat('d F Y H:i') : null,
             'is_recent' => $item->created_at->diffInDays(now()) <= 7,
             'is_upcoming' => $item->due_date ? $item->due_date->isFuture() : false,
-            'url' => route('murid.learning-modules.ujians.index', $learningModule->id),
+            'url' => route('murid.learning-modules.ujians.index', [$learningModule->id, 'semester_id' => $selectedSemesterId]),
         ]);
 
         $activities = collect()
@@ -149,7 +160,7 @@ class MuridLearningModuleController extends Controller
             ->take(15)
             ->values();
 
-        return view('murid.learning_modules.show', compact('learningModule', 'activities'));
+        return view('murid.learning_modules.show', compact('learningModule', 'activities', 'semesters', 'selectedSemester'));
     }
 
     public function materis(LearningModule $learningModule)
@@ -157,11 +168,17 @@ class MuridLearningModuleController extends Controller
         $this->authorizeModule($learningModule);
 
         $learningModule->load('mataPelajaran');
+        
+        $semesters = \App\Models\Semester::where('tahun_akademik_id', $learningModule->tahun_akademik_id)->get();
+        $selectedSemester = $semesters->where('id', request('semester_id'))->first() ?? $semesters->where('is_active', true)->first() ?? $semesters->first();
+        $selectedSemesterId = $selectedSemester?->id;
+
         $materis = LearningModuleMateri::where('learning_module_id', $learningModule->id)
+            ->where('semester_id', $selectedSemesterId)
             ->latest()
             ->get();
 
-        return view('murid.learning_modules.materis.index', compact('learningModule', 'materis'));
+        return view('murid.learning_modules.materis.index', compact('learningModule', 'materis', 'semesters', 'selectedSemester'));
     }
 
     public function tugas(LearningModule $learningModule)
@@ -171,14 +188,20 @@ class MuridLearningModuleController extends Controller
         $learningModule->load('mataPelajaran');
 
         $murid = auth()->user()->murid;
+        
+        $semesters = \App\Models\Semester::where('tahun_akademik_id', $learningModule->tahun_akademik_id)->get();
+        $selectedSemester = $semesters->where('id', request('semester_id'))->first() ?? $semesters->where('is_active', true)->first() ?? $semesters->first();
+        $selectedSemesterId = $selectedSemester?->id;
+
         $tugas = LearningModuleTugas::where('learning_module_id', $learningModule->id)
+            ->where('semester_id', $selectedSemesterId)
             ->with(['submissions' => function ($query) use ($murid) {
                 $query->where('murid_id', $murid->id);
             }])
             ->latest()
             ->get();
 
-        return view('murid.learning_modules.tugas.index', compact('learningModule', 'tugas'));
+        return view('murid.learning_modules.tugas.index', compact('learningModule', 'tugas', 'semesters', 'selectedSemester'));
     }
 
     public function quizzes(LearningModule $learningModule)
@@ -188,7 +211,12 @@ class MuridLearningModuleController extends Controller
         $learningModule->load('mataPelajaran');
         $murid = auth()->user()->murid;
 
+        $semesters = \App\Models\Semester::where('tahun_akademik_id', $learningModule->tahun_akademik_id)->get();
+        $selectedSemester = $semesters->where('id', request('semester_id'))->first() ?? $semesters->where('is_active', true)->first() ?? $semesters->first();
+        $selectedSemesterId = $selectedSemester?->id;
+
         $quizzes = LearningModuleQuiz::where('learning_module_id', $learningModule->id)
+            ->where('semester_id', $selectedSemesterId)
             ->withCount('soals')
             ->latest()
             ->get();
@@ -198,7 +226,7 @@ class MuridLearningModuleController extends Controller
             ->get()
             ->keyBy('learning_module_quiz_id');
 
-        return view('murid.learning_modules.quizzes.index', compact('learningModule', 'quizzes', 'attempts'));
+        return view('murid.learning_modules.quizzes.index', compact('learningModule', 'quizzes', 'attempts', 'semesters', 'selectedSemester'));
     }
 
     public function startQuiz(LearningModule $learningModule, LearningModuleQuiz $quiz)
@@ -393,7 +421,12 @@ class MuridLearningModuleController extends Controller
         $learningModule->load('mataPelajaran');
         $murid = auth()->user()->murid;
 
+        $semesters = \App\Models\Semester::where('tahun_akademik_id', $learningModule->tahun_akademik_id)->get();
+        $selectedSemester = $semesters->where('id', request('semester_id'))->first() ?? $semesters->where('is_active', true)->first() ?? $semesters->first();
+        $selectedSemesterId = $selectedSemester?->id;
+
         $ujians = LearningModuleUjian::where('learning_module_id', $learningModule->id)
+            ->where('semester_id', $selectedSemesterId)
             ->withCount('soals')
             ->latest()
             ->get();
@@ -403,7 +436,7 @@ class MuridLearningModuleController extends Controller
             ->get()
             ->keyBy('learning_module_ujian_id');
 
-        return view('murid.learning_modules.ujians.index', compact('learningModule', 'ujians', 'attempts'));
+        return view('murid.learning_modules.ujians.index', compact('learningModule', 'ujians', 'attempts', 'semesters', 'selectedSemester'));
     }
 
     public function startUjian(LearningModule $learningModule, LearningModuleUjian $ujian)
@@ -595,12 +628,17 @@ class MuridLearningModuleController extends Controller
 
         $murid = auth()->user()->murid;
 
+        $semesters = \App\Models\Semester::where('tahun_akademik_id', $learningModule->tahun_akademik_id)->get();
+        $selectedSemester = $semesters->where('id', request('semester_id'))->first() ?? $semesters->where('is_active', true)->first() ?? $semesters->first();
+        $selectedSemesterId = $selectedSemester?->id;
+
         $absensis = LearningModuleAbsensi::where('learning_module_id', $learningModule->id)
+            ->where('semester_id', $selectedSemesterId)
             ->where('murid_id', $murid->id)
             ->orderBy('date', 'desc')
             ->get();
 
-        return view('murid.learning_modules.absensi.index', compact('learningModule', 'absensis'));
+        return view('murid.learning_modules.absensi.index', compact('learningModule', 'absensis', 'semesters', 'selectedSemester'));
     }
 
     public function rekapNilai(LearningModule $learningModule)
@@ -611,13 +649,18 @@ class MuridLearningModuleController extends Controller
 
         $murid = auth()->user()->murid;
 
+        $semesters = \App\Models\Semester::where('tahun_akademik_id', $learningModule->tahun_akademik_id)->get();
+        $selectedSemester = $semesters->where('id', request('semester_id'))->first() ?? $semesters->where('is_active', true)->first() ?? $semesters->first();
+        $selectedSemesterId = $selectedSemester?->id;
+
         $tugas = LearningModuleTugas::where('learning_module_id', $learningModule->id)
+            ->where('semester_id', $selectedSemesterId)
             ->with(['submissions' => function ($query) use ($murid) {
                 $query->where('murid_id', $murid->id);
             }])
             ->latest()
             ->get();
 
-        return view('murid.learning_modules.rekap_nilai.index', compact('learningModule', 'tugas'));
+        return view('murid.learning_modules.rekap_nilai.index', compact('learningModule', 'tugas', 'semesters', 'selectedSemester'));
     }
 }

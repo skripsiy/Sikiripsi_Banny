@@ -4,12 +4,13 @@ namespace App\Http\Controllers;
 
 use App\Models\LearningModule;
 use App\Models\LearningModuleMateri;
+use App\Models\Semester;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 
 class MateriController extends Controller
 {
-    public function index(LearningModule $learningModule)
+    public function index(Request $request, LearningModule $learningModule)
     {
         $guru = auth()->user()->guru;
         if (!$guru || $learningModule->guru_id !== $guru->id) {
@@ -17,12 +18,26 @@ class MateriController extends Controller
         }
 
         $learningModule->load('mataPelajaran');
-        $materis = LearningModuleMateri::where('learning_module_id', $learningModule->id)->latest()->get();
 
-        return view('guru.learning_modules.materis.index', compact('learningModule', 'materis'));
+        $selectedSemesterId = $request->query('semester_id');
+        if (!$selectedSemesterId) {
+            $selectedSemesterId = Semester::where('tahun_akademik_id', $learningModule->tahun_akademik_id)
+                ->where('is_active', true)
+                ->value('id')
+                ?? Semester::where('tahun_akademik_id', $learningModule->tahun_akademik_id)->value('id');
+        }
+
+        $materis = LearningModuleMateri::where('learning_module_id', $learningModule->id)
+            ->where('semester_id', $selectedSemesterId)
+            ->latest()
+            ->get();
+
+        $semesters = Semester::where('tahun_akademik_id', $learningModule->tahun_akademik_id)->get();
+
+        return view('guru.learning_modules.materis.index', compact('learningModule', 'materis', 'selectedSemesterId', 'semesters'));
     }
 
-    public function create(LearningModule $learningModule)
+    public function create(Request $request, LearningModule $learningModule)
     {
         $guru = auth()->user()->guru;
         if (!$guru || $learningModule->guru_id !== $guru->id) {
@@ -30,8 +45,9 @@ class MateriController extends Controller
         }
 
         $learningModule->load('mataPelajaran');
+        $selectedSemesterId = $request->query('semester_id');
 
-        return view('guru.learning_modules.materis.create', compact('learningModule'));
+        return view('guru.learning_modules.materis.create', compact('learningModule', 'selectedSemesterId'));
     }
 
     public function store(Request $request, LearningModule $learningModule)
@@ -42,6 +58,7 @@ class MateriController extends Controller
         }
 
         $request->validate([
+            'semester_id' => ['required', 'exists:semesters,id'],
             'title' => ['required', 'string', 'max:255'],
             'content' => ['required', 'string'],
             'file' => ['nullable', 'file', 'max:10240'],
@@ -54,12 +71,13 @@ class MateriController extends Controller
 
         LearningModuleMateri::create([
             'learning_module_id' => $learningModule->id,
+            'semester_id' => $request->semester_id,
             'title' => $request->title,
             'content' => $request->content,
             'file_path' => $filePath,
         ]);
 
-        return redirect()->route('guru.learning-modules.materis.index', $learningModule->id)
+        return redirect()->route('guru.learning-modules.show', [$learningModule->id, 'semester_id' => $request->semester_id])
             ->with('status', 'Materi berhasil ditambahkan.');
     }
 
@@ -71,12 +89,14 @@ class MateriController extends Controller
         }
 
         $request->validate([
+            'semester_id' => ['required', 'exists:semesters,id'],
             'title' => ['required', 'string', 'max:255'],
             'content' => ['required', 'string'],
             'file' => ['nullable', 'file', 'max:10240'],
         ]);
 
         $data = [
+            'semester_id' => $request->semester_id,
             'title' => $request->title,
             'content' => $request->content,
         ];
@@ -90,7 +110,7 @@ class MateriController extends Controller
 
         $materi->update($data);
 
-        return redirect()->route('guru.learning-modules.materis.index', $learningModule->id)
+        return redirect()->route('guru.learning-modules.show', [$learningModule->id, 'semester_id' => $request->semester_id])
             ->with('status', 'Materi berhasil diperbarui.');
     }
 
@@ -101,21 +121,22 @@ class MateriController extends Controller
             abort(403, 'Aksi tidak diizinkan.');
         }
 
-        $learningModule->load('mataPelajaran');
+        $selectedSemesterId = $materi->semester_id;
 
-        return view('guru.learning_modules.materis.edit', compact('learningModule', 'materi'));
+        return view('guru.learning_modules.materis.edit', compact('learningModule', 'materi', 'selectedSemesterId'));
     }
 
-    public function destroy(LearningModule $learningModule, LearningModuleMateri $materi)
+    public function destroy(Request $request, LearningModule $learningModule, LearningModuleMateri $materi)
     {
         $guru = auth()->user()->guru;
         if (!$guru || $learningModule->guru_id !== $guru->id || $materi->learning_module_id !== $learningModule->id) {
             abort(403, 'Aksi tidak diizinkan.');
         }
 
+        $semesterId = $materi->semester_id;
         $materi->delete();
 
-        return redirect()->route('guru.learning-modules.materis.index', $learningModule->id)
+        return redirect()->route('guru.learning-modules.show', [$learningModule->id, 'semester_id' => $semesterId])
             ->with('status', 'Materi berhasil dihapus.');
     }
 }

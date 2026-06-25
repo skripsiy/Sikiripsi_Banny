@@ -45,8 +45,10 @@ return new class extends Migration
 
         // 7. Update unique constraint on learning_module_absensis
         Schema::table('learning_module_absensis', function (Blueprint $table) {
-            $table->dropUnique('lm_murid_date_unique');
             $table->unique(['learning_module_id', 'murid_id', 'date', 'semester_id'], 'lm_murid_date_semester_unique');
+        });
+        Schema::table('learning_module_absensis', function (Blueprint $table) {
+            $table->dropUnique('lm_murid_date_unique');
         });
 
         // 8. Populate semester_id for existing records based on parent learning module's tahun_akademik_id
@@ -59,8 +61,11 @@ return new class extends Migration
     public function down(): void
     {
         Schema::table('learning_module_absensis', function (Blueprint $table) {
-            $table->dropUnique('lm_murid_date_semester_unique');
             $table->unique(['learning_module_id', 'murid_id', 'date'], 'lm_murid_date_unique');
+        });
+
+        Schema::table('learning_module_absensis', function (Blueprint $table) {
+            $table->dropUnique('lm_murid_date_semester_unique');
             $table->dropForeign(['semester_id']);
             $table->dropColumn('semester_id');
         });

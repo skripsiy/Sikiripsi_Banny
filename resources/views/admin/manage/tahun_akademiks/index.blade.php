@@ -11,7 +11,7 @@
             tahun_ajaran: {{ json_encode(old('tahun_ajaran') ?? '') }},
             is_active: '{{ old('is_active') !== null ? (old('is_active') ? '1' : '0') : '' }}'
         },
-        editUrl: '{{ old('id') ? route('admin.manage.tahun-akademiks.update', old('id')) : '' }}'
+        editUrl: '{{ old('id') ? route('admin.manage.tahun_akademiks.update', old('id')) : '' }}'
     }">
         <!-- Header Actions -->
         <div class="flex justify-between items-center mb-6">
@@ -74,13 +74,13 @@
                                                         tahun_ajaran: {{ json_encode($year->tahun_ajaran) }},
                                                         is_active: '{{ $year->is_active ? '1' : '0' }}'
                                                     };
-                                                    editUrl = '{{ route('admin.manage.tahun-akademiks.update', $year->id) }}';
+                                                    editUrl = '{{ route('admin.manage.tahun_akademiks.update', $year->id) }}';
                                                  " 
                                                  class="text-blue-600 hover:text-blue-900 bg-blue-50 hover:bg-blue-100 px-3 py-1.5 rounded-lg text-xs font-bold transition-all duration-150 cursor-pointer select-none">
                                                     Edit
                                                 </button>
                                                 
-                                                <form action="{{ route('admin.manage.tahun-akademiks.destroy', $year->id) }}" method="POST" onsubmit="return confirm('Apakah Anda yakin ingin menghapus tahun akademik ini?');" class="inline">
+                                                <form action="{{ route('admin.manage.tahun_akademiks.destroy', $year->id) }}" method="POST" onsubmit="return confirm('Apakah Anda yakin ingin menghapus tahun akademik ini?');" class="inline">
                                                     @csrf
                                                     @method('DELETE')
                                                     <button type="submit" 

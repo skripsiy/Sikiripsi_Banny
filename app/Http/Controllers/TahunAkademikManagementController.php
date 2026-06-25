@@ -63,58 +63,8 @@ class TahunAkademikManagementController extends Controller
             ]);
         }
 
-        // Auto-create Semester Ganjil & Genap if they don't exist yet
-        $parts = explode('/', $request->tahun_ajaran);
-        $year1 = (int) $parts[0];
-        $year2 = (int) $parts[1];
-        $adminId = auth()->user()->admin?->id;
-
-        // Semester Ganjil: Juli tahun pertama - Desember tahun pertama
-        $existingGanjil = Semester::withTrashed()
-            ->where('tahun_akademik_id', $ay->id)
-            ->where('semester', 'ganjil')
-            ->first();
-
-        if ($existingGanjil) {
-            if ($existingGanjil->trashed()) {
-                $existingGanjil->restore();
-            }
-        } else {
-            Semester::create([
-                'tahun_akademik_id' => $ay->id,
-                'tahun_ajaran' => $request->tahun_ajaran,
-                'semester' => 'ganjil',
-                'start_date' => "{$year1}-07-01",
-                'end_date' => "{$year1}-12-31",
-                'is_active' => true,
-                'admin_id' => $adminId,
-            ]);
-        }
-
-        // Semester Genap: Januari tahun kedua - Juni tahun kedua
-        $existingGenap = Semester::withTrashed()
-            ->where('tahun_akademik_id', $ay->id)
-            ->where('semester', 'genap')
-            ->first();
-
-        if ($existingGenap) {
-            if ($existingGenap->trashed()) {
-                $existingGenap->restore();
-            }
-        } else {
-            Semester::create([
-                'tahun_akademik_id' => $ay->id,
-                'tahun_ajaran' => $request->tahun_ajaran,
-                'semester' => 'genap',
-                'start_date' => "{$year2}-01-01",
-                'end_date' => "{$year2}-06-30",
-                'is_active' => false,
-                'admin_id' => $adminId,
-            ]);
-        }
-
         return redirect()->route('admin.manage.tahun_akademiks.index')
-            ->with('status', 'Tahun Akademik beserta Semester Ganjil & Genap berhasil ditambahkan.');
+            ->with('status', 'Tahun Akademik berhasil ditambahkan.');
     }
 
     public function edit(TahunAkademik $tahunAkademik)
@@ -154,9 +104,6 @@ class TahunAkademikManagementController extends Controller
             'tahun_ajaran' => $request->tahun_ajaran,
             'is_active' => (bool)$request->is_active,
         ]);
-
-        // Automatically update the year string in semesters of this year
-        $tahunAkademik->semesters()->update(['tahun_ajaran' => $request->tahun_ajaran]);
 
         return redirect()->route('admin.manage.tahun_akademiks.index')
             ->with('status', 'Tahun Akademik berhasil diperbarui.');

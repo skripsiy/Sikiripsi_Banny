@@ -28,12 +28,16 @@ describe('Learning Module Management', function () {
         ]);
 
         // Create TahunAjaran
-        $this->tahunAkademik = Semester::create([
+        $this->academicYear = \App\Models\TahunAkademik::create([
             'tahun_ajaran' => '2025/2026',
+            'is_active' => true,
+        ]);
+
+        $this->tahunAkademik = Semester::create([
+            'tahun_akademik_id' => $this->academicYear->id,
             'semester' => 'ganjil',
             'is_active' => true,
         ]);
-        $this->academicYear = $this->tahunAkademik->tahunAkademik;
 
         // Create mata_pelajarans
         $this->mataPelajaran1 = MataPelajaran::create([

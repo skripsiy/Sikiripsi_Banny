@@ -14,15 +14,25 @@ describe('Classroom CRUD Management', function () {
         $this->admin = User::factory()->create(['role' => 'admin']);
 
         // Create initial Tahun Ajaran
-        $this->tahunAkademik = Semester::create([
+        $this->tahunAkademik = \App\Models\TahunAkademik::create([
             'tahun_ajaran' => '2025/2026',
+            'is_active' => true,
+        ]);
+
+        $this->semester = Semester::create([
+            'tahun_akademik_id' => $this->tahunAkademik->id,
             'semester' => 'ganjil',
             'is_active' => true,
         ]);
 
         // Create another Tahun Ajaran for testing cross-year duplicates
-        $this->tahunAkademik2 = Semester::create([
+        $this->tahunAkademik2 = \App\Models\TahunAkademik::create([
             'tahun_ajaran' => '2026/2027',
+            'is_active' => false,
+        ]);
+
+        $this->semester2 = Semester::create([
+            'tahun_akademik_id' => $this->tahunAkademik2->id,
             'semester' => 'ganjil',
             'is_active' => false,
         ]);

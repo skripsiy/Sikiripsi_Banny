@@ -14,13 +14,12 @@ return new class extends Migration
         Schema::create('semesters', function (Blueprint $table) {
             $table->id();
             $table->foreignId('tahun_akademik_id')->constrained('tahun_akademiks')->cascadeOnDelete();
-            $table->string('tahun_ajaran', 9);
             $table->enum('semester', ['ganjil', 'genap']);
             $table->boolean('is_active')->default(false);
             $table->timestamps();
             $table->softDeletes();
 
-            $table->index(['tahun_ajaran', 'semester']);
+            $table->index(['tahun_akademik_id', 'semester']);
         });
     }
 

@@ -36,12 +36,16 @@ describe('Learning Module Details and Sub-content', function () {
         ]);
 
         // Setup Jurusan & Tahun Ajaran
-        $this->tahunAkademik = Semester::create([
+        $this->academicYear = \App\Models\TahunAkademik::create([
             'tahun_ajaran' => '2025/2026',
+            'is_active' => true,
+        ]);
+
+        $this->tahunAkademik = Semester::create([
+            'tahun_akademik_id' => $this->academicYear->id,
             'semester' => 'ganjil',
             'is_active' => true,
         ]);
-        $this->academicYear = $this->tahunAkademik->tahunAkademik;
 
         $this->jurusan = Jurusan::create([
             'kode_jurusan' => 'RPL',

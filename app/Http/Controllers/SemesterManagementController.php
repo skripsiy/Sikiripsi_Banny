@@ -46,7 +46,6 @@ class SemesterManagementController extends Controller
 
         Semester::create([
             'tahun_akademik_id' => $ay->id,
-            'tahun_ajaran' => $ay->tahun_ajaran,
             'semester' => $request->semester,
             'start_date' => $request->start_date,
             'end_date' => $request->end_date,
@@ -89,7 +88,6 @@ class SemesterManagementController extends Controller
 
         $semester->update([
             'tahun_akademik_id' => $ay->id,
-            'tahun_ajaran' => $ay->tahun_ajaran,
             'semester' => $request->semester,
             'start_date' => $request->start_date,
             'end_date' => $request->end_date,

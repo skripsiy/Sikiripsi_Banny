@@ -18,8 +18,13 @@ describe('Equivalence Partitioning (EP) - Email & Required Fields Validation', f
         // Create an admin to bypass role middleware for managing murids
         $this->admin = User::factory()->create(['role' => 'admin']);
 
-        $this->tahunAkademik = \App\Models\Semester::create([
+        $this->academicYear = \App\Models\TahunAkademik::create([
             'tahun_ajaran' => '2025/2026',
+            'is_active' => true,
+        ]);
+
+        $this->tahunAkademik = \App\Models\Semester::create([
+            'tahun_akademik_id' => $this->academicYear->id,
             'semester' => 'ganjil',
             'is_active' => true,
         ]);
@@ -115,8 +120,13 @@ describe('Boundary Value Analysis (BVA) - NISN Length & Password Length', functi
     beforeEach(function () {
         $this->admin = User::factory()->create(['role' => 'admin']);
 
-        $this->tahunAkademik = \App\Models\Semester::create([
+        $this->academicYear = \App\Models\TahunAkademik::create([
             'tahun_ajaran' => '2025/2026',
+            'is_active' => true,
+        ]);
+
+        $this->tahunAkademik = \App\Models\Semester::create([
+            'tahun_akademik_id' => $this->academicYear->id,
             'semester' => 'ganjil',
             'is_active' => true,
         ]);
@@ -406,7 +416,6 @@ describe('Tahun Ajaran - Black Box Testing (EP, BVA, Decision Table)', function 
             // Setup: create active record
             \App\Models\Semester::create([
                 'tahun_akademik_id' => $ta->id,
-                'tahun_ajaran' => $ta->tahun_ajaran,
                 'semester' => 'ganjil',
                 'start_date' => '2024-07-01',
                 'end_date' => '2024-12-31',
@@ -434,7 +443,6 @@ describe('Tahun Ajaran - Black Box Testing (EP, BVA, Decision Table)', function 
             // Setup: create active record and soft delete it
             $taSemester = \App\Models\Semester::create([
                 'tahun_akademik_id' => $ta->id,
-                'tahun_ajaran' => $ta->tahun_ajaran,
                 'semester' => 'ganjil',
                 'start_date' => '2024-07-01',
                 'end_date' => '2024-12-31',

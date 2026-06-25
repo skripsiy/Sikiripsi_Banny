@@ -11,20 +11,7 @@
         @enderror
     </div>
 
-    <div class="mb-6 p-4 bg-blue-50 border border-blue-200 rounded-xl">
-        <div class="flex items-start gap-3">
-            <svg class="w-5 h-5 text-blue-500 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-            </svg>
-            <div>
-                <p class="text-sm font-bold text-blue-800">Otomatis Dibuat</p>
-                <p class="text-xs text-blue-600 mt-1 leading-relaxed">
-                    Tahun Akademik baru akan langsung berstatus <strong>Aktif</strong>. 
-                    Semester <strong>Ganjil</strong> dan <strong>Genap</strong> juga akan otomatis dibuat dengan tanggal default yang dapat diedit nanti.
-                </p>
-            </div>
-        </div>
-    </div>
+
 
     <div class="flex justify-end gap-3 mt-8">
         <button type="button" @click="showCreateModal = false"

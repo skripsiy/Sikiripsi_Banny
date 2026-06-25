@@ -53,14 +53,12 @@ class DatabaseSeeder extends Seeder
 
         $taGanjil = \App\Models\Semester::create([
             'tahun_akademik_id' => $ay->id,
-            'tahun_ajaran' => '2025/2026',
             'semester' => 'ganjil',
             'is_active' => true,
         ]);
 
         $taGenap = \App\Models\Semester::create([
             'tahun_akademik_id' => $ay->id,
-            'tahun_ajaran' => '2025/2026',
             'semester' => 'genap',
             'is_active' => false,
         ]);

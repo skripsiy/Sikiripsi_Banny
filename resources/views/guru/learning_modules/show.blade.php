@@ -44,20 +44,7 @@
             </div>
         </div>
 
-        <!-- Semester Selection Tabs -->
-        @if($semesters->isNotEmpty())
-            <div class="mb-6 bg-white border border-gray-150 p-1.5 rounded-2xl flex flex-wrap gap-1 shadow-sm">
-                @foreach($semesters as $sem)
-                    <a href="{{ route('guru.learning-modules.show', [$learningModule->id, 'semester_id' => $sem->id]) }}"
-                       class="px-4 py-2 rounded-xl text-xs font-bold transition-all select-none cursor-pointer flex items-center gap-2 {{ $selectedSemester?->id === $sem->id ? 'bg-[#0c2b4d] text-white shadow-sm' : 'text-gray-600 hover:bg-gray-50' }}">
-                        <span>Semester {{ ucfirst($sem->semester) }}</span>
-                        @if($sem->is_active)
-                            <span class="w-1.5 h-1.5 rounded-full bg-green-400 animate-pulse"></span>
-                        @endif
-                    </a>
-                @endforeach
-            </div>
-        @endif
+
 
         <!-- Statistics / Overview Cards Grid -->
         <div class="grid grid-cols-2 md:grid-cols-5 gap-4 mb-6">

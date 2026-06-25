@@ -81,7 +81,17 @@ class MuridLearningModuleController extends Controller
         $learningModule->load(['mataPelajaran', 'guru.user', 'tahunAkademik']);
         
         $semesters = \App\Models\Semester::where('tahun_akademik_id', $learningModule->tahun_akademik_id)->get();
-        $selectedSemester = $semesters->where('id', request('semester_id'))->first() ?? $semesters->where('is_active', true)->first() ?? $semesters->first();
+        $selectedSemester = null;
+        if (request()->has('semester_id')) {
+            $selectedSemester = $semesters->where('id', request('semester_id'))->first();
+        }
+        if (!$selectedSemester) {
+            $selectedSemester = $semesters->filter(function($s) {
+                return date('Y-m-d') >= $s->start_date && date('Y-m-d') <= $s->end_date;
+            })->first() 
+            ?? $semesters->where('is_active', true)->first() 
+            ?? $semesters->first();
+        }
         $selectedSemesterId = $selectedSemester?->id;
 
         // Load all sub-contents counts filtered by selected semester
@@ -170,7 +180,17 @@ class MuridLearningModuleController extends Controller
         $learningModule->load('mataPelajaran');
         
         $semesters = \App\Models\Semester::where('tahun_akademik_id', $learningModule->tahun_akademik_id)->get();
-        $selectedSemester = $semesters->where('id', request('semester_id'))->first() ?? $semesters->where('is_active', true)->first() ?? $semesters->first();
+        $selectedSemester = null;
+        if (request()->has('semester_id')) {
+            $selectedSemester = $semesters->where('id', request('semester_id'))->first();
+        }
+        if (!$selectedSemester) {
+            $selectedSemester = $semesters->filter(function($s) {
+                return date('Y-m-d') >= $s->start_date && date('Y-m-d') <= $s->end_date;
+            })->first() 
+            ?? $semesters->where('is_active', true)->first() 
+            ?? $semesters->first();
+        }
         $selectedSemesterId = $selectedSemester?->id;
 
         $materis = LearningModuleMateri::where('learning_module_id', $learningModule->id)
@@ -190,7 +210,17 @@ class MuridLearningModuleController extends Controller
         $murid = auth()->user()->murid;
         
         $semesters = \App\Models\Semester::where('tahun_akademik_id', $learningModule->tahun_akademik_id)->get();
-        $selectedSemester = $semesters->where('id', request('semester_id'))->first() ?? $semesters->where('is_active', true)->first() ?? $semesters->first();
+        $selectedSemester = null;
+        if (request()->has('semester_id')) {
+            $selectedSemester = $semesters->where('id', request('semester_id'))->first();
+        }
+        if (!$selectedSemester) {
+            $selectedSemester = $semesters->filter(function($s) {
+                return date('Y-m-d') >= $s->start_date && date('Y-m-d') <= $s->end_date;
+            })->first() 
+            ?? $semesters->where('is_active', true)->first() 
+            ?? $semesters->first();
+        }
         $selectedSemesterId = $selectedSemester?->id;
 
         $tugas = LearningModuleTugas::where('learning_module_id', $learningModule->id)
@@ -212,7 +242,17 @@ class MuridLearningModuleController extends Controller
         $murid = auth()->user()->murid;
 
         $semesters = \App\Models\Semester::where('tahun_akademik_id', $learningModule->tahun_akademik_id)->get();
-        $selectedSemester = $semesters->where('id', request('semester_id'))->first() ?? $semesters->where('is_active', true)->first() ?? $semesters->first();
+        $selectedSemester = null;
+        if (request()->has('semester_id')) {
+            $selectedSemester = $semesters->where('id', request('semester_id'))->first();
+        }
+        if (!$selectedSemester) {
+            $selectedSemester = $semesters->filter(function($s) {
+                return date('Y-m-d') >= $s->start_date && date('Y-m-d') <= $s->end_date;
+            })->first() 
+            ?? $semesters->where('is_active', true)->first() 
+            ?? $semesters->first();
+        }
         $selectedSemesterId = $selectedSemester?->id;
 
         $quizzes = LearningModuleQuiz::where('learning_module_id', $learningModule->id)
@@ -422,7 +462,17 @@ class MuridLearningModuleController extends Controller
         $murid = auth()->user()->murid;
 
         $semesters = \App\Models\Semester::where('tahun_akademik_id', $learningModule->tahun_akademik_id)->get();
-        $selectedSemester = $semesters->where('id', request('semester_id'))->first() ?? $semesters->where('is_active', true)->first() ?? $semesters->first();
+        $selectedSemester = null;
+        if (request()->has('semester_id')) {
+            $selectedSemester = $semesters->where('id', request('semester_id'))->first();
+        }
+        if (!$selectedSemester) {
+            $selectedSemester = $semesters->filter(function($s) {
+                return date('Y-m-d') >= $s->start_date && date('Y-m-d') <= $s->end_date;
+            })->first() 
+            ?? $semesters->where('is_active', true)->first() 
+            ?? $semesters->first();
+        }
         $selectedSemesterId = $selectedSemester?->id;
 
         $ujians = LearningModuleUjian::where('learning_module_id', $learningModule->id)
@@ -629,7 +679,17 @@ class MuridLearningModuleController extends Controller
         $murid = auth()->user()->murid;
 
         $semesters = \App\Models\Semester::where('tahun_akademik_id', $learningModule->tahun_akademik_id)->get();
-        $selectedSemester = $semesters->where('id', request('semester_id'))->first() ?? $semesters->where('is_active', true)->first() ?? $semesters->first();
+        $selectedSemester = null;
+        if (request()->has('semester_id')) {
+            $selectedSemester = $semesters->where('id', request('semester_id'))->first();
+        }
+        if (!$selectedSemester) {
+            $selectedSemester = $semesters->filter(function($s) {
+                return date('Y-m-d') >= $s->start_date && date('Y-m-d') <= $s->end_date;
+            })->first() 
+            ?? $semesters->where('is_active', true)->first() 
+            ?? $semesters->first();
+        }
         $selectedSemesterId = $selectedSemester?->id;
 
         $absensis = LearningModuleAbsensi::where('learning_module_id', $learningModule->id)
@@ -650,7 +710,17 @@ class MuridLearningModuleController extends Controller
         $murid = auth()->user()->murid;
 
         $semesters = \App\Models\Semester::where('tahun_akademik_id', $learningModule->tahun_akademik_id)->get();
-        $selectedSemester = $semesters->where('id', request('semester_id'))->first() ?? $semesters->where('is_active', true)->first() ?? $semesters->first();
+        $selectedSemester = null;
+        if (request()->has('semester_id')) {
+            $selectedSemester = $semesters->where('id', request('semester_id'))->first();
+        }
+        if (!$selectedSemester) {
+            $selectedSemester = $semesters->filter(function($s) {
+                return date('Y-m-d') >= $s->start_date && date('Y-m-d') <= $s->end_date;
+            })->first() 
+            ?? $semesters->where('is_active', true)->first() 
+            ?? $semesters->first();
+        }
         $selectedSemesterId = $selectedSemester?->id;
 
         $tugas = LearningModuleTugas::where('learning_module_id', $learningModule->id)

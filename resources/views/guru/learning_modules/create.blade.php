@@ -10,7 +10,7 @@
     </div>
 </div>
 
-<form method="POST" action="{{ route('guru.learning-modules.store') }}" enctype="multipart/form-data" class="space-y-4">
+<form method="POST" action="{{ route('guru.learning-modules.store') }}" class="space-y-4">
     @csrf
 
     <div>

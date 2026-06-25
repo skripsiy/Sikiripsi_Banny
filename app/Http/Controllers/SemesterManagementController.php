@@ -36,7 +36,7 @@ class SemesterManagementController extends Controller
             ],
             'start_date' => ['required', 'date'],
             'end_date' => ['required', 'date', 'after_or_equal:start_date'],
-            'is_active' => ['required', 'boolean'],
+            'is_active' => ['nullable', 'boolean'],
         ], [
             'semester.unique' => 'Semester ini sudah terdaftar pada tahun akademik yang dipilih.',
             'end_date.after_or_equal' => 'Tanggal selesai tidak boleh mendahului tanggal mulai.',
@@ -49,7 +49,7 @@ class SemesterManagementController extends Controller
             'semester' => $request->semester,
             'start_date' => $request->start_date,
             'end_date' => $request->end_date,
-            'is_active' => (bool)$request->is_active,
+            'is_active' => (bool)$request->input('is_active', false),
             'admin_id' => auth()->user()->admin?->id,
         ]);
 

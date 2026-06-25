@@ -14,17 +14,17 @@ class ClassroomManagementController extends Controller
     {
         $classrooms = Classroom::with(['jurusan', 'tahunAkademik'])->latest()->get();
         $jurusans = Jurusan::where('is_active', true)->orderBy('nama_jurusan')->get();
-        $semesters = TahunAkademik::where('is_active', true)->latest()->get();
+        $academicYears = TahunAkademik::where('is_active', true)->latest()->get();
 
-        return view('admin.manage.classrooms.index', compact('classrooms', 'jurusans', 'semesters'));
+        return view('admin.manage.classrooms.index', compact('classrooms', 'jurusans', 'academicYears'));
     }
 
     public function create()
     {
         $jurusans = Jurusan::where('is_active', true)->orderBy('nama_jurusan')->get();
-        $semesters = TahunAkademik::where('is_active', true)->latest()->get();
+        $academicYears = TahunAkademik::where('is_active', true)->latest()->get();
 
-        return view('admin.manage.classrooms.create', compact('jurusans', 'semesters'));
+        return view('admin.manage.classrooms.create', compact('jurusans', 'academicYears'));
     }
 
     public function store(Request $request)
@@ -62,9 +62,9 @@ class ClassroomManagementController extends Controller
     public function edit(Classroom $classroom)
     {
         $jurusans = Jurusan::where('is_active', true)->orderBy('nama_jurusan')->get();
-        $semesters = TahunAkademik::where('is_active', true)->latest()->get();
+        $academicYears = TahunAkademik::where('is_active', true)->latest()->get();
 
-        return view('admin.manage.classrooms.edit', compact('classroom', 'jurusans', 'semesters'));
+        return view('admin.manage.classrooms.edit', compact('classroom', 'jurusans', 'academicYears'));
     }
 
     public function update(Request $request, Classroom $classroom)

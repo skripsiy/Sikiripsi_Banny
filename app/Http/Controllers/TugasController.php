@@ -25,8 +25,12 @@ class TugasController extends Controller
         $selectedSemesterId = $request->query('semester_id');
         if (!$selectedSemesterId) {
             $selectedSemesterId = Semester::where('tahun_akademik_id', $learningModule->tahun_akademik_id)
-                ->where('is_active', true)
+                ->whereDate('start_date', '<=', now())
+                ->whereDate('end_date', '>=', now())
                 ->value('id')
+                ?? Semester::where('tahun_akademik_id', $learningModule->tahun_akademik_id)
+                    ->where('is_active', true)
+                    ->value('id')
                 ?? Semester::where('tahun_akademik_id', $learningModule->tahun_akademik_id)->value('id');
         }
 
@@ -61,7 +65,7 @@ class TugasController extends Controller
         }
 
         $request->validate([
-            'semester_id' => ['required', 'exists:semesters,id'],
+            'semester_id' => ['nullable', 'exists:semesters,id'],
             'title' => ['required', 'string', 'max:255'],
             'instructions' => ['required', 'string'],
             'due_date' => ['required', 'date'],
@@ -73,16 +77,29 @@ class TugasController extends Controller
             $filePath = $request->file('file')->store('learning_modules/tugas', 'public');
         }
 
+        $semesterId = $request->semester_id;
+        if (!$semesterId) {
+            $semesterId = Semester::where('tahun_akademik_id', $learningModule->tahun_akademik_id)
+                ->whereDate('start_date', '<=', now())
+                ->whereDate('end_date', '>=', now())
+                ->value('id')
+                ?? Semester::where('tahun_akademik_id', $learningModule->tahun_akademik_id)
+                    ->where('is_active', true)
+                    ->value('id')
+                ?? Semester::where('tahun_akademik_id', $learningModule->tahun_akademik_id)
+                    ->value('id');
+        }
+
         LearningModuleTugas::create([
             'learning_module_id' => $learningModule->id,
-            'semester_id' => $request->semester_id,
+            'semester_id' => $semesterId,
             'title' => $request->title,
             'instructions' => $request->instructions,
             'due_date' => $request->due_date,
             'file_path' => $filePath,
         ]);
 
-        return redirect()->route('guru.learning-modules.show', [$learningModule->id, 'semester_id' => $request->semester_id])
+        return redirect()->route('guru.learning-modules.show', [$learningModule->id, 'semester_id' => $semesterId])
             ->with('status', 'Tugas berhasil ditambahkan.');
     }
 
@@ -94,15 +111,17 @@ class TugasController extends Controller
         }
 
         $request->validate([
-            'semester_id' => ['required', 'exists:semesters,id'],
+            'semester_id' => ['nullable', 'exists:semesters,id'],
             'title' => ['required', 'string', 'max:255'],
             'instructions' => ['required', 'string'],
             'due_date' => ['required', 'date'],
             'file' => ['nullable', 'file', 'max:10240'],
         ]);
 
+        $semesterId = $request->semester_id ?? $tuga->semester_id;
+
         $data = [
-            'semester_id' => $request->semester_id,
+            'semester_id' => $semesterId,
             'title' => $request->title,
             'instructions' => $request->instructions,
             'due_date' => $request->due_date,
@@ -117,7 +136,7 @@ class TugasController extends Controller
 
         $tuga->update($data);
 
-        return redirect()->route('guru.learning-modules.show', [$learningModule->id, 'semester_id' => $request->semester_id])
+        return redirect()->route('guru.learning-modules.show', [$learningModule->id, 'semester_id' => $semesterId])
             ->with('status', 'Tugas berhasil diperbarui.');
     }
 

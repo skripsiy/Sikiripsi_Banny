@@ -22,8 +22,12 @@ class MateriController extends Controller
         $selectedSemesterId = $request->query('semester_id');
         if (!$selectedSemesterId) {
             $selectedSemesterId = Semester::where('tahun_akademik_id', $learningModule->tahun_akademik_id)
-                ->where('is_active', true)
+                ->whereDate('start_date', '<=', now())
+                ->whereDate('end_date', '>=', now())
                 ->value('id')
+                ?? Semester::where('tahun_akademik_id', $learningModule->tahun_akademik_id)
+                    ->where('is_active', true)
+                    ->value('id')
                 ?? Semester::where('tahun_akademik_id', $learningModule->tahun_akademik_id)->value('id');
         }
 
@@ -58,7 +62,7 @@ class MateriController extends Controller
         }
 
         $request->validate([
-            'semester_id' => ['required', 'exists:semesters,id'],
+            'semester_id' => ['nullable', 'exists:semesters,id'],
             'title' => ['required', 'string', 'max:255'],
             'content' => ['required', 'string'],
             'file' => ['nullable', 'file', 'max:10240'],
@@ -69,15 +73,28 @@ class MateriController extends Controller
             $filePath = $request->file('file')->store('learning_modules/materi', 'public');
         }
 
+        $semesterId = $request->semester_id;
+        if (!$semesterId) {
+            $semesterId = Semester::where('tahun_akademik_id', $learningModule->tahun_akademik_id)
+                ->whereDate('start_date', '<=', now())
+                ->whereDate('end_date', '>=', now())
+                ->value('id')
+                ?? Semester::where('tahun_akademik_id', $learningModule->tahun_akademik_id)
+                    ->where('is_active', true)
+                    ->value('id')
+                ?? Semester::where('tahun_akademik_id', $learningModule->tahun_akademik_id)
+                    ->value('id');
+        }
+
         LearningModuleMateri::create([
             'learning_module_id' => $learningModule->id,
-            'semester_id' => $request->semester_id,
+            'semester_id' => $semesterId,
             'title' => $request->title,
             'content' => $request->content,
             'file_path' => $filePath,
         ]);
 
-        return redirect()->route('guru.learning-modules.show', [$learningModule->id, 'semester_id' => $request->semester_id])
+        return redirect()->route('guru.learning-modules.show', [$learningModule->id, 'semester_id' => $semesterId])
             ->with('status', 'Materi berhasil ditambahkan.');
     }
 
@@ -89,14 +106,16 @@ class MateriController extends Controller
         }
 
         $request->validate([
-            'semester_id' => ['required', 'exists:semesters,id'],
+            'semester_id' => ['nullable', 'exists:semesters,id'],
             'title' => ['required', 'string', 'max:255'],
             'content' => ['required', 'string'],
             'file' => ['nullable', 'file', 'max:10240'],
         ]);
 
+        $semesterId = $request->semester_id ?? $materi->semester_id;
+
         $data = [
-            'semester_id' => $request->semester_id,
+            'semester_id' => $semesterId,
             'title' => $request->title,
             'content' => $request->content,
         ];
@@ -110,7 +129,7 @@ class MateriController extends Controller
 
         $materi->update($data);
 
-        return redirect()->route('guru.learning-modules.show', [$learningModule->id, 'semester_id' => $request->semester_id])
+        return redirect()->route('guru.learning-modules.show', [$learningModule->id, 'semester_id' => $semesterId])
             ->with('status', 'Materi berhasil diperbarui.');
     }
 

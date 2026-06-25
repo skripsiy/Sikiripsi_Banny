@@ -88,7 +88,6 @@ class LearningModuleController extends Controller
             'tahun_akademik_id' => ['required', 'exists:tahun_akademiks,id'],
             'title' => ['required', 'string', 'max:255'],
             'description' => ['required', 'string'],
-            'file' => ['nullable', 'file', 'mimes:pdf,doc,docx,ppt,pptx,xls,xlsx,zip,png,jpg,jpeg', 'max:10240'],
         ], [
             'mata_pelajaran_id.required' => 'Mata pelajaran wajib dipilih.',
             'mata_pelajaran_id.exists' => 'Mata pelajaran tidak valid.',
@@ -97,8 +96,6 @@ class LearningModuleController extends Controller
             'title.required' => 'Judul modul wajib diisi.',
             'title.max' => 'Judul modul maksimal 255 karakter.',
             'description.required' => 'Deskripsi modul wajib diisi.',
-            'file.mimes' => 'Format file pendukung tidak didukung.',
-            'file.max' => 'Ukuran file pendukung maksimal 10MB.',
         ]);
 
         // Authorize that the teacher is assigned to this subject
@@ -108,18 +105,12 @@ class LearningModuleController extends Controller
                 ->withInput();
         }
 
-        $filePath = null;
-        if ($request->hasFile('file')) {
-            $filePath = $request->file('file')->store('learning_modules', 'public');
-        }
-
         LearningModule::create([
             'guru_id' => $guru->id,
             'mata_pelajaran_id' => $request->mata_pelajaran_id,
             'tahun_akademik_id' => $request->tahun_akademik_id,
             'title' => $request->title,
             'description' => $request->description,
-            'file_path' => $filePath,
         ]);
 
         return redirect()->route('guru.learning-modules.index')
@@ -138,7 +129,6 @@ class LearningModuleController extends Controller
             'tahun_akademik_id' => ['required', 'exists:tahun_akademiks,id'],
             'title' => ['required', 'string', 'max:255'],
             'description' => ['required', 'string'],
-            'file' => ['nullable', 'file', 'mimes:pdf,doc,docx,ppt,pptx,xls,xlsx,zip,png,jpg,jpeg', 'max:10240'],
         ], [
             'mata_pelajaran_id.required' => 'Mata pelajaran wajib dipilih.',
             'mata_pelajaran_id.exists' => 'Mata pelajaran tidak valid.',
@@ -147,8 +137,6 @@ class LearningModuleController extends Controller
             'title.required' => 'Judul modul wajib diisi.',
             'title.max' => 'Judul modul maksimal 255 karakter.',
             'description.required' => 'Deskripsi modul wajib diisi.',
-            'file.mimes' => 'Format file pendukung tidak didukung.',
-            'file.max' => 'Ukuran file pendukung maksimal 10MB.',
         ]);
 
         // Authorize that the teacher is assigned to this subject
@@ -164,14 +152,6 @@ class LearningModuleController extends Controller
             'title' => $request->title,
             'description' => $request->description,
         ];
-
-        if ($request->hasFile('file')) {
-            // Delete old file if exists
-            if ($learningModule->file_path && Storage::disk('public')->exists($learningModule->file_path)) {
-                Storage::disk('public')->delete($learningModule->file_path);
-            }
-            $data['file_path'] = $request->file('file')->store('learning_modules', 'public');
-        }
 
         $learningModule->update($data);
 
@@ -221,7 +201,17 @@ class LearningModuleController extends Controller
         $learningModule->load('mataPelajaran');
 
         $semesters = Semester::where('tahun_akademik_id', $learningModule->tahun_akademik_id)->get();
-        $selectedSemester = $semesters->where('id', request('semester_id'))->first() ?? $semesters->where('is_active', true)->first() ?? $semesters->first();
+        $selectedSemester = null;
+        if (request()->has('semester_id')) {
+            $selectedSemester = $semesters->where('id', request('semester_id'))->first();
+        }
+        if (!$selectedSemester) {
+            $selectedSemester = $semesters->filter(function($s) {
+                return date('Y-m-d') >= $s->start_date && date('Y-m-d') <= $s->end_date;
+            })->first() 
+            ?? $semesters->where('is_active', true)->first() 
+            ?? $semesters->first();
+        }
         $selectedSemesterId = $selectedSemester?->id;
 
         // Load all sub-contents counts filtered by selected semester
@@ -392,13 +382,24 @@ class LearningModuleController extends Controller
 
         $request->validate([
             'date' => ['required', 'date'],
-            'semester_id' => ['required', 'exists:semesters,id'],
+            'semester_id' => ['nullable', 'exists:semesters,id'],
             'status' => ['required', 'array'],
             'status.*' => ['in:hadir,sakit,izin,alpa'],
         ]);
 
         $date = $request->date;
         $semesterId = $request->semester_id;
+        if (!$semesterId) {
+            $semesterId = Semester::where('tahun_akademik_id', $learningModule->tahun_akademik_id)
+                ->whereDate('start_date', '<=', $date)
+                ->whereDate('end_date', '>=', $date)
+                ->value('id')
+                ?? Semester::where('tahun_akademik_id', $learningModule->tahun_akademik_id)
+                    ->where('is_active', true)
+                    ->value('id')
+                ?? Semester::where('tahun_akademik_id', $learningModule->tahun_akademik_id)
+                    ->value('id');
+        }
 
         foreach ($request->status as $muridId => $status) {
             $oldAbsensi = LearningModuleAbsensi::where('learning_module_id', $learningModule->id)

@@ -10,7 +10,7 @@
     </div>
 </div>
 
-<form method="POST" :action="editUrl" enctype="multipart/form-data" class="space-y-4">
+<form method="POST" :action="editUrl" class="space-y-4">
     @csrf
     @method('PUT')
     <input type="hidden" name="id" :value="editData.id">

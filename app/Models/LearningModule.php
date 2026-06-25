@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
-#[Fillable(['guru_id', 'mata_pelajaran_id', 'tahun_akademik_id', 'title', 'description', 'file_path'])]
+#[Fillable(['guru_id', 'mata_pelajaran_id', 'tahun_akademik_id', 'title', 'description'])]
 class LearningModule extends Model
 {
     use HasFactory, SoftDeletes;

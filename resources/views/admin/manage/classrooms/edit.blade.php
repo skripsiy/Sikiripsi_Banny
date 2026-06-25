@@ -60,9 +60,9 @@
         <select name="tahun_akademik_id" id="edit_tahun_akademik_id" x-model="editData.tahun_akademik_id" required
                 class="w-full px-4 py-2.5 bg-white border border-gray-200 rounded-xl focus:outline-none focus:border-[#0c2b4d] focus:ring-1 focus:ring-[#0c2b4d] text-sm text-gray-800 transition-all shadow-sm">
             <option value="" disabled>Pilih Tahun Ajaran</option>
-            @foreach($semesters as $ta)
+            @foreach($academicYears as $ta)
                 <option value="{{ $ta->id }}">
-                    {{ $ta->tahun_ajaran }} - Semester {{ ucfirst($ta->semester) }}
+                    {{ $ta->tahun_ajaran }}
                 </option>
             @endforeach
         </select>

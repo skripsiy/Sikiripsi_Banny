@@ -61,7 +61,7 @@
                                             {{ $classroom->jurusan->nama_jurusan ?? '-' }} ({{ $classroom->jurusan->kode_jurusan ?? '-' }})
                                         </td>
                                         <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                                            {{ $classroom->tahunAkademik->tahun_ajaran ?? '-' }} - Semester {{ ucfirst($classroom->tahunAkademik->semester ?? '') }}
+                                            {{ $classroom->tahunAkademik->tahun_ajaran ?? '-' }}
                                         </td>
                                         <td class="px-6 py-4 whitespace-nowrap text-sm">
                                             @if ($classroom->is_active)

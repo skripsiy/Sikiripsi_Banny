@@ -24,8 +24,12 @@ class UjianController extends Controller
         $selectedSemesterId = $request->query('semester_id');
         if (!$selectedSemesterId) {
             $selectedSemesterId = Semester::where('tahun_akademik_id', $learningModule->tahun_akademik_id)
-                ->where('is_active', true)
+                ->whereDate('start_date', '<=', now())
+                ->whereDate('end_date', '>=', now())
                 ->value('id')
+                ?? Semester::where('tahun_akademik_id', $learningModule->tahun_akademik_id)
+                    ->where('is_active', true)
+                    ->value('id')
                 ?? Semester::where('tahun_akademik_id', $learningModule->tahun_akademik_id)->value('id');
         }
 
@@ -60,23 +64,36 @@ class UjianController extends Controller
         }
 
         $request->validate([
-            'semester_id' => ['required', 'exists:semesters,id'],
+            'semester_id' => ['nullable', 'exists:semesters,id'],
             'title' => ['required', 'string', 'max:255'],
             'instructions' => ['required', 'string'],
             'duration_minutes' => ['required', 'integer', 'min:1'],
             'due_date' => ['required', 'date'],
         ]);
 
+        $semesterId = $request->semester_id;
+        if (!$semesterId) {
+            $semesterId = Semester::where('tahun_akademik_id', $learningModule->tahun_akademik_id)
+                ->whereDate('start_date', '<=', now())
+                ->whereDate('end_date', '>=', now())
+                ->value('id')
+                ?? Semester::where('tahun_akademik_id', $learningModule->tahun_akademik_id)
+                    ->where('is_active', true)
+                    ->value('id')
+                ?? Semester::where('tahun_akademik_id', $learningModule->tahun_akademik_id)
+                    ->value('id');
+        }
+
         LearningModuleUjian::create([
             'learning_module_id' => $learningModule->id,
-            'semester_id' => $request->semester_id,
+            'semester_id' => $semesterId,
             'title' => $request->title,
             'instructions' => $request->instructions,
             'duration_minutes' => $request->duration_minutes,
             'due_date' => $request->due_date,
         ]);
 
-        return redirect()->route('guru.learning-modules.show', [$learningModule->id, 'semester_id' => $request->semester_id])
+        return redirect()->route('guru.learning-modules.show', [$learningModule->id, 'semester_id' => $semesterId])
             ->with('status', 'Ujian berhasil ditambahkan.');
     }
 
@@ -88,22 +105,24 @@ class UjianController extends Controller
         }
 
         $request->validate([
-            'semester_id' => ['required', 'exists:semesters,id'],
+            'semester_id' => ['nullable', 'exists:semesters,id'],
             'title' => ['required', 'string', 'max:255'],
             'instructions' => ['required', 'string'],
             'duration_minutes' => ['required', 'integer', 'min:1'],
             'due_date' => ['required', 'date'],
         ]);
 
+        $semesterId = $request->semester_id ?? $ujian->semester_id;
+
         $ujian->update([
-            'semester_id' => $request->semester_id,
+            'semester_id' => $semesterId,
             'title' => $request->title,
             'instructions' => $request->instructions,
             'duration_minutes' => $request->duration_minutes,
             'due_date' => $request->due_date,
         ]);
 
-        return redirect()->route('guru.learning-modules.show', [$learningModule->id, 'semester_id' => $request->semester_id])
+        return redirect()->route('guru.learning-modules.show', [$learningModule->id, 'semester_id' => $semesterId])
             ->with('status', 'Ujian berhasil diperbarui.');
     }
 

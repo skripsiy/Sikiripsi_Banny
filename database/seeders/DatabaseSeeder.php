@@ -42,6 +42,7 @@ class DatabaseSeeder extends Seeder
 
         Guru::create([
             'user_id' => $guruUser->id,
+            'nip' => '198501012010011002',
             'nuptk' => '9876543210987654',
         ]);
 

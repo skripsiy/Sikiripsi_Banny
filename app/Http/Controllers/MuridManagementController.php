@@ -26,6 +26,12 @@ class MuridManagementController extends Controller
         $sheet->setCellValue('C1', 'nisn');
         $sheet->setCellValue('D1', 'class_room');
         $sheet->setCellValue('E1', 'no_telepon_orang_tua');
+        $sheet->setCellValue('F1', 'username');
+        $sheet->setCellValue('G1', 'nama_lengkap');
+        $sheet->setCellValue('H1', 'tanggal_lahir');
+        $sheet->setCellValue('I1', 'alamat');
+        $sheet->setCellValue('J1', 'no_telpon');
+        $sheet->setCellValue('K1', 'nama_orang_tua');
 
         // Sample Data Row
         $sheet->setCellValue('A2', 'Aji Pratama');
@@ -33,6 +39,12 @@ class MuridManagementController extends Controller
         $sheet->setCellValue('C2', '0054321098');
         $sheet->setCellValue('D2', 'XII RPL 1');
         $sheet->setCellValue('E2', '628123456789');
+        $sheet->setCellValue('F2', 'aji_pratama');
+        $sheet->setCellValue('G2', 'Aji Pratama');
+        $sheet->setCellValue('H2', '2008-05-15');
+        $sheet->setCellValue('I2', 'Jl. Kebon Jeruk No. 5, Jakarta');
+        $sheet->setCellValue('J2', '628987654321');
+        $sheet->setCellValue('K2', 'Bambang Pratama');
 
         $writer = new Xlsx($spreadsheet);
 

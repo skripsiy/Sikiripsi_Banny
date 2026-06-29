@@ -71,7 +71,7 @@
                                         </td>
                                         <td class="px-6 py-4 text-sm text-gray-900 font-semibold">
                                             {{ $assignment->guru->user->name ?? 'N/A' }}
-                                            <span class="block text-[10px] text-gray-400 font-normal mt-0.5">NUPTK: {{ $assignment->guru->nuptk ?? '-' }}</span>
+                                            <span class="block text-[10px] text-gray-400 font-normal mt-0.5">NIP: {{ $assignment->guru->nip ?? '-' }}</span>
                                         </td>
                                         <td class="px-6 py-4 whitespace-nowrap text-sm text-center font-medium">
                                             <div class="flex items-center justify-center gap-2">

@@ -77,8 +77,8 @@
 
     <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
         <div>
-            <label for="edit_nuptk" class="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-1.5">NUPTK (16 Digit)</label>
-            <input type="text" name="nuptk" id="edit_nuptk" x-model="editData.nuptk" required
+            <label for="edit_nuptk" class="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-1.5">NUPTK</label>
+            <input type="text" name="nuptk" id="edit_nuptk" x-model="editData.nuptk"
                    class="w-full px-4 py-2.5 bg-white border border-gray-200 rounded-xl focus:outline-none focus:border-[#0c2b4d] focus:ring-1 focus:ring-[#0c2b4d] text-sm text-gray-800 transition-all shadow-sm">
             @if(old('_method') === 'PUT')
                 @error('nuptk') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
@@ -87,7 +87,7 @@
 
         <div>
             <label for="edit_nip" class="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-1.5">NIP</label>
-            <input type="text" name="nip" id="edit_nip" x-model="editData.nip"
+            <input type="text" name="nip" id="edit_nip" x-model="editData.nip" required
                    class="w-full px-4 py-2.5 bg-white border border-gray-200 rounded-xl focus:outline-none focus:border-[#0c2b4d] focus:ring-1 focus:ring-[#0c2b4d] text-sm text-gray-800 transition-all shadow-sm">
             @if(old('_method') === 'PUT')
                 @error('nip') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror

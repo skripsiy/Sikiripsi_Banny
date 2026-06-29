@@ -75,8 +75,8 @@
 
     <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
         <div>
-            <label for="create_nuptk" class="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-1.5">NUPTK (16 Digit)</label>
-            <input type="text" name="nuptk" id="create_nuptk" value="{{ !old('_method') ? old('nuptk') : '' }}" required
+            <label for="create_nuptk" class="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-1.5">NUPTK</label>
+            <input type="text" name="nuptk" id="create_nuptk" value="{{ !old('_method') ? old('nuptk') : '' }}"
                    class="w-full px-4 py-2.5 bg-white border border-gray-200 rounded-xl focus:outline-none focus:border-[#0c2b4d] focus:ring-1 focus:ring-[#0c2b4d] text-sm text-gray-800 transition-all shadow-sm">
             @if(!old('_method'))
                 @error('nuptk') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
@@ -85,7 +85,7 @@
 
         <div>
             <label for="create_nip" class="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-1.5">NIP</label>
-            <input type="text" name="nip" id="create_nip" value="{{ !old('_method') ? old('nip') : '' }}"
+            <input type="text" name="nip" id="create_nip" value="{{ !old('_method') ? old('nip') : '' }}" required
                    class="w-full px-4 py-2.5 bg-white border border-gray-200 rounded-xl focus:outline-none focus:border-[#0c2b4d] focus:ring-1 focus:ring-[#0c2b4d] text-sm text-gray-800 transition-all shadow-sm">
             @if(!old('_method'))
                 @error('nip') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror

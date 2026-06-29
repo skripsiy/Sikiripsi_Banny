@@ -28,6 +28,7 @@ class MuridsImport implements ToCollection, WithHeadingRow, WithValidation
 
                 $user = User::create([
                     'name'                 => $row['name'],
+                    'username'             => $row['username'] ?? null,
                     'email'                => $row['email'],
                     'password'             => Hash::make('ChangeMe@123'),
                     'role'                 => 'murid',
@@ -39,6 +40,11 @@ class MuridsImport implements ToCollection, WithHeadingRow, WithValidation
                     'nisn'         => $row['nisn'],
                     'classroom_id' => $classroom->id,
                     'no_telepon_orang_tua' => $row['no_telepon_orang_tua'] ?? null,
+                    'namaLengkap'  => $row['nama_lengkap'] ?? null,
+                    'tanggalLahir' => $row['tanggal_lahir'] ?? null,
+                    'alamat'       => $row['alamat'] ?? null,
+                    'noTelpon'     => $row['no_telpon'] ?? null,
+                    'namaOrangTua' => $row['nama_orang_tua'] ?? null,
                     'admin_id'     => auth()->user()?->admin?->id,
                 ]);
             }
@@ -50,6 +56,12 @@ class MuridsImport implements ToCollection, WithHeadingRow, WithValidation
         if (isset($data['nisn'])) {
             $data['nisn'] = (string)$data['nisn'];
         }
+        if (isset($data['no_telepon_orang_tua'])) {
+            $data['no_telepon_orang_tua'] = (string)$data['no_telepon_orang_tua'];
+        }
+        if (isset($data['no_telpon'])) {
+            $data['no_telpon'] = (string)$data['no_telpon'];
+        }
         return $data;
     }
 
@@ -60,6 +72,12 @@ class MuridsImport implements ToCollection, WithHeadingRow, WithValidation
             'email' => ['required', 'string', 'email', 'max:255', 'unique:users,email'],
             'nisn' => ['required', 'string', 'max:50'],
             'no_telepon_orang_tua' => ['nullable', 'string', 'max:20'],
+            'username' => ['nullable', 'string', 'max:255', 'unique:users,username'],
+            'nama_lengkap' => ['nullable', 'string', 'max:255'],
+            'tanggal_lahir' => ['nullable', 'date'],
+            'alamat' => ['nullable', 'string'],
+            'no_telpon' => ['nullable', 'string', 'max:20'],
+            'nama_orang_tua' => ['nullable', 'string', 'max:255'],
             'class_room' => [
                 'required',
                 'string',

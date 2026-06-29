@@ -19,6 +19,7 @@ class GurusImport implements ToCollection, WithHeadingRow, WithValidation
             foreach ($rows as $row) {
                 $user = User::create([
                     'name'                 => $row['name'],
+                    'username'             => $row['username'] ?? null,
                     'email'                => $row['email'],
                     'password'             => Hash::make('ChangeMe@123'),
                     'role'                 => 'guru',
@@ -27,7 +28,13 @@ class GurusImport implements ToCollection, WithHeadingRow, WithValidation
 
                 Guru::create([
                     'user_id'           => $user->id,
-                    'nuptk'             => $row['nuptk'],
+                    'nuptk'             => $row['nuptk'] ?? null,
+                    'nip'               => $row['nip'],
+                    'fullname'          => $row['fullname'] ?? null,
+                    'tanggalLahir'      => $row['tanggal_lahir'] ?? null,
+                    'alamat'            => $row['alamat'] ?? null,
+                    'noWhatsapp'        => $row['no_whatsapp'] ?? null,
+                    'gelar'             => $row['gelar'] ?? null,
                     'admin_id'          => auth()->user()?->admin?->id,
                 ]);
             }
@@ -39,6 +46,12 @@ class GurusImport implements ToCollection, WithHeadingRow, WithValidation
         if (isset($data['nuptk'])) {
             $data['nuptk'] = (string)$data['nuptk'];
         }
+        if (isset($data['nip'])) {
+            $data['nip'] = (string)$data['nip'];
+        }
+        if (isset($data['no_whatsapp'])) {
+            $data['no_whatsapp'] = (string)$data['no_whatsapp'];
+        }
         return $data;
     }
 
@@ -47,7 +60,14 @@ class GurusImport implements ToCollection, WithHeadingRow, WithValidation
         return [
             'name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'string', 'email', 'max:255', 'unique:users,email'],
-            'nuptk' => ['required', 'string', 'max:50'],
+            'nip' => ['required', 'string', 'max:50', 'unique:gurus,nip'],
+            'nuptk' => ['nullable', 'string', 'max:50'],
+            'username' => ['nullable', 'string', 'max:255', 'unique:users,username'],
+            'fullname' => ['nullable', 'string', 'max:255'],
+            'tanggal_lahir' => ['nullable', 'date'],
+            'alamat' => ['nullable', 'string'],
+            'no_whatsapp' => ['nullable', 'string', 'max:20'],
+            'gelar' => ['nullable', 'string', 'max:50'],
         ];
     }
 }

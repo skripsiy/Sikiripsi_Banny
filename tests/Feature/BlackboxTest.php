@@ -98,6 +98,7 @@ describe('Equivalence Partitioning (EP) - Email & Required Fields Validation', f
             'email' => 'gurubaru@stovia.sch.id',
             'password' => 'ChangeMe@123',
             'password_confirmation' => 'ChangeMe@123',
+            'nip' => '198501012010011002',
             'nuptk' => '1234567890123456',
         ]);
 

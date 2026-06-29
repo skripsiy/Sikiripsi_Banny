@@ -24,11 +24,25 @@ class GuruManagementController extends Controller
         $sheet->setCellValue('A1', 'name');
         $sheet->setCellValue('B1', 'email');
         $sheet->setCellValue('C1', 'nuptk');
+        $sheet->setCellValue('D1', 'username');
+        $sheet->setCellValue('E1', 'nip');
+        $sheet->setCellValue('F1', 'fullname');
+        $sheet->setCellValue('G1', 'tanggal_lahir');
+        $sheet->setCellValue('H1', 'alamat');
+        $sheet->setCellValue('I1', 'no_whatsapp');
+        $sheet->setCellValue('J1', 'gelar');
 
         // Sample Data Row
         $sheet->setCellValue('A2', 'Budi Handoko, S.Pd.');
         $sheet->setCellValue('B2', 'budi@smkn1jakarta.sch.id');
         $sheet->setCellValue('C2', '9876543210987654');
+        $sheet->setCellValue('D2', 'budi_handoko');
+        $sheet->setCellValue('E2', '198501012010011002');
+        $sheet->setCellValue('F2', 'Budi Handoko');
+        $sheet->setCellValue('G2', '1985-01-01');
+        $sheet->setCellValue('H2', 'Jl. Merdeka No. 10, Jakarta');
+        $sheet->setCellValue('I2', '6281234567890');
+        $sheet->setCellValue('J2', 'S.Pd.');
 
         $writer = new Xlsx($spreadsheet);
 
@@ -81,8 +95,8 @@ class GuruManagementController extends Controller
             'username' => ['nullable', 'string', 'max:255', 'unique:users,username'],
             'email' => ['required', 'string', 'email', 'max:255', 'unique:'.User::class],
             'password' => ['required', 'confirmed', Rules\Password::defaults()],
-            'nuptk' => ['required', 'numeric', 'digits:16'],
-            'nip' => ['nullable', 'numeric', 'unique:gurus,nip'],
+            'nip' => ['required', 'string', 'max:50', 'unique:gurus,nip'],
+            'nuptk' => ['nullable', 'string', 'max:50'],
             'fullname' => ['nullable', 'string', 'max:255'],
             'tanggalLahir' => ['nullable', 'date'],
             'alamat' => ['nullable', 'string'],
@@ -128,8 +142,8 @@ class GuruManagementController extends Controller
             'username' => ['nullable', 'string', 'max:255', 'unique:users,username,'.$guru->id],
             'email' => ['required', 'string', 'email', 'max:255', 'unique:users,email,'.$guru->id],
             'password' => ['nullable', 'confirmed', Rules\Password::defaults()],
-            'nuptk' => ['required', 'numeric', 'digits:16'],
-            'nip' => ['nullable', 'numeric', 'unique:gurus,nip,'.($guru->guru?->id ?? '')],
+            'nip' => ['required', 'string', 'max:50', 'unique:gurus,nip,'.($guru->guru?->id ?? '')],
+            'nuptk' => ['nullable', 'string', 'max:50'],
             'fullname' => ['nullable', 'string', 'max:255'],
             'tanggalLahir' => ['nullable', 'date'],
             'alamat' => ['nullable', 'string'],

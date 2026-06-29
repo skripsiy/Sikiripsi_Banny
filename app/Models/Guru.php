@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
-#[Fillable(['user_id', 'nuptk', 'admin_id'])]
+#[Fillable(['user_id', 'nuptk', 'admin_id', 'nip', 'fullname', 'tanggalLahir', 'alamat', 'noWhatsapp', 'gelar'])]
 class Guru extends Model
 {
     use HasFactory, SoftDeletes;

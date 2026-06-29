@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
-#[Fillable(['user_id', 'nip'])]
+#[Fillable(['user_id', 'nip', 'fullname'])]
 class Admin extends Model
 {
     use HasFactory, SoftDeletes;

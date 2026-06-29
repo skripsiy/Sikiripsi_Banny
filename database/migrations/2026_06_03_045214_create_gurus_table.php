@@ -14,6 +14,12 @@ return new class extends Migration
         Schema::create('gurus', function (Blueprint $table) {
             $table->id();
             $table->foreignId('user_id')->constrained()->cascadeOnDelete();
+            $table->string('nip')->nullable()->unique();
+            $table->string('fullname')->nullable();
+            $table->date('tanggalLahir')->nullable();
+            $table->text('alamat')->nullable();
+            $table->string('noWhatsapp')->nullable();
+            $table->string('gelar')->nullable();
             $table->string('nuptk')->nullable();
             $table->timestamps();
             $table->softDeletes();

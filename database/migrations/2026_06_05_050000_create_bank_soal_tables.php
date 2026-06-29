@@ -38,13 +38,11 @@ return new class extends Migration
         Schema::create('quiz_soals', function (Blueprint $table) {
             $table->id();
             $table->foreignId('learning_module_quiz_id')
-                  ->constrained('learning_module_quizzes')
-                  ->cascadeOnDelete()
-                  ->name('qz_soals_quiz_fk');
+                  ->constrained('learning_module_quizzes', 'id', 'qz_soals_quiz_fk')
+                  ->cascadeOnDelete();
             $table->foreignId('bank_soal_id')
-                  ->constrained('bank_soals')
-                  ->cascadeOnDelete()
-                  ->name('qz_soals_soal_fk');
+                  ->constrained('bank_soals', 'id', 'qz_soals_soal_fk')
+                  ->cascadeOnDelete();
             $table->integer('urutan')->default(0);
             $table->integer('bobot')->default(1);
             $table->timestamps();
@@ -56,13 +54,11 @@ return new class extends Migration
         Schema::create('ujian_soals', function (Blueprint $table) {
             $table->id();
             $table->foreignId('learning_module_ujian_id')
-                  ->constrained('learning_module_ujians')
-                  ->cascadeOnDelete()
-                  ->name('uj_soals_ujian_fk');
+                  ->constrained('learning_module_ujians', 'id', 'uj_soals_ujian_fk')
+                  ->cascadeOnDelete();
             $table->foreignId('bank_soal_id')
-                  ->constrained('bank_soals')
-                  ->cascadeOnDelete()
-                  ->name('uj_soals_soal_fk');
+                  ->constrained('bank_soals', 'id', 'uj_soals_soal_fk')
+                  ->cascadeOnDelete();
             $table->integer('urutan')->default(0);
             $table->integer('bobot')->default(1);
             $table->timestamps();
@@ -74,13 +70,11 @@ return new class extends Migration
         Schema::create('quiz_attempts', function (Blueprint $table) {
             $table->id();
             $table->foreignId('learning_module_quiz_id')
-                  ->constrained('learning_module_quizzes')
-                  ->cascadeOnDelete()
-                  ->name('qz_att_quiz_fk');
+                  ->constrained('learning_module_quizzes', 'id', 'qz_att_quiz_fk')
+                  ->cascadeOnDelete();
             $table->foreignId('murid_id')
-                  ->constrained('murids')
-                  ->cascadeOnDelete()
-                  ->name('qz_att_murid_fk');
+                  ->constrained('murids', 'id', 'qz_att_murid_fk')
+                  ->cascadeOnDelete();
             $table->dateTime('started_at');
             $table->dateTime('finished_at')->nullable();
             $table->decimal('skor', 5, 2)->nullable();
@@ -94,13 +88,11 @@ return new class extends Migration
         Schema::create('quiz_answers', function (Blueprint $table) {
             $table->id();
             $table->foreignId('quiz_attempt_id')
-                  ->constrained('quiz_attempts')
-                  ->cascadeOnDelete()
-                  ->name('qz_ans_att_fk');
+                  ->constrained('quiz_attempts', 'id', 'qz_ans_att_fk')
+                  ->cascadeOnDelete();
             $table->foreignId('bank_soal_id')
-                  ->constrained('bank_soals')
-                  ->cascadeOnDelete()
-                  ->name('qz_ans_soal_fk');
+                  ->constrained('bank_soals', 'id', 'qz_ans_soal_fk')
+                  ->cascadeOnDelete();
             $table->string('jawaban_pg', 10)->nullable();
             $table->text('jawaban_essay')->nullable();
             $table->boolean('is_correct')->nullable();
@@ -114,13 +106,11 @@ return new class extends Migration
         Schema::create('ujian_attempts', function (Blueprint $table) {
             $table->id();
             $table->foreignId('learning_module_ujian_id')
-                  ->constrained('learning_module_ujians')
-                  ->cascadeOnDelete()
-                  ->name('uj_att_ujian_fk');
+                  ->constrained('learning_module_ujians', 'id', 'uj_att_ujian_fk')
+                  ->cascadeOnDelete();
             $table->foreignId('murid_id')
-                  ->constrained('murids')
-                  ->cascadeOnDelete()
-                  ->name('uj_att_murid_fk');
+                  ->constrained('murids', 'id', 'uj_att_murid_fk')
+                  ->cascadeOnDelete();
             $table->dateTime('started_at');
             $table->dateTime('finished_at')->nullable();
             $table->decimal('skor', 5, 2)->nullable();
@@ -134,13 +124,11 @@ return new class extends Migration
         Schema::create('ujian_answers', function (Blueprint $table) {
             $table->id();
             $table->foreignId('ujian_attempt_id')
-                  ->constrained('ujian_attempts')
-                  ->cascadeOnDelete()
-                  ->name('uj_ans_att_fk');
+                  ->constrained('ujian_attempts', 'id', 'uj_ans_att_fk')
+                  ->cascadeOnDelete();
             $table->foreignId('bank_soal_id')
-                  ->constrained('bank_soals')
-                  ->cascadeOnDelete()
-                  ->name('uj_ans_soal_fk');
+                  ->constrained('bank_soals', 'id', 'uj_ans_soal_fk')
+                  ->cascadeOnDelete();
             $table->string('jawaban_pg', 10)->nullable();
             $table->text('jawaban_essay')->nullable();
             $table->boolean('is_correct')->nullable();

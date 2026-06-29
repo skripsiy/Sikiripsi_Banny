@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
-#[Fillable(['user_id', 'nisn', 'classroom_id', 'no_telepon_orang_tua', 'admin_id'])]
+#[Fillable(['user_id', 'nisn', 'classroom_id', 'no_telepon_orang_tua', 'admin_id', 'namaLengkap', 'tanggalLahir', 'alamat', 'noTelpon', 'namaOrangTua'])]
 class Murid extends Model
 {
     use HasFactory, SoftDeletes;

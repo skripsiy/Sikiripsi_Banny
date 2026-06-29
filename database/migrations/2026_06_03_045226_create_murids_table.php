@@ -15,6 +15,11 @@ return new class extends Migration
             $table->id();
             $table->foreignId('user_id')->constrained()->cascadeOnDelete();
             $table->string('nisn')->nullable();
+            $table->string('namaLengkap')->nullable();
+            $table->date('tanggalLahir')->nullable();
+            $table->text('alamat')->nullable();
+            $table->string('noTelpon')->nullable();
+            $table->string('namaOrangTua')->nullable();
             $table->string('no_telepon_orang_tua')->nullable();
             $table->string('class_room')->nullable();
             $table->timestamps();

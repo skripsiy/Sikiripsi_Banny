@@ -15,22 +15,44 @@
     @method('PUT')
     <input type="hidden" name="id" :value="editData.id">
 
-    <div>
-        <label for="edit_name" class="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-1.5">Nama Lengkap</label>
-        <input type="text" name="name" id="edit_name" x-model="editData.name" required
-               class="w-full px-4 py-2.5 bg-white border border-gray-200 rounded-xl focus:outline-none focus:border-[#0c2b4d] focus:ring-1 focus:ring-[#0c2b4d] text-sm text-gray-800 transition-all shadow-sm">
-        @if(old('_method') === 'PUT')
-            @error('name') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
-        @endif
+    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <div>
+            <label for="edit_name" class="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-1.5">Nama Tampilan (Display Name)</label>
+            <input type="text" name="name" id="edit_name" x-model="editData.name" required
+                   class="w-full px-4 py-2.5 bg-white border border-gray-200 rounded-xl focus:outline-none focus:border-[#0c2b4d] focus:ring-1 focus:ring-[#0c2b4d] text-sm text-gray-800 transition-all shadow-sm">
+            @if(old('_method') === 'PUT')
+                @error('name') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
+            @endif
+        </div>
+
+        <div>
+            <label for="edit_username" class="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-1.5">Username Login</label>
+            <input type="text" name="username" id="edit_username" x-model="editData.username"
+                   class="w-full px-4 py-2.5 bg-white border border-gray-200 rounded-xl focus:outline-none focus:border-[#0c2b4d] focus:ring-1 focus:ring-[#0c2b4d] text-sm text-gray-800 transition-all shadow-sm">
+            @if(old('_method') === 'PUT')
+                @error('username') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
+            @endif
+        </div>
     </div>
 
-    <div>
-        <label for="edit_email" class="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-1.5">Email</label>
-        <input type="email" name="email" id="edit_email" x-model="editData.email" required
-               class="w-full px-4 py-2.5 bg-white border border-gray-200 rounded-xl focus:outline-none focus:border-[#0c2b4d] focus:ring-1 focus:ring-[#0c2b4d] text-sm text-gray-800 transition-all shadow-sm">
-        @if(old('_method') === 'PUT')
-            @error('email') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
-        @endif
+    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <div>
+            <label for="edit_fullname" class="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-1.5">Nama Lengkap</label>
+            <input type="text" name="fullname" id="edit_fullname" x-model="editData.fullname"
+                   class="w-full px-4 py-2.5 bg-white border border-gray-200 rounded-xl focus:outline-none focus:border-[#0c2b4d] focus:ring-1 focus:ring-[#0c2b4d] text-sm text-gray-800 transition-all shadow-sm">
+            @if(old('_method') === 'PUT')
+                @error('fullname') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
+            @endif
+        </div>
+
+        <div>
+            <label for="edit_email" class="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-1.5">Email</label>
+            <input type="email" name="email" id="edit_email" x-model="editData.email" required
+                   class="w-full px-4 py-2.5 bg-white border border-gray-200 rounded-xl focus:outline-none focus:border-[#0c2b4d] focus:ring-1 focus:ring-[#0c2b4d] text-sm text-gray-800 transition-all shadow-sm">
+            @if(old('_method') === 'PUT')
+                @error('email') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
+            @endif
+        </div>
     </div>
 
     <div>

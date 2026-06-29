@@ -9,8 +9,15 @@
         editData: {
             id: '{{ old('id') ?? '' }}',
             name: {{ json_encode(old('name') ?? '') }},
+            username: {{ json_encode(old('username') ?? '') }},
             email: {{ json_encode(old('email') ?? '') }},
-            nuptk: {{ json_encode(old('nuptk') ?? '') }}
+            nuptk: {{ json_encode(old('nuptk') ?? '') }},
+            nip: {{ json_encode(old('nip') ?? '') }},
+            fullname: {{ json_encode(old('fullname') ?? '') }},
+            tanggalLahir: {{ json_encode(old('tanggalLahir') ?? '') }},
+            alamat: {{ json_encode(old('alamat') ?? '') }},
+            noWhatsapp: {{ json_encode(old('noWhatsapp') ?? '') }},
+            gelar: {{ json_encode(old('gelar') ?? '') }}
         },
         editUrl: '{{ old('id') ? route('admin.manage.gurus.update', old('id')) : '' }}'
     }">
@@ -98,8 +105,15 @@
                                                     editData = {
                                                         id: '{{ $userObj->id }}',
                                                         name: {{ json_encode($userObj->name) }},
+                                                        username: {{ json_encode($userObj->username ?? '') }},
                                                         email: {{ json_encode($userObj->email) }},
-                                                        nuptk: {{ json_encode($userObj->guru->nuptk ?? '') }}
+                                                        nuptk: {{ json_encode($userObj->guru->nuptk ?? '') }},
+                                                        nip: {{ json_encode($userObj->guru->nip ?? '') }},
+                                                        fullname: {{ json_encode($userObj->guru->fullname ?? '') }},
+                                                        tanggalLahir: {{ json_encode($userObj->guru->tanggalLahir ?? '') }},
+                                                        alamat: {{ json_encode($userObj->guru->alamat ?? '') }},
+                                                        noWhatsapp: {{ json_encode($userObj->guru->noWhatsapp ?? '') }},
+                                                        gelar: {{ json_encode($userObj->guru->gelar ?? '') }}
                                                     };
                                                     editUrl = '{{ route('admin.manage.gurus.update', $userObj->id) }}';
                                                  " 

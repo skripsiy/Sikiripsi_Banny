@@ -9,10 +9,16 @@
         editData: {
             id: '{{ old('id') ?? '' }}',
             name: {{ json_encode(old('name') ?? '') }},
+            username: {{ json_encode(old('username') ?? '') }},
             email: {{ json_encode(old('email') ?? '') }},
             nisn: {{ json_encode(old('nisn') ?? '') }},
             classroom_id: '{{ old('classroom_id') ?? '' }}',
-            no_telepon_orang_tua: {{ json_encode(old('no_telepon_orang_tua') ?? '') }}
+            no_telepon_orang_tua: {{ json_encode(old('no_telepon_orang_tua') ?? '') }},
+            namaLengkap: {{ json_encode(old('namaLengkap') ?? '') }},
+            tanggalLahir: {{ json_encode(old('tanggalLahir') ?? '') }},
+            alamat: {{ json_encode(old('alamat') ?? '') }},
+            noTelpon: {{ json_encode(old('noTelpon') ?? '') }},
+            namaOrangTua: {{ json_encode(old('namaOrangTua') ?? '') }}
         },
         editUrl: '{{ old('id') ? route('admin.manage.murids.update', old('id')) : '' }}'
     }">
@@ -104,10 +110,16 @@
                                                     editData = {
                                                         id: '{{ $userObj->id }}',
                                                         name: {{ json_encode($userObj->name) }},
+                                                        username: {{ json_encode($userObj->username ?? '') }},
                                                         email: {{ json_encode($userObj->email) }},
                                                         nisn: {{ json_encode($userObj->murid->nisn ?? '') }},
                                                         classroom_id: '{{ $userObj->murid->classroom_id ?? '' }}',
-                                                        no_telepon_orang_tua: {{ json_encode($userObj->murid->no_telepon_orang_tua ?? '') }}
+                                                        no_telepon_orang_tua: {{ json_encode($userObj->murid->no_telepon_orang_tua ?? '') }},
+                                                        namaLengkap: {{ json_encode($userObj->murid->namaLengkap ?? '') }},
+                                                        tanggalLahir: {{ json_encode($userObj->murid->tanggalLahir ?? '') }},
+                                                        alamat: {{ json_encode($userObj->murid->alamat ?? '') }},
+                                                        noTelpon: {{ json_encode($userObj->murid->noTelpon ?? '') }},
+                                                        namaOrangTua: {{ json_encode($userObj->murid->namaOrangTua ?? '') }}
                                                     };
                                                     editUrl = '{{ route('admin.manage.murids.update', $userObj->id) }}';
                                                  " 

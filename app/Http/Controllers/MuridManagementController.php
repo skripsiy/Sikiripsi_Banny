@@ -83,15 +83,22 @@ class MuridManagementController extends Controller
     {
         $request->validate([
             'name' => ['required', 'string', 'max:255'],
+            'username' => ['nullable', 'string', 'max:255', 'unique:users,username'],
             'email' => ['required', 'string', 'email', 'max:255', 'unique:'.User::class],
             'password' => ['required', 'confirmed', Rules\Password::defaults()],
             'nisn' => ['required', 'numeric', 'digits:10'],
             'classroom_id' => ['required', 'exists:classrooms,id'],
             'no_telepon_orang_tua' => ['nullable', 'string', 'max:20'],
+            'namaLengkap' => ['nullable', 'string', 'max:255'],
+            'tanggalLahir' => ['nullable', 'date'],
+            'alamat' => ['nullable', 'string'],
+            'noTelpon' => ['nullable', 'string', 'max:20'],
+            'namaOrangTua' => ['nullable', 'string', 'max:255'],
         ]);
 
         $user = User::create([
             'name' => $request->name,
+            'username' => $request->username,
             'email' => $request->email,
             'password' => Hash::make($request->password),
             'role' => 'murid',
@@ -103,6 +110,11 @@ class MuridManagementController extends Controller
             'nisn' => $request->nisn,
             'classroom_id' => $request->classroom_id,
             'no_telepon_orang_tua' => $request->no_telepon_orang_tua,
+            'namaLengkap' => $request->namaLengkap,
+            'tanggalLahir' => $request->tanggalLahir,
+            'alamat' => $request->alamat,
+            'noTelpon' => $request->noTelpon,
+            'namaOrangTua' => $request->namaOrangTua,
             'admin_id' => auth()->user()->admin?->id,
         ]);
 
@@ -120,15 +132,22 @@ class MuridManagementController extends Controller
     {
         $request->validate([
             'name' => ['required', 'string', 'max:255'],
+            'username' => ['nullable', 'string', 'max:255', 'unique:users,username,'.$murid->id],
             'email' => ['required', 'string', 'email', 'max:255', 'unique:users,email,'.$murid->id],
             'password' => ['nullable', 'confirmed', Rules\Password::defaults()],
             'nisn' => ['required', 'numeric', 'digits:10'],
             'classroom_id' => ['required', 'exists:classrooms,id'],
             'no_telepon_orang_tua' => ['nullable', 'string', 'max:20'],
+            'namaLengkap' => ['nullable', 'string', 'max:255'],
+            'tanggalLahir' => ['nullable', 'date'],
+            'alamat' => ['nullable', 'string'],
+            'noTelpon' => ['nullable', 'string', 'max:20'],
+            'namaOrangTua' => ['nullable', 'string', 'max:255'],
         ]);
 
         $murid->update([
             'name' => $request->name,
+            'username' => $request->username,
             'email' => $request->email,
         ]);
 
@@ -144,6 +163,11 @@ class MuridManagementController extends Controller
                 'nisn' => $request->nisn,
                 'classroom_id' => $request->classroom_id,
                 'no_telepon_orang_tua' => $request->no_telepon_orang_tua,
+                'namaLengkap' => $request->namaLengkap,
+                'tanggalLahir' => $request->tanggalLahir,
+                'alamat' => $request->alamat,
+                'noTelpon' => $request->noTelpon,
+                'namaOrangTua' => $request->namaOrangTua,
             ]
         );
 

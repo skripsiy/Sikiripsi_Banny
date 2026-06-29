@@ -78,13 +78,21 @@ class GuruManagementController extends Controller
     {
         $request->validate([
             'name' => ['required', 'string', 'max:255'],
+            'username' => ['nullable', 'string', 'max:255', 'unique:users,username'],
             'email' => ['required', 'string', 'email', 'max:255', 'unique:'.User::class],
             'password' => ['required', 'confirmed', Rules\Password::defaults()],
             'nuptk' => ['required', 'numeric', 'digits:16'],
+            'nip' => ['nullable', 'numeric', 'unique:gurus,nip'],
+            'fullname' => ['nullable', 'string', 'max:255'],
+            'tanggalLahir' => ['nullable', 'date'],
+            'alamat' => ['nullable', 'string'],
+            'noWhatsapp' => ['nullable', 'string', 'max:20'],
+            'gelar' => ['nullable', 'string', 'max:50'],
         ]);
 
         $user = User::create([
             'name' => $request->name,
+            'username' => $request->username,
             'email' => $request->email,
             'password' => Hash::make($request->password),
             'role' => 'guru',
@@ -94,6 +102,12 @@ class GuruManagementController extends Controller
         Guru::create([
             'user_id' => $user->id,
             'nuptk' => $request->nuptk,
+            'nip' => $request->nip,
+            'fullname' => $request->fullname,
+            'tanggalLahir' => $request->tanggalLahir,
+            'alamat' => $request->alamat,
+            'noWhatsapp' => $request->noWhatsapp,
+            'gelar' => $request->gelar,
             'admin_id' => auth()->user()->admin?->id,
         ]);
 
@@ -111,13 +125,21 @@ class GuruManagementController extends Controller
     {
         $request->validate([
             'name' => ['required', 'string', 'max:255'],
+            'username' => ['nullable', 'string', 'max:255', 'unique:users,username,'.$guru->id],
             'email' => ['required', 'string', 'email', 'max:255', 'unique:users,email,'.$guru->id],
             'password' => ['nullable', 'confirmed', Rules\Password::defaults()],
             'nuptk' => ['required', 'numeric', 'digits:16'],
+            'nip' => ['nullable', 'numeric', 'unique:gurus,nip,'.($guru->guru?->id ?? '')],
+            'fullname' => ['nullable', 'string', 'max:255'],
+            'tanggalLahir' => ['nullable', 'date'],
+            'alamat' => ['nullable', 'string'],
+            'noWhatsapp' => ['nullable', 'string', 'max:20'],
+            'gelar' => ['nullable', 'string', 'max:50'],
         ]);
 
         $guru->update([
             'name' => $request->name,
+            'username' => $request->username,
             'email' => $request->email,
         ]);
 
@@ -131,6 +153,12 @@ class GuruManagementController extends Controller
             ['user_id' => $guru->id],
             [
                 'nuptk' => $request->nuptk,
+                'nip' => $request->nip,
+                'fullname' => $request->fullname,
+                'tanggalLahir' => $request->tanggalLahir,
+                'alamat' => $request->alamat,
+                'noWhatsapp' => $request->noWhatsapp,
+                'gelar' => $request->gelar,
             ]
         );
 

@@ -9,6 +9,8 @@
         editData: {
             id: '{{ old('id') ?? '' }}',
             name: {{ json_encode(old('name') ?? '') }},
+            username: {{ json_encode(old('username') ?? '') }},
+            fullname: {{ json_encode(old('fullname') ?? '') }},
             email: {{ json_encode(old('email') ?? '') }},
             nip: {{ json_encode(old('nip') ?? '') }}
         },
@@ -63,6 +65,8 @@
                                                     editData = {
                                                         id: '{{ $userObj->id }}',
                                                         name: {{ json_encode($userObj->name) }},
+                                                        username: {{ json_encode($userObj->username ?? '') }},
+                                                        fullname: {{ json_encode($userObj->admin->fullname ?? '') }},
                                                         email: {{ json_encode($userObj->email) }},
                                                         nip: {{ json_encode($userObj->admin->nip ?? '') }}
                                                     };

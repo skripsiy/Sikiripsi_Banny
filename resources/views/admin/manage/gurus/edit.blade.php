@@ -15,31 +15,104 @@
     @method('PUT')
     <input type="hidden" name="id" :value="editData.id">
 
-    <div>
-        <label for="edit_name" class="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-1.5">Nama Lengkap</label>
-        <input type="text" name="name" id="edit_name" x-model="editData.name" required
-               class="w-full px-4 py-2.5 bg-white border border-gray-200 rounded-xl focus:outline-none focus:border-[#0c2b4d] focus:ring-1 focus:ring-[#0c2b4d] text-sm text-gray-800 transition-all shadow-sm">
-        @if(old('_method') === 'PUT')
-            @error('name') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
-        @endif
+    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <div>
+            <label for="edit_name" class="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-1.5">Nama Tampilan (Display Name)</label>
+            <input type="text" name="name" id="edit_name" x-model="editData.name" required
+                   class="w-full px-4 py-2.5 bg-white border border-gray-200 rounded-xl focus:outline-none focus:border-[#0c2b4d] focus:ring-1 focus:ring-[#0c2b4d] text-sm text-gray-800 transition-all shadow-sm">
+            @if(old('_method') === 'PUT')
+                @error('name') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
+            @endif
+        </div>
+
+        <div>
+            <label for="edit_username" class="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-1.5">Username Login</label>
+            <input type="text" name="username" id="edit_username" x-model="editData.username"
+                   class="w-full px-4 py-2.5 bg-white border border-gray-200 rounded-xl focus:outline-none focus:border-[#0c2b4d] focus:ring-1 focus:ring-[#0c2b4d] text-sm text-gray-800 transition-all shadow-sm">
+            @if(old('_method') === 'PUT')
+                @error('username') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
+            @endif
+        </div>
     </div>
 
-    <div>
-        <label for="edit_email" class="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-1.5">Email</label>
-        <input type="email" name="email" id="edit_email" x-model="editData.email" required
-               class="w-full px-4 py-2.5 bg-white border border-gray-200 rounded-xl focus:outline-none focus:border-[#0c2b4d] focus:ring-1 focus:ring-[#0c2b4d] text-sm text-gray-800 transition-all shadow-sm">
-        @if(old('_method') === 'PUT')
-            @error('email') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
-        @endif
+    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <div>
+            <label for="edit_fullname" class="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-1.5">Nama Lengkap</label>
+            <input type="text" name="fullname" id="edit_fullname" x-model="editData.fullname"
+                   class="w-full px-4 py-2.5 bg-white border border-gray-200 rounded-xl focus:outline-none focus:border-[#0c2b4d] focus:ring-1 focus:ring-[#0c2b4d] text-sm text-gray-800 transition-all shadow-sm">
+            @if(old('_method') === 'PUT')
+                @error('fullname') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
+            @endif
+        </div>
+
+        <div>
+            <label for="edit_gelar" class="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-1.5">Gelar Akademik (Misal: S.Pd, M.Kom)</label>
+            <input type="text" name="gelar" id="edit_gelar" x-model="editData.gelar"
+                   class="w-full px-4 py-2.5 bg-white border border-gray-200 rounded-xl focus:outline-none focus:border-[#0c2b4d] focus:ring-1 focus:ring-[#0c2b4d] text-sm text-gray-800 transition-all shadow-sm">
+            @if(old('_method') === 'PUT')
+                @error('gelar') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
+            @endif
+        </div>
     </div>
 
-    <div>
-        <label for="edit_nuptk" class="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-1.5">NUPTK (16 Digit)</label>
-        <input type="text" name="nuptk" id="edit_nuptk" x-model="editData.nuptk" required
-               class="w-full px-4 py-2.5 bg-white border border-gray-200 rounded-xl focus:outline-none focus:border-[#0c2b4d] focus:ring-1 focus:ring-[#0c2b4d] text-sm text-gray-800 transition-all shadow-sm">
-        @if(old('_method') === 'PUT')
-            @error('nuptk') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
-        @endif
+    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <div>
+            <label for="edit_email" class="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-1.5">Email</label>
+            <input type="email" name="email" id="edit_email" x-model="editData.email" required
+                   class="w-full px-4 py-2.5 bg-white border border-gray-200 rounded-xl focus:outline-none focus:border-[#0c2b4d] focus:ring-1 focus:ring-[#0c2b4d] text-sm text-gray-800 transition-all shadow-sm">
+            @if(old('_method') === 'PUT')
+                @error('email') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
+            @endif
+        </div>
+
+        <div>
+            <label for="edit_noWhatsapp" class="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-1.5">No. WhatsApp</label>
+            <input type="text" name="noWhatsapp" id="edit_noWhatsapp" x-model="editData.noWhatsapp"
+                   class="w-full px-4 py-2.5 bg-white border border-gray-200 rounded-xl focus:outline-none focus:border-[#0c2b4d] focus:ring-1 focus:ring-[#0c2b4d] text-sm text-gray-800 transition-all shadow-sm">
+            @if(old('_method') === 'PUT')
+                @error('noWhatsapp') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
+            @endif
+        </div>
+    </div>
+
+    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <div>
+            <label for="edit_nuptk" class="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-1.5">NUPTK (16 Digit)</label>
+            <input type="text" name="nuptk" id="edit_nuptk" x-model="editData.nuptk" required
+                   class="w-full px-4 py-2.5 bg-white border border-gray-200 rounded-xl focus:outline-none focus:border-[#0c2b4d] focus:ring-1 focus:ring-[#0c2b4d] text-sm text-gray-800 transition-all shadow-sm">
+            @if(old('_method') === 'PUT')
+                @error('nuptk') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
+            @endif
+        </div>
+
+        <div>
+            <label for="edit_nip" class="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-1.5">NIP</label>
+            <input type="text" name="nip" id="edit_nip" x-model="editData.nip"
+                   class="w-full px-4 py-2.5 bg-white border border-gray-200 rounded-xl focus:outline-none focus:border-[#0c2b4d] focus:ring-1 focus:ring-[#0c2b4d] text-sm text-gray-800 transition-all shadow-sm">
+            @if(old('_method') === 'PUT')
+                @error('nip') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
+            @endif
+        </div>
+    </div>
+
+    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <div>
+            <label for="edit_tanggalLahir" class="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-1.5">Tanggal Lahir</label>
+            <input type="date" name="tanggalLahir" id="edit_tanggalLahir" x-model="editData.tanggalLahir"
+                   class="w-full px-4 py-2.5 bg-white border border-gray-200 rounded-xl focus:outline-none focus:border-[#0c2b4d] focus:ring-1 focus:ring-[#0c2b4d] text-sm text-gray-800 transition-all shadow-sm">
+            @if(old('_method') === 'PUT')
+                @error('tanggalLahir') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
+            @endif
+        </div>
+
+        <div>
+            <label for="edit_alamat" class="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-1.5">Alamat</label>
+            <input type="text" name="alamat" id="edit_alamat" x-model="editData.alamat"
+                   class="w-full px-4 py-2.5 bg-white border border-gray-200 rounded-xl focus:outline-none focus:border-[#0c2b4d] focus:ring-1 focus:ring-[#0c2b4d] text-sm text-gray-800 transition-all shadow-sm">
+            @if(old('_method') === 'PUT')
+                @error('alamat') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
+            @endif
+        </div>
     </div>
 
     <div class="p-3 bg-blue-50 border border-blue-150 rounded-xl text-[11px] text-blue-700 leading-normal">

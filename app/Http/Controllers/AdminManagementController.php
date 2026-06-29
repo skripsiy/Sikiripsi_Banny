@@ -25,13 +25,16 @@ class AdminManagementController extends Controller
     {
         $request->validate([
             'name' => ['required', 'string', 'max:255'],
+            'username' => ['nullable', 'string', 'max:255', 'unique:users,username'],
             'email' => ['required', 'string', 'email', 'max:255', 'unique:'.User::class],
             'password' => ['required', 'confirmed', Rules\Password::defaults()],
             'nip' => ['required', 'numeric', 'digits:18'],
+            'fullname' => ['nullable', 'string', 'max:255'],
         ]);
 
         $user = User::create([
             'name' => $request->name,
+            'username' => $request->username,
             'email' => $request->email,
             'password' => Hash::make($request->password),
             'role' => 'admin',
@@ -40,6 +43,7 @@ class AdminManagementController extends Controller
         Admin::create([
             'user_id' => $user->id,
             'nip' => $request->nip,
+            'fullname' => $request->fullname,
         ]);
 
         return redirect()->route('admin.manage.admins.index')
@@ -56,13 +60,16 @@ class AdminManagementController extends Controller
     {
         $request->validate([
             'name' => ['required', 'string', 'max:255'],
+            'username' => ['nullable', 'string', 'max:255', 'unique:users,username,'.$admin->id],
             'email' => ['required', 'string', 'email', 'max:255', 'unique:users,email,'.$admin->id],
             'password' => ['nullable', 'confirmed', Rules\Password::defaults()],
             'nip' => ['required', 'numeric', 'digits:18'],
+            'fullname' => ['nullable', 'string', 'max:255'],
         ]);
 
         $admin->update([
             'name' => $request->name,
+            'username' => $request->username,
             'email' => $request->email,
         ]);
 
@@ -76,6 +83,7 @@ class AdminManagementController extends Controller
             ['user_id' => $admin->id],
             [
                 'nip' => $request->nip,
+                'fullname' => $request->fullname,
             ]
         );
 

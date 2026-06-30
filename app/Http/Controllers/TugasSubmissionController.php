@@ -38,11 +38,23 @@ class TugasSubmissionController extends Controller
         }
 
         $request->validate([
-            'file' => ['required', 'file', 'max:10240', 'mimes:pdf,doc,docx,xls,xlsx,ppt,pptx,zip,rar,png,jpg,jpeg'],
+            'file' => ['nullable', 'file', 'max:10240', 'mimes:pdf,doc,docx,ppt,pptx'],
             'catatan_murid' => ['nullable', 'string', 'max:1000'],
+        ], [
+            'file.max' => 'Ukuran file tidak boleh lebih dari 10 MB.',
+            'file.mimes' => 'Format file harus berupa PDF, DOC, DOCX, PPT, atau PPTX.',
+            'catatan_murid.max' => 'Catatan tambahan maksimal 1000 karakter.',
         ]);
 
-        $filePath = $request->file('file')->store('learning_modules/submissions', 'public');
+        // Pastikan minimal file atau catatan diisi
+        if (!$request->hasFile('file') && !$request->filled('catatan_murid')) {
+            return back()->withErrors(['file' => 'Harap unggah file tugas atau isi catatan jawaban.'])->withInput();
+        }
+
+        $filePath = null;
+        if ($request->hasFile('file')) {
+            $filePath = $request->file('file')->store('learning_modules/submissions', 'public');
+        }
 
         TugasSubmission::create([
             'learning_module_tugas_id' => $tuga->id,

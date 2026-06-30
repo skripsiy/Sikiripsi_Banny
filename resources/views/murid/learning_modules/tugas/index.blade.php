@@ -9,7 +9,7 @@
 
         <!-- Back Button (outside header) -->
         <div class="mb-4">
-            <a href="{{ route('murid.learning-modules.show', [$learningModule->id, 'semester_id' => $selectedSemester?->id]) }}" 
+            <a href="{{ route('murid.learning-modules.show', [$learningModule->id, 'semester_id' => $selectedSemester?->id]) }}"
                class="inline-flex items-center gap-1.5 text-gray-500 hover:text-gray-800 font-bold text-xs transition-colors select-none">
                 <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7"></path>
@@ -73,11 +73,11 @@
                     <h3 class="text-base font-bold text-gray-800">Daftar Tugas / Homework</h3>
                     <p class="text-xs text-gray-400 mt-0.5">Perhatikan batas waktu pengerjaan tugas di bawah ini.</p>
                 </div>
-                
+
                 <div class="flex items-center gap-3 w-full sm:w-auto">
                     <!-- Search Input -->
                     <div class="relative w-full sm:w-64">
-                        <input type="text" x-model="searchQuery" placeholder="Cari tugas..." 
+                        <input type="text" x-model="searchQuery" placeholder="Cari tugas..."
                                class="w-full pl-9 pr-4 py-2 bg-gray-50 border border-gray-250 rounded-xl focus:outline-none focus:border-[#0c2b4d] focus:ring-1 focus:ring-[#0c2b4d] text-xs text-gray-800 transition-all">
                         <svg class="w-4 h-4 text-gray-400 absolute left-3 top-2.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
@@ -91,7 +91,7 @@
                     @foreach($tugas as $tgs)
                         <div x-show="searchQuery === '' || '{{ strtolower(addslashes($tgs->title)) }}'.includes(searchQuery.toLowerCase()) || '{{ strtolower(addslashes($tgs->instructions)) }}'.includes(searchQuery.toLowerCase())"
                              class="p-5 hover:bg-gray-50/20 transition-all flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 relative">
-                            
+
                             <div class="flex items-start gap-4 min-w-0 flex-grow">
                                 <div class="w-9 h-9 rounded-xl bg-rose-50 text-rose-600 flex items-center justify-center flex-shrink-0 mt-0.5 border border-rose-100">
                                     <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
@@ -101,7 +101,7 @@
                                 <div class="min-w-0 flex-grow">
                                     <h4 class="font-extrabold text-gray-800 text-sm">{{ $tgs->title }}</h4>
                                     <p class="text-xs text-gray-650 mt-2 leading-relaxed whitespace-pre-wrap font-medium">{{ $tgs->instructions }}</p>
-                                    
+
                                     @if ($tgs->file_path)
                                         <div class="mt-4">
                                             <a href="{{ asset('storage/' . $tgs->file_path) }}" target="_blank"
@@ -141,6 +141,7 @@
                                                     <span class="text-gray-400 font-medium">Dikumpulkan pada: {{ $submission->submitted_at->translatedFormat('d F Y H:i') }}</span>
                                                 </div>
 
+                                                @if($submission->file_path)
                                                 <div class="flex items-center gap-2 mt-2">
                                                     <a href="{{ asset('storage/' . $submission->file_path) }}" target="_blank"
                                                        class="inline-flex items-center gap-1.5 text-[#0c2b4d] hover:text-[#061424] font-bold text-xs bg-white border border-gray-200 px-3 py-1.5 rounded-xl transition-all shadow-sm">
@@ -150,10 +151,11 @@
                                                         Unduh Jawaban Anda
                                                     </a>
                                                 </div>
+                                                @endif
 
                                                 @if($submission->catatan_murid)
                                                     <div class="bg-white p-3 rounded-xl border border-gray-150 mt-2">
-                                                        <span class="text-[10px] text-gray-400 font-bold block mb-1 uppercase tracking-wider">Catatan Anda:</span>
+                                                        <span class="text-[10px] text-gray-400 font-bold block mb-1 uppercase tracking-wider">Catatan:</span>
                                                         <p class="text-gray-750 italic font-medium">{{ $submission->catatan_murid }}</p>
                                                     </div>
                                                 @endif
@@ -177,13 +179,13 @@
                                                 <form action="{{ route('murid.learning-modules.tugas.submit', [$learningModule->id, $tgs->id]) }}" method="POST" enctype="multipart/form-data" class="space-y-3 mt-3">
                                                     @csrf
                                                     <div>
-                                                        <label class="block text-[10px] font-bold text-gray-500 uppercase tracking-wider mb-1">Pilih File Tugas (Maks. 10MB)</label>
-                                                        <input type="file" name="file" required
+                                                        <label class="block text-[10px] font-bold text-gray-500 uppercase tracking-wider mb-1">Unggah File Tugas (PDF, DOC, DOCX, PPT, PPTX. Maks. 10MB)</label>
+                                                        <input type="file" name="file" accept=".pdf,.doc,.docx,.ppt,.pptx"
                                                                class="block w-full text-xs text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-bold file:bg-blue-50 file:text-[#0c2b4d] hover:file:bg-blue-100 transition-all cursor-pointer border border-gray-200 rounded-xl p-1 bg-white">
                                                     </div>
                                                     <div>
-                                                        <label class="block text-[10px] font-bold text-gray-500 uppercase tracking-wider mb-1">Catatan Tambahan (Opsional)</label>
-                                                        <textarea name="catatan_murid" rows="2" placeholder="Tulis catatan untuk guru jika ada..."
+                                                        <label class="block text-[10px] font-bold text-gray-500 uppercase tracking-wider mb-1">Jawaban / Catatan Tambahan</label>
+                                                        <textarea name="catatan_murid" rows="3" placeholder="Tulis jawaban atau catatan untuk guru di sini..."
                                                                   class="w-full p-3 border border-gray-200 rounded-xl focus:outline-none focus:border-[#0c2b4d] focus:ring-1 focus:ring-[#0c2b4d] text-xs text-gray-700 font-medium"></textarea>
                                                     </div>
                                                     <div>

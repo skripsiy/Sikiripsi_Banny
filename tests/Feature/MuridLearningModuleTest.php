@@ -23,7 +23,7 @@ describe('Murid Learning Module Access', function () {
         $this->guruUser = User::factory()->create(['role' => 'guru']);
         $this->guru = Guru::create([
             'user_id' => $this->guruUser->id,
-            'nuptk' => '1111111111111111',
+            'nip' => '1111111111111111',
         ]);
 
         // Setup Jurusan & Tahun Ajaran

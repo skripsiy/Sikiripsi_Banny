@@ -197,7 +197,7 @@ describe('Subject CRUD Management', function () {
         $guruUser = User::factory()->create(['role' => 'guru']);
         $guru = Guru::create([
             'user_id' => $guruUser->id,
-            'nuptk' => '1234567890123456',
+            'nip' => '1234567890123456',
         ]);
 
         $assignment = GuruMataPelajaran::create([
@@ -220,7 +220,7 @@ describe('Subject CRUD Management', function () {
         $guruUser = User::factory()->create(['role' => 'guru']);
         $guru = Guru::create([
             'user_id' => $guruUser->id,
-            'nuptk' => '1234567890123456',
+            'nip' => '1234567890123456',
         ]);
 
         $response = $this->actingAs($this->admin)->post(route('admin.manage.penugasan-guru.store'), [
@@ -248,7 +248,7 @@ describe('Subject CRUD Management', function () {
         $guruUser = User::factory()->create(['role' => 'guru']);
         $guru = Guru::create([
             'user_id' => $guruUser->id,
-            'nuptk' => '1234567890123456',
+            'nip' => '1234567890123456',
         ]);
 
         GuruMataPelajaran::create([
@@ -279,7 +279,7 @@ describe('Subject CRUD Management', function () {
         $guruUser = User::factory()->create(['role' => 'guru']);
         $guru = Guru::create([
             'user_id' => $guruUser->id,
-            'nuptk' => '1234567890123456',
+            'nip' => '1234567890123456',
         ]);
 
         $assignment = GuruMataPelajaran::create([
@@ -312,7 +312,7 @@ describe('Subject CRUD Management', function () {
         $guruUser = User::factory()->create(['role' => 'guru']);
         $guru = Guru::create([
             'user_id' => $guruUser->id,
-            'nuptk' => '1234567890123456',
+            'nip' => '1234567890123456',
         ]);
 
         $assignment = GuruMataPelajaran::create([

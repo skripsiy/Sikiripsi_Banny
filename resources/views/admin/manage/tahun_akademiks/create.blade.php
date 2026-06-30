@@ -3,7 +3,7 @@
     <h3 class="text-lg font-bold text-gray-900 mb-6">Tambah Tahun Akademik</h3>
     
     <div class="mb-5">
-        <label for="tahun_ajaran" class="block text-sm font-bold text-gray-700 mb-2">Tahun Ajaran</label>
+        <label for="tahun_ajaran" class="block text-sm font-bold text-gray-700 mb-2">Tahun Ajaran <span class="text-red-500">*</span></label>
         <input type="text" name="tahun_ajaran" id="tahun_ajaran" placeholder="Contoh: 2025/2026" value="{{ old('tahun_ajaran') }}" required
                class="w-full px-4 py-2.5 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-[#0c2b4d] focus:border-transparent text-sm font-medium text-gray-800 placeholder-gray-400 transition-all">
         @error('tahun_ajaran')

@@ -46,7 +46,7 @@
 
                     <!-- New Password -->
                     <div>
-                        <label for="password" class="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-2">Password Baru</label>
+                        <label for="password" class="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-2">Password Baru <span class="text-red-500">*</span></label>
                         <input id="password" 
                                type="password" 
                                name="password" 
@@ -60,7 +60,7 @@
 
                     <!-- Confirm Password -->
                     <div>
-                        <label for="password_confirmation" class="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-2">Konfirmasi Password Baru</label>
+                        <label for="password_confirmation" class="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-2">Konfirmasi Password Baru <span class="text-red-500">*</span></label>
                         <input id="password_confirmation" 
                                type="password" 
                                name="password_confirmation" 

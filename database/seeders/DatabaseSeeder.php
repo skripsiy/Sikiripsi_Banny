@@ -22,6 +22,7 @@ class DatabaseSeeder extends Seeder
         // 1. Seed Admin
         $adminUser = User::create([
             'name' => 'Admin SMKN 1 Jakarta',
+            'username' => 'admin_smk',
             'email' => 'admin@smkn1jakarta.sch.id',
             'password' => Hash::make('password'),
             'role' => 'admin',
@@ -30,11 +31,13 @@ class DatabaseSeeder extends Seeder
         Admin::create([
             'user_id' => $adminUser->id,
             'nip' => '198805122010011002',
+            'fullname' => 'Admin SMKN 1 Jakarta',
         ]);
 
         // 2. Seed Guru
         $guruUser = User::create([
             'name' => 'Budi Handoko, S.Pd.',
+            'username' => 'budi_handoko',
             'email' => 'budi@smkn1jakarta.sch.id',
             'password' => Hash::make('password'),
             'role' => 'guru',
@@ -43,7 +46,11 @@ class DatabaseSeeder extends Seeder
         Guru::create([
             'user_id' => $guruUser->id,
             'nip' => '198501012010011002',
-            'nuptk' => '9876543210987654',
+            'fullname' => 'Budi Handoko',
+            'tanggalLahir' => '1985-01-01',
+            'alamat' => 'Jl. Merdeka No. 10',
+            'noWhatsapp' => '6281234567890',
+            'gelar' => 'S.Pd.',
         ]);
 
         // 3. Seed Academic Prerequisites
@@ -80,6 +87,7 @@ class DatabaseSeeder extends Seeder
         // 4. Seed Murid
         $muridUser = User::create([
             'name' => 'Aji Pratama',
+            'username' => 'aji_pratama',
             'email' => 'aji@smkn1jakarta.sch.id',
             'password' => Hash::make('password'),
             'role' => 'murid',
@@ -90,6 +98,11 @@ class DatabaseSeeder extends Seeder
             'nisn' => '0054321098',
             'classroom_id' => $classroom->id,
             'no_telepon_orang_tua' => '628123456789',
+            'namaLengkap' => 'Aji Pratama',
+            'tanggalLahir' => '2008-05-15',
+            'alamat' => 'Jl. Pemuda No. 5',
+            'noTelpon' => '628111222333',
+            'namaOrangTua' => 'Bambang Pratama',
         ]);
     }
 }

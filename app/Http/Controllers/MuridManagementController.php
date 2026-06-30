@@ -95,17 +95,17 @@ class MuridManagementController extends Controller
     {
         $request->validate([
             'name' => ['required', 'string', 'max:255'],
-            'username' => ['nullable', 'string', 'max:255', 'unique:users,username'],
+            'username' => ['required', 'string', 'max:255', 'unique:users,username'],
             'email' => ['required', 'string', 'email', 'max:255', 'unique:'.User::class],
             'password' => ['required', 'confirmed', Rules\Password::defaults()],
             'nisn' => ['required', 'numeric', 'digits:10'],
             'classroom_id' => ['required', 'exists:classrooms,id'],
-            'no_telepon_orang_tua' => ['nullable', 'string', 'max:20'],
-            'namaLengkap' => ['nullable', 'string', 'max:255'],
-            'tanggalLahir' => ['nullable', 'date'],
-            'alamat' => ['nullable', 'string'],
-            'noTelpon' => ['nullable', 'string', 'max:20'],
-            'namaOrangTua' => ['nullable', 'string', 'max:255'],
+            'no_telepon_orang_tua' => ['required', 'string', 'max:20'],
+            'namaLengkap' => ['required', 'string', 'max:255'],
+            'tanggalLahir' => ['required', 'date'],
+            'alamat' => ['required', 'string'],
+            'noTelpon' => ['required', 'string', 'max:20'],
+            'namaOrangTua' => ['required', 'string', 'max:255'],
         ]);
 
         $user = User::create([
@@ -144,17 +144,17 @@ class MuridManagementController extends Controller
     {
         $request->validate([
             'name' => ['required', 'string', 'max:255'],
-            'username' => ['nullable', 'string', 'max:255', 'unique:users,username,'.$murid->id],
+            'username' => ['required', 'string', 'max:255', 'unique:users,username,'.$murid->id],
             'email' => ['required', 'string', 'email', 'max:255', 'unique:users,email,'.$murid->id],
             'password' => ['nullable', 'confirmed', Rules\Password::defaults()],
             'nisn' => ['required', 'numeric', 'digits:10'],
             'classroom_id' => ['required', 'exists:classrooms,id'],
-            'no_telepon_orang_tua' => ['nullable', 'string', 'max:20'],
-            'namaLengkap' => ['nullable', 'string', 'max:255'],
-            'tanggalLahir' => ['nullable', 'date'],
-            'alamat' => ['nullable', 'string'],
-            'noTelpon' => ['nullable', 'string', 'max:20'],
-            'namaOrangTua' => ['nullable', 'string', 'max:255'],
+            'no_telepon_orang_tua' => ['required', 'string', 'max:20'],
+            'namaLengkap' => ['required', 'string', 'max:255'],
+            'tanggalLahir' => ['required', 'date'],
+            'alamat' => ['required', 'string'],
+            'noTelpon' => ['required', 'string', 'max:20'],
+            'namaOrangTua' => ['required', 'string', 'max:255'],
         ]);
 
         $murid->update([

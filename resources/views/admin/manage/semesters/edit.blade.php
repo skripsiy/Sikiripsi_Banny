@@ -16,7 +16,7 @@
     <input type="hidden" name="id" :value="editData.id">
 
     <div>
-        <label for="edit_tahun_akademik_id" class="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-1.5">Tahun Akademik</label>
+        <label for="edit_tahun_akademik_id" class="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-1.5">Tahun Akademik <span class="text-red-500">*</span></label>
         <select name="tahun_akademik_id" id="edit_tahun_akademik_id" x-model="editData.tahun_akademik_id" required
                 class="w-full px-4 py-2.5 bg-white border border-gray-200 rounded-xl focus:outline-none focus:border-[#0c2b4d] focus:ring-1 focus:ring-[#0c2b4d] text-sm text-gray-800 transition-all shadow-sm">
             <option value="" disabled>Pilih Tahun Akademik</option>
@@ -30,7 +30,7 @@
     </div>
 
     <div>
-        <label for="edit_semester" class="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-1.5">Semester</label>
+        <label for="edit_semester" class="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-1.5">Semester <span class="text-red-500">*</span></label>
         <select name="semester" id="edit_semester" x-model="editData.semester" required
                 class="w-full px-4 py-2.5 bg-white border border-gray-200 rounded-xl focus:outline-none focus:border-[#0c2b4d] focus:ring-1 focus:ring-[#0c2b4d] text-sm text-gray-800 transition-all shadow-sm">
             <option value="ganjil">Ganjil</option>
@@ -43,7 +43,7 @@
 
     <div class="grid grid-cols-2 gap-4">
         <div>
-            <label for="edit_start_date" class="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-1.5">Tanggal Mulai</label>
+            <label for="edit_start_date" class="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-1.5">Tanggal Mulai <span class="text-red-500">*</span></label>
             <input type="date" name="start_date" id="edit_start_date" x-model="editData.start_date" required
                    class="w-full px-4 py-2.5 bg-white border border-gray-200 rounded-xl focus:outline-none focus:border-[#0c2b4d] focus:ring-1 focus:ring-[#0c2b4d] text-sm text-gray-800 transition-all shadow-sm">
             @if(old('_method') === 'PUT')
@@ -51,7 +51,7 @@
             @endif
         </div>
         <div>
-            <label for="edit_end_date" class="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-1.5">Tanggal Selesai</label>
+            <label for="edit_end_date" class="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-1.5">Tanggal Selesai <span class="text-red-500">*</span></label>
             <input type="date" name="end_date" id="edit_end_date" x-model="editData.end_date" required
                    class="w-full px-4 py-2.5 bg-white border border-gray-200 rounded-xl focus:outline-none focus:border-[#0c2b4d] focus:ring-1 focus:ring-[#0c2b4d] text-sm text-gray-800 transition-all shadow-sm">
             @if(old('_method') === 'PUT')
@@ -61,7 +61,7 @@
     </div>
 
     <div>
-        <label for="edit_is_active" class="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-1.5">Status Aktif</label>
+        <label for="edit_is_active" class="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-1.5">Status Aktif <span class="text-red-500">*</span></label>
         <select name="is_active" id="edit_is_active" x-model="editData.is_active" required
                 class="w-full px-4 py-2.5 bg-white border border-gray-200 rounded-xl focus:outline-none focus:border-[#0c2b4d] focus:ring-1 focus:ring-[#0c2b4d] text-sm text-gray-800 transition-all shadow-sm">
             <option value="1">Aktif</option>

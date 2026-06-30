@@ -25,14 +25,14 @@ describe('Learning Module Details and Sub-content', function () {
         $this->guruUser1 = User::factory()->create(['role' => 'guru']);
         $this->guru1 = Guru::create([
             'user_id' => $this->guruUser1->id,
-            'nuptk' => '1111111111111111',
+            'nip' => '1111111111111111',
         ]);
 
         // Teacher 2
         $this->guruUser2 = User::factory()->create(['role' => 'guru']);
         $this->guru2 = Guru::create([
             'user_id' => $this->guruUser2->id,
-            'nuptk' => '2222222222222222',
+            'nip' => '2222222222222222',
         ]);
 
         // Setup Jurusan & Tahun Ajaran

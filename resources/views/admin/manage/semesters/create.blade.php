@@ -14,7 +14,7 @@
     @csrf
 
     <div>
-        <label for="create_tahun_akademik_id" class="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-1.5">Tahun Akademik</label>
+        <label for="create_tahun_akademik_id" class="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-1.5">Tahun Akademik <span class="text-red-500">*</span></label>
         <select name="tahun_akademik_id" id="create_tahun_akademik_id" required autofocus
                 class="w-full px-4 py-2.5 bg-white border border-gray-200 rounded-xl focus:outline-none focus:border-[#0c2b4d] focus:ring-1 focus:ring-[#0c2b4d] text-sm text-gray-800 transition-all shadow-sm">
             <option value="" disabled selected>Pilih Tahun Akademik</option>
@@ -30,7 +30,7 @@
     </div>
 
     <div>
-        <label for="create_semester" class="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-1.5">Semester</label>
+        <label for="create_semester" class="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-1.5">Semester <span class="text-red-500">*</span></label>
         <select name="semester" id="create_semester" required
                 class="w-full px-4 py-2.5 bg-white border border-gray-200 rounded-xl focus:outline-none focus:border-[#0c2b4d] focus:ring-1 focus:ring-[#0c2b4d] text-sm text-gray-800 transition-all shadow-sm">
             <option value="ganjil" {{ (!old('_method') && old('semester') === 'ganjil') ? 'selected' : '' }}>Ganjil</option>
@@ -43,7 +43,7 @@
 
     <div class="grid grid-cols-2 gap-4">
         <div>
-            <label for="create_start_date" class="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-1.5">Tanggal Mulai</label>
+            <label for="create_start_date" class="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-1.5">Tanggal Mulai <span class="text-red-500">*</span></label>
             <input type="date" name="start_date" id="create_start_date" value="{{ !old('_method') ? old('start_date') : '' }}" required
                    class="w-full px-4 py-2.5 bg-white border border-gray-200 rounded-xl focus:outline-none focus:border-[#0c2b4d] focus:ring-1 focus:ring-[#0c2b4d] text-sm text-gray-800 transition-all shadow-sm">
             @if(!old('_method'))
@@ -51,7 +51,7 @@
             @endif
         </div>
         <div>
-            <label for="create_end_date" class="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-1.5">Tanggal Selesai</label>
+            <label for="create_end_date" class="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-1.5">Tanggal Selesai <span class="text-red-500">*</span></label>
             <input type="date" name="end_date" id="create_end_date" value="{{ !old('_method') ? old('end_date') : '' }}" required
                    class="w-full px-4 py-2.5 bg-white border border-gray-200 rounded-xl focus:outline-none focus:border-[#0c2b4d] focus:ring-1 focus:ring-[#0c2b4d] text-sm text-gray-800 transition-all shadow-sm">
             @if(!old('_method'))

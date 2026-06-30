@@ -17,7 +17,7 @@
 
     <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
         <div>
-            <label for="edit_kode_jurusan" class="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-1.5">Kode Jurusan</label>
+            <label for="edit_kode_jurusan" class="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-1.5">Kode Jurusan <span class="text-red-500">*</span></label>
             <input type="text" name="kode_jurusan" id="edit_kode_jurusan" x-model="editData.kode_jurusan" required
                    placeholder="Contoh: RPL"
                    class="w-full px-4 py-2.5 bg-white border border-gray-200 rounded-xl focus:outline-none focus:border-[#0c2b4d] focus:ring-1 focus:ring-[#0c2b4d] text-sm text-gray-800 transition-all shadow-sm uppercase">
@@ -28,7 +28,7 @@
         </div>
 
         <div>
-            <label for="edit_is_active" class="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-1.5">Status Aktif</label>
+            <label for="edit_is_active" class="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-1.5">Status Aktif <span class="text-red-500">*</span></label>
             <select name="is_active" id="edit_is_active" x-model="editData.is_active" required
                     class="w-full px-4 py-2.5 bg-white border border-gray-200 rounded-xl focus:outline-none focus:border-[#0c2b4d] focus:ring-1 focus:ring-[#0c2b4d] text-sm text-gray-800 transition-all shadow-sm">
                 <option value="1">Aktif</option>
@@ -41,7 +41,7 @@
     </div>
 
     <div>
-        <label for="edit_nama_jurusan" class="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-1.5">Nama Jurusan</label>
+        <label for="edit_nama_jurusan" class="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-1.5">Nama Jurusan <span class="text-red-500">*</span></label>
         <input type="text" name="nama_jurusan" id="edit_nama_jurusan" x-model="editData.nama_jurusan" required
                placeholder="Contoh: Rekayasa Perangkat Lunak"
                class="w-full px-4 py-2.5 bg-white border border-gray-200 rounded-xl focus:outline-none focus:border-[#0c2b4d] focus:ring-1 focus:ring-[#0c2b4d] text-sm text-gray-800 transition-all shadow-sm">

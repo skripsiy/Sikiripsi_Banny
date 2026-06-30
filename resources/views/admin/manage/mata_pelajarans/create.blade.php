@@ -20,7 +20,7 @@
     </div>
 
     <div>
-        <label for="create_nama_pelajaran" class="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-1.5">Nama Mata Pelajaran</label>
+        <label for="create_nama_pelajaran" class="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-1.5">Nama Mata Pelajaran <span class="text-red-500">*</span></label>
         <input type="text" name="nama_pelajaran" id="create_nama_pelajaran" value="{{ !old('_method') ? old('nama_pelajaran') : '' }}" required autofocus
                placeholder="Contoh: Pemrograman Web"
                class="w-full px-4 py-2.5 bg-white border border-gray-200 rounded-xl focus:outline-none focus:border-[#0c2b4d] focus:ring-1 focus:ring-[#0c2b4d] text-sm text-gray-800 transition-all shadow-sm">

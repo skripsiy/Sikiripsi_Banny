@@ -15,7 +15,7 @@ describe('Bank Soal CRUD and Validation', function () {
         $this->guruUser = User::factory()->create(['role' => 'guru']);
         $this->guru = Guru::create([
             'user_id' => $this->guruUser->id,
-            'nuptk' => '1234567890123456',
+            'nip' => '1234567890123456',
         ]);
 
         // Create subject

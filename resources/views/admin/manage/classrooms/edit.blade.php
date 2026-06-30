@@ -17,7 +17,7 @@
 
     <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
         <div>
-            <label for="edit_nama_kelas" class="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-1.5">Nama Kelas</label>
+            <label for="edit_nama_kelas" class="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-1.5">Nama Kelas <span class="text-red-500">*</span></label>
             <input type="text" name="nama_kelas" id="edit_nama_kelas" x-model="editData.nama_kelas" required
                    placeholder="Contoh: XII RPL 1"
                    class="w-full px-4 py-2.5 bg-white border border-gray-200 rounded-xl focus:outline-none focus:border-[#0c2b4d] focus:ring-1 focus:ring-[#0c2b4d] text-sm text-gray-800 transition-all shadow-sm uppercase">
@@ -27,7 +27,7 @@
         </div>
 
         <div>
-            <label for="edit_is_active" class="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-1.5">Status Aktif</label>
+            <label for="edit_is_active" class="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-1.5">Status Aktif <span class="text-red-500">*</span></label>
             <select name="is_active" id="edit_is_active" x-model="editData.is_active" required
                     class="w-full px-4 py-2.5 bg-white border border-gray-200 rounded-xl focus:outline-none focus:border-[#0c2b4d] focus:ring-1 focus:ring-[#0c2b4d] text-sm text-gray-800 transition-all shadow-sm">
                 <option value="1">Aktif</option>
@@ -40,7 +40,7 @@
     </div>
 
     <div>
-        <label for="edit_jurusan_id" class="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-1.5">Jurusan</label>
+        <label for="edit_jurusan_id" class="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-1.5">Jurusan <span class="text-red-500">*</span></label>
         <select name="jurusan_id" id="edit_jurusan_id" x-model="editData.jurusan_id" required
                 class="w-full px-4 py-2.5 bg-white border border-gray-200 rounded-xl focus:outline-none focus:border-[#0c2b4d] focus:ring-1 focus:ring-[#0c2b4d] text-sm text-gray-800 transition-all shadow-sm">
             <option value="" disabled>Pilih Jurusan</option>
@@ -56,7 +56,7 @@
     </div>
 
     <div>
-        <label for="edit_tahun_akademik_id" class="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-1.5">Tahun Ajaran</label>
+        <label for="edit_tahun_akademik_id" class="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-1.5">Tahun Ajaran <span class="text-red-500">*</span></label>
         <select name="tahun_akademik_id" id="edit_tahun_akademik_id" x-model="editData.tahun_akademik_id" required
                 class="w-full px-4 py-2.5 bg-white border border-gray-200 rounded-xl focus:outline-none focus:border-[#0c2b4d] focus:ring-1 focus:ring-[#0c2b4d] text-sm text-gray-800 transition-all shadow-sm">
             <option value="" disabled>Pilih Tahun Ajaran</option>

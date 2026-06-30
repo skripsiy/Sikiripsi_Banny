@@ -7,6 +7,41 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 
 uses(RefreshDatabase::class);
 
+function validMuridPayload(array $overrides = []): array
+{
+    return array_merge([
+        'name' => 'Student Name',
+        'username' => 'student_' . rand(1000, 9999),
+        'email' => 'student' . rand(1000, 9999) . '@stovia.sch.id',
+        'password' => 'password123',
+        'password_confirmation' => 'password123',
+        'nisn' => '1234567890',
+        'no_telepon_orang_tua' => '628123456789',
+        'namaLengkap' => 'Student Full Name',
+        'tanggalLahir' => '2008-01-01',
+        'alamat' => 'Jl. Pelajar No. 1',
+        'noTelpon' => '628123456789',
+        'namaOrangTua' => 'Student Parent Name',
+    ], $overrides);
+}
+
+function validGuruPayload(array $overrides = []): array
+{
+    return array_merge([
+        'name' => 'Guru Baru',
+        'username' => 'guru_' . rand(1000, 9999),
+        'email' => 'guru' . rand(1000, 9999) . '@stovia.sch.id',
+        'password' => 'ChangeMe@123',
+        'password_confirmation' => 'ChangeMe@123',
+        'nip' => '198501012010011002',
+        'fullname' => 'Guru Baru Lengkap',
+        'tanggalLahir' => '1980-01-01',
+        'alamat' => 'Jl. Guru No. 1',
+        'noWhatsapp' => '6281234567890',
+        'gelar' => 'S.Pd',
+    ], $overrides);
+}
+
 /*
 |--------------------------------------------------------------------------
 | 1. EQUIVALENCE PARTITIONING (EP)
@@ -50,14 +85,10 @@ describe('Equivalence Partitioning (EP) - Email & Required Fields Validation', f
     });
 
     it('accepts valid email partition', function () {
-        $response = $this->actingAs($this->admin)->post(route('admin.manage.murids.store'), [
-            'name' => 'Valid Name',
-            'email' => 'validemail@stovia.sch.id', // Valid partition
-            'password' => 'password123',
-            'password_confirmation' => 'password123',
-            'nisn' => '1234567890',
+        $response = $this->actingAs($this->admin)->post(route('admin.manage.murids.store'), validMuridPayload([
+            'email' => 'validemail@stovia.sch.id',
             'classroom_id' => $this->classroom->id,
-        ]);
+        ]));
 
         $response->assertSessionHasNoErrors();
         $this->assertDatabaseHas('users', [
@@ -67,40 +98,28 @@ describe('Equivalence Partitioning (EP) - Email & Required Fields Validation', f
     });
 
     it('rejects invalid email partition', function () {
-        $response = $this->actingAs($this->admin)->post(route('admin.manage.murids.store'), [
-            'name' => 'Valid Name',
-            'email' => 'invalid-email-format', // Invalid partition
-            'password' => 'password123',
-            'password_confirmation' => 'password123',
-            'nisn' => '1234567890',
+        $response = $this->actingAs($this->admin)->post(route('admin.manage.murids.store'), validMuridPayload([
+            'email' => 'invalid-email-format',
             'classroom_id' => $this->classroom->id,
-        ]);
+        ]));
 
         $response->assertSessionHasErrors('email');
     });
 
     it('rejects empty required field partition', function () {
-        $response = $this->actingAs($this->admin)->post(route('admin.manage.murids.store'), [
-            'name' => '', // Invalid partition (empty required field)
-            'email' => 'validemail2@stovia.sch.id',
-            'password' => 'password123',
-            'password_confirmation' => 'password123',
-            'nisn' => '1234567890',
+        $response = $this->actingAs($this->admin)->post(route('admin.manage.murids.store'), validMuridPayload([
+            'name' => '',
             'classroom_id' => $this->classroom->id,
-        ]);
+        ]));
 
         $response->assertSessionHasErrors('name');
     });
 
     it('sets must_change_password to true for manually created gurus', function () {
-        $response = $this->actingAs($this->admin)->post(route('admin.manage.gurus.store'), [
-            'name' => 'Guru Baru',
+        $response = $this->actingAs($this->admin)->post(route('admin.manage.gurus.store'), validGuruPayload([
             'email' => 'gurubaru@stovia.sch.id',
-            'password' => 'ChangeMe@123',
-            'password_confirmation' => 'ChangeMe@123',
             'nip' => '198501012010011002',
-            'nuptk' => '1234567890123456',
-        ]);
+        ]));
 
         $response->assertSessionHasNoErrors();
         $this->assertDatabaseHas('users', [
@@ -148,40 +167,31 @@ describe('Boundary Value Analysis (BVA) - NISN Length & Password Length', functi
 
     // NISN Boundary: exactly 10 digits
     it('rejects NISN with 9 digits (below boundary)', function () {
-        $response = $this->actingAs($this->admin)->post(route('admin.manage.murids.store'), [
-            'name' => 'Student Name',
+        $response = $this->actingAs($this->admin)->post(route('admin.manage.murids.store'), validMuridPayload([
             'email' => 'student9@stovia.sch.id',
-            'password' => 'password123',
-            'password_confirmation' => 'password123',
             'nisn' => '123456789', // 9 digits (invalid)
             'classroom_id' => $this->classroom->id,
-        ]);
+        ]));
 
         $response->assertSessionHasErrors('nisn');
     });
 
     it('accepts NISN with 10 digits (on boundary)', function () {
-        $response = $this->actingAs($this->admin)->post(route('admin.manage.murids.store'), [
-            'name' => 'Student Name',
+        $response = $this->actingAs($this->admin)->post(route('admin.manage.murids.store'), validMuridPayload([
             'email' => 'student10@stovia.sch.id',
-            'password' => 'password123',
-            'password_confirmation' => 'password123',
             'nisn' => '1234567890', // 10 digits (valid)
             'classroom_id' => $this->classroom->id,
-        ]);
+        ]));
 
         $response->assertSessionHasNoErrors();
     });
 
     it('rejects NISN with 11 digits (above boundary)', function () {
-        $response = $this->actingAs($this->admin)->post(route('admin.manage.murids.store'), [
-            'name' => 'Student Name',
+        $response = $this->actingAs($this->admin)->post(route('admin.manage.murids.store'), validMuridPayload([
             'email' => 'student11@stovia.sch.id',
-            'password' => 'password123',
-            'password_confirmation' => 'password123',
             'nisn' => '12345678901', // 11 digits (invalid)
             'classroom_id' => $this->classroom->id,
-        ]);
+        ]));
 
         $response->assertSessionHasErrors('nisn');
     });

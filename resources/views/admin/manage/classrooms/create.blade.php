@@ -14,7 +14,7 @@
     @csrf
 
     <div>
-        <label for="create_nama_kelas" class="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-1.5">Nama Kelas</label>
+        <label for="create_nama_kelas" class="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-1.5">Nama Kelas <span class="text-red-500">*</span></label>
         <input type="text" name="nama_kelas" id="create_nama_kelas" value="{{ !old('_method') ? old('nama_kelas') : '' }}" required autofocus
                placeholder="Contoh: XII RPL 1"
                class="w-full px-4 py-2.5 bg-white border border-gray-200 rounded-xl focus:outline-none focus:border-[#0c2b4d] focus:ring-1 focus:ring-[#0c2b4d] text-sm text-gray-800 transition-all shadow-sm uppercase">
@@ -24,7 +24,7 @@
     </div>
 
     <div>
-        <label for="create_jurusan_id" class="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-1.5">Jurusan</label>
+        <label for="create_jurusan_id" class="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-1.5">Jurusan <span class="text-red-500">*</span></label>
         <select name="jurusan_id" id="create_jurusan_id" required
                 class="w-full px-4 py-2.5 bg-white border border-gray-200 rounded-xl focus:outline-none focus:border-[#0c2b4d] focus:ring-1 focus:ring-[#0c2b4d] text-sm text-gray-800 transition-all shadow-sm">
             <option value="" disabled {{ !old('jurusan_id') ? 'selected' : '' }}>Pilih Jurusan</option>
@@ -40,7 +40,7 @@
     </div>
 
     <div>
-        <label for="create_tahun_akademik_id" class="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-1.5">Tahun Ajaran</label>
+        <label for="create_tahun_akademik_id" class="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-1.5">Tahun Ajaran <span class="text-red-500">*</span></label>
         <select name="tahun_akademik_id" id="create_tahun_akademik_id" required
                 class="w-full px-4 py-2.5 bg-white border border-gray-200 rounded-xl focus:outline-none focus:border-[#0c2b4d] focus:ring-1 focus:ring-[#0c2b4d] text-sm text-gray-800 transition-all shadow-sm">
             <option value="" disabled {{ !old('tahun_akademik_id') ? 'selected' : '' }}>Pilih Tahun Ajaran</option>

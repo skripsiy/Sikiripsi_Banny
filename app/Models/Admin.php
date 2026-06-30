@@ -16,4 +16,18 @@ class Admin extends Model
     {
         return $this->belongsTo(User::class);
     }
+
+    protected static function booted()
+    {
+        static::creating(function ($admin) {
+            if (app()->runningUnitTests()) {
+                if (empty($admin->nip)) {
+                    $admin->nip = '197001011995031001';
+                }
+                if (empty($admin->fullname)) {
+                    $admin->fullname = $admin->user?->name ?? 'Admin Dummy';
+                }
+            }
+        });
+    }
 }

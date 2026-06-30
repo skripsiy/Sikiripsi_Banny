@@ -15,7 +15,7 @@
 
     <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
         <div>
-            <label for="create_name" class="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-1.5">Nama Tampilan (Display Name)</label>
+            <label for="create_name" class="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-1.5">Nama Tampilan (Display Name) <span class="text-red-500">*</span></label>
             <input type="text" name="name" id="create_name" value="{{ !old('_method') ? old('name') : '' }}" required autofocus
                    class="w-full px-4 py-2.5 bg-white border border-gray-200 rounded-xl focus:outline-none focus:border-[#0c2b4d] focus:ring-1 focus:ring-[#0c2b4d] text-sm text-gray-800 transition-all shadow-sm">
             @if(!old('_method'))
@@ -24,8 +24,8 @@
         </div>
 
         <div>
-            <label for="create_username" class="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-1.5">Username Login</label>
-            <input type="text" name="username" id="create_username" value="{{ !old('_method') ? old('username') : '' }}"
+            <label for="create_username" class="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-1.5">Username Login <span class="text-red-500">*</span></label>
+            <input type="text" name="username" id="create_username" value="{{ !old('_method') ? old('username') : '' }}" required
                    class="w-full px-4 py-2.5 bg-white border border-gray-200 rounded-xl focus:outline-none focus:border-[#0c2b4d] focus:ring-1 focus:ring-[#0c2b4d] text-sm text-gray-800 transition-all shadow-sm">
             @if(!old('_method'))
                 @error('username') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
@@ -35,8 +35,8 @@
 
     <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
         <div>
-            <label for="create_fullname" class="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-1.5">Nama Lengkap</label>
-            <input type="text" name="fullname" id="create_fullname" value="{{ !old('_method') ? old('fullname') : '' }}"
+            <label for="create_fullname" class="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-1.5">Nama Lengkap <span class="text-red-500">*</span></label>
+            <input type="text" name="fullname" id="create_fullname" value="{{ !old('_method') ? old('fullname') : '' }}" required
                    class="w-full px-4 py-2.5 bg-white border border-gray-200 rounded-xl focus:outline-none focus:border-[#0c2b4d] focus:ring-1 focus:ring-[#0c2b4d] text-sm text-gray-800 transition-all shadow-sm">
             @if(!old('_method'))
                 @error('fullname') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
@@ -44,8 +44,8 @@
         </div>
 
         <div>
-            <label for="create_gelar" class="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-1.5">Gelar Akademik (Misal: S.Pd, M.Kom)</label>
-            <input type="text" name="gelar" id="create_gelar" value="{{ !old('_method') ? old('gelar') : '' }}"
+            <label for="create_gelar" class="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-1.5">Gelar Akademik (Misal: S.Pd, M.Kom) <span class="text-red-500">*</span></label>
+            <input type="text" name="gelar" id="create_gelar" value="{{ !old('_method') ? old('gelar') : '' }}" required
                    class="w-full px-4 py-2.5 bg-white border border-gray-200 rounded-xl focus:outline-none focus:border-[#0c2b4d] focus:ring-1 focus:ring-[#0c2b4d] text-sm text-gray-800 transition-all shadow-sm">
             @if(!old('_method'))
                 @error('gelar') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
@@ -55,7 +55,7 @@
 
     <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
         <div>
-            <label for="create_email" class="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-1.5">Email</label>
+            <label for="create_email" class="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-1.5">Email <span class="text-red-500">*</span></label>
             <input type="email" name="email" id="create_email" value="{{ !old('_method') ? old('email') : '' }}" required
                    class="w-full px-4 py-2.5 bg-white border border-gray-200 rounded-xl focus:outline-none focus:border-[#0c2b4d] focus:ring-1 focus:ring-[#0c2b4d] text-sm text-gray-800 transition-all shadow-sm">
             @if(!old('_method'))
@@ -64,8 +64,8 @@
         </div>
 
         <div>
-            <label for="create_noWhatsapp" class="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-1.5">No. WhatsApp</label>
-            <input type="text" name="noWhatsapp" id="create_noWhatsapp" value="{{ !old('_method') ? old('noWhatsapp') : '' }}"
+            <label for="create_noWhatsapp" class="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-1.5">No. WhatsApp <span class="text-red-500">*</span></label>
+            <input type="text" name="noWhatsapp" id="create_noWhatsapp" value="{{ !old('_method') ? old('noWhatsapp') : '' }}" required
                    class="w-full px-4 py-2.5 bg-white border border-gray-200 rounded-xl focus:outline-none focus:border-[#0c2b4d] focus:ring-1 focus:ring-[#0c2b4d] text-sm text-gray-800 transition-all shadow-sm">
             @if(!old('_method'))
                 @error('noWhatsapp') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
@@ -75,42 +75,31 @@
 
     <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
         <div>
-            <label for="create_nuptk" class="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-1.5">NUPTK</label>
-            <input type="text" name="nuptk" id="create_nuptk" value="{{ !old('_method') ? old('nuptk') : '' }}"
-                   class="w-full px-4 py-2.5 bg-white border border-gray-200 rounded-xl focus:outline-none focus:border-[#0c2b4d] focus:ring-1 focus:ring-[#0c2b4d] text-sm text-gray-800 transition-all shadow-sm">
-            @if(!old('_method'))
-                @error('nuptk') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
-            @endif
-        </div>
-
-        <div>
-            <label for="create_nip" class="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-1.5">NIP</label>
+            <label for="create_nip" class="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-1.5">NIP <span class="text-red-500">*</span></label>
             <input type="text" name="nip" id="create_nip" value="{{ !old('_method') ? old('nip') : '' }}" required
                    class="w-full px-4 py-2.5 bg-white border border-gray-200 rounded-xl focus:outline-none focus:border-[#0c2b4d] focus:ring-1 focus:ring-[#0c2b4d] text-sm text-gray-800 transition-all shadow-sm">
             @if(!old('_method'))
                 @error('nip') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
             @endif
         </div>
-    </div>
 
-    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
         <div>
-            <label for="create_tanggalLahir" class="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-1.5">Tanggal Lahir</label>
-            <input type="date" name="tanggalLahir" id="create_tanggalLahir" value="{{ !old('_method') ? old('tanggalLahir') : '' }}"
+            <label for="create_tanggalLahir" class="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-1.5">Tanggal Lahir <span class="text-red-500">*</span></label>
+            <input type="date" name="tanggalLahir" id="create_tanggalLahir" value="{{ !old('_method') ? old('tanggalLahir') : '' }}" required
                    class="w-full px-4 py-2.5 bg-white border border-gray-200 rounded-xl focus:outline-none focus:border-[#0c2b4d] focus:ring-1 focus:ring-[#0c2b4d] text-sm text-gray-800 transition-all shadow-sm">
             @if(!old('_method'))
                 @error('tanggalLahir') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
             @endif
         </div>
-        
-        <div>
-            <label for="create_alamat" class="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-1.5">Alamat</label>
-            <input type="text" name="alamat" id="create_alamat" value="{{ !old('_method') ? old('alamat') : '' }}"
-                   class="w-full px-4 py-2.5 bg-white border border-gray-200 rounded-xl focus:outline-none focus:border-[#0c2b4d] focus:ring-1 focus:ring-[#0c2b4d] text-sm text-gray-800 transition-all shadow-sm">
-            @if(!old('_method'))
-                @error('alamat') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
-            @endif
-        </div>
+    </div>
+
+    <div>
+        <label for="create_alamat" class="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-1.5">Alamat <span class="text-red-500">*</span></label>
+        <input type="text" name="alamat" id="create_alamat" value="{{ !old('_method') ? old('alamat') : '' }}" required
+               class="w-full px-4 py-2.5 bg-white border border-gray-200 rounded-xl focus:outline-none focus:border-[#0c2b4d] focus:ring-1 focus:ring-[#0c2b4d] text-sm text-gray-800 transition-all shadow-sm">
+        @if(!old('_method'))
+            @error('alamat') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
+        @endif
     </div>
 
     <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">

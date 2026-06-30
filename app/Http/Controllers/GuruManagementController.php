@@ -23,26 +23,24 @@ class GuruManagementController extends Controller
         // Column Headings
         $sheet->setCellValue('A1', 'name');
         $sheet->setCellValue('B1', 'email');
-        $sheet->setCellValue('C1', 'nuptk');
-        $sheet->setCellValue('D1', 'username');
-        $sheet->setCellValue('E1', 'nip');
-        $sheet->setCellValue('F1', 'fullname');
-        $sheet->setCellValue('G1', 'tanggal_lahir');
-        $sheet->setCellValue('H1', 'alamat');
-        $sheet->setCellValue('I1', 'no_whatsapp');
-        $sheet->setCellValue('J1', 'gelar');
+        $sheet->setCellValue('C1', 'nip');
+        $sheet->setCellValue('D1', 'fullname');
+        $sheet->setCellValue('E1', 'tanggal_lahir');
+        $sheet->setCellValue('F1', 'alamat');
+        $sheet->setCellValue('G1', 'no_whatsapp');
+        $sheet->setCellValue('H1', 'gelar');
+        $sheet->setCellValue('I1', 'username');
 
         // Sample Data Row
         $sheet->setCellValue('A2', 'Budi Handoko, S.Pd.');
         $sheet->setCellValue('B2', 'budi@smkn1jakarta.sch.id');
-        $sheet->setCellValue('C2', '9876543210987654');
-        $sheet->setCellValue('D2', 'budi_handoko');
-        $sheet->setCellValue('E2', '198501012010011002');
-        $sheet->setCellValue('F2', 'Budi Handoko');
-        $sheet->setCellValue('G2', '1985-01-01');
-        $sheet->setCellValue('H2', 'Jl. Merdeka No. 10, Jakarta');
-        $sheet->setCellValue('I2', '6281234567890');
-        $sheet->setCellValue('J2', 'S.Pd.');
+        $sheet->setCellValue('C2', '198501012010011002');
+        $sheet->setCellValue('D2', 'Budi Handoko');
+        $sheet->setCellValue('E2', '1985-01-01');
+        $sheet->setCellValue('F2', 'Jl. Merdeka No. 10, Jakarta');
+        $sheet->setCellValue('G2', '6281234567890');
+        $sheet->setCellValue('H2', 'S.Pd.');
+        $sheet->setCellValue('I2', 'budi_handoko');
 
         $writer = new Xlsx($spreadsheet);
 
@@ -92,16 +90,15 @@ class GuruManagementController extends Controller
     {
         $request->validate([
             'name' => ['required', 'string', 'max:255'],
-            'username' => ['nullable', 'string', 'max:255', 'unique:users,username'],
+            'username' => ['required', 'string', 'max:255', 'unique:users,username'],
             'email' => ['required', 'string', 'email', 'max:255', 'unique:'.User::class],
             'password' => ['required', 'confirmed', Rules\Password::defaults()],
             'nip' => ['required', 'string', 'max:50', 'unique:gurus,nip'],
-            'nuptk' => ['nullable', 'string', 'max:50'],
-            'fullname' => ['nullable', 'string', 'max:255'],
-            'tanggalLahir' => ['nullable', 'date'],
-            'alamat' => ['nullable', 'string'],
-            'noWhatsapp' => ['nullable', 'string', 'max:20'],
-            'gelar' => ['nullable', 'string', 'max:50'],
+            'fullname' => ['required', 'string', 'max:255'],
+            'tanggalLahir' => ['required', 'date'],
+            'alamat' => ['required', 'string'],
+            'noWhatsapp' => ['required', 'string', 'max:20'],
+            'gelar' => ['required', 'string', 'max:50'],
         ]);
 
         $user = User::create([
@@ -115,7 +112,6 @@ class GuruManagementController extends Controller
 
         Guru::create([
             'user_id' => $user->id,
-            'nuptk' => $request->nuptk,
             'nip' => $request->nip,
             'fullname' => $request->fullname,
             'tanggalLahir' => $request->tanggalLahir,
@@ -139,16 +135,15 @@ class GuruManagementController extends Controller
     {
         $request->validate([
             'name' => ['required', 'string', 'max:255'],
-            'username' => ['nullable', 'string', 'max:255', 'unique:users,username,'.$guru->id],
+            'username' => ['required', 'string', 'max:255', 'unique:users,username,'.$guru->id],
             'email' => ['required', 'string', 'email', 'max:255', 'unique:users,email,'.$guru->id],
             'password' => ['nullable', 'confirmed', Rules\Password::defaults()],
             'nip' => ['required', 'string', 'max:50', 'unique:gurus,nip,'.($guru->guru?->id ?? '')],
-            'nuptk' => ['nullable', 'string', 'max:50'],
-            'fullname' => ['nullable', 'string', 'max:255'],
-            'tanggalLahir' => ['nullable', 'date'],
-            'alamat' => ['nullable', 'string'],
-            'noWhatsapp' => ['nullable', 'string', 'max:20'],
-            'gelar' => ['nullable', 'string', 'max:50'],
+            'fullname' => ['required', 'string', 'max:255'],
+            'tanggalLahir' => ['required', 'date'],
+            'alamat' => ['required', 'string'],
+            'noWhatsapp' => ['required', 'string', 'max:20'],
+            'gelar' => ['required', 'string', 'max:50'],
         ]);
 
         $guru->update([
@@ -166,7 +161,6 @@ class GuruManagementController extends Controller
         $guru->guru()->updateOrCreate(
             ['user_id' => $guru->id],
             [
-                'nuptk' => $request->nuptk,
                 'nip' => $request->nip,
                 'fullname' => $request->fullname,
                 'tanggalLahir' => $request->tanggalLahir,

@@ -28,7 +28,6 @@ class GurusImport implements ToCollection, WithHeadingRow, WithValidation
 
                 Guru::create([
                     'user_id'           => $user->id,
-                    'nuptk'             => $row['nuptk'] ?? null,
                     'nip'               => $row['nip'],
                     'fullname'          => $row['fullname'] ?? null,
                     'tanggalLahir'      => $row['tanggal_lahir'] ?? null,
@@ -43,9 +42,6 @@ class GurusImport implements ToCollection, WithHeadingRow, WithValidation
 
     public function prepareForValidation($data, $index)
     {
-        if (isset($data['nuptk'])) {
-            $data['nuptk'] = (string)$data['nuptk'];
-        }
         if (isset($data['nip'])) {
             $data['nip'] = (string)$data['nip'];
         }
@@ -61,13 +57,12 @@ class GurusImport implements ToCollection, WithHeadingRow, WithValidation
             'name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'string', 'email', 'max:255', 'unique:users,email'],
             'nip' => ['required', 'string', 'max:50', 'unique:gurus,nip'],
-            'nuptk' => ['nullable', 'string', 'max:50'],
-            'username' => ['nullable', 'string', 'max:255', 'unique:users,username'],
-            'fullname' => ['nullable', 'string', 'max:255'],
-            'tanggal_lahir' => ['nullable', 'date'],
-            'alamat' => ['nullable', 'string'],
-            'no_whatsapp' => ['nullable', 'string', 'max:20'],
-            'gelar' => ['nullable', 'string', 'max:50'],
+            'username' => ['required', 'string', 'max:255', 'unique:users,username'],
+            'fullname' => ['required', 'string', 'max:255'],
+            'tanggal_lahir' => ['required', 'date'],
+            'alamat' => ['required', 'string'],
+            'no_whatsapp' => ['required', 'string', 'max:20'],
+            'gelar' => ['required', 'string', 'max:50'],
         ];
     }
 }

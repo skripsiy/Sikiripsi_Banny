@@ -4,7 +4,7 @@
     <h3 class="text-lg font-bold text-gray-900 mb-6">Edit Tahun Akademik</h3>
     
     <div class="mb-5">
-        <label for="tahun_ajaran_edit" class="block text-sm font-bold text-gray-700 mb-2">Tahun Ajaran</label>
+        <label for="tahun_ajaran_edit" class="block text-sm font-bold text-gray-700 mb-2">Tahun Ajaran <span class="text-red-500">*</span></label>
         <input type="text" name="tahun_ajaran" id="tahun_ajaran_edit" placeholder="Contoh: 2025/2026" x-model="editData.tahun_ajaran" required
                class="w-full px-4 py-2.5 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-[#0c2b4d] focus:border-transparent text-sm font-medium text-gray-800 transition-all">
         @error('tahun_ajaran')
@@ -13,7 +13,7 @@
     </div>
 
     <div class="mb-6">
-        <label for="is_active_edit" class="block text-sm font-bold text-gray-700 mb-2">Status Aktif</label>
+        <label for="is_active_edit" class="block text-sm font-bold text-gray-700 mb-2">Status Aktif <span class="text-red-500">*</span></label>
         <select name="is_active" id="is_active_edit" x-model="editData.is_active" required
                 class="w-full px-4 py-2.5 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-[#0c2b4d] focus:border-transparent text-sm font-medium text-gray-800 transition-all">
             <option value="1">Aktif</option>

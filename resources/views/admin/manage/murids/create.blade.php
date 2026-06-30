@@ -15,7 +15,7 @@
 
     <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
         <div>
-            <label for="create_name" class="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-1.5">Nama Tampilan (Display Name)</label>
+            <label for="create_name" class="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-1.5">Nama Tampilan (Display Name) <span class="text-red-500">*</span></label>
             <input type="text" name="name" id="create_name" value="{{ !old('_method') ? old('name') : '' }}" required autofocus
                    class="w-full px-4 py-2.5 bg-white border border-gray-200 rounded-xl focus:outline-none focus:border-[#0c2b4d] focus:ring-1 focus:ring-[#0c2b4d] text-sm text-gray-800 transition-all shadow-sm">
             @if(!old('_method'))
@@ -24,8 +24,8 @@
         </div>
 
         <div>
-            <label for="create_username" class="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-1.5">Username Login</label>
-            <input type="text" name="username" id="create_username" value="{{ !old('_method') ? old('username') : '' }}"
+            <label for="create_username" class="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-1.5">Username Login <span class="text-red-500">*</span></label>
+            <input type="text" name="username" id="create_username" value="{{ !old('_method') ? old('username') : '' }}" required
                    class="w-full px-4 py-2.5 bg-white border border-gray-200 rounded-xl focus:outline-none focus:border-[#0c2b4d] focus:ring-1 focus:ring-[#0c2b4d] text-sm text-gray-800 transition-all shadow-sm">
             @if(!old('_method'))
                 @error('username') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
@@ -35,8 +35,8 @@
 
     <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
         <div>
-            <label for="create_namaLengkap" class="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-1.5">Nama Lengkap</label>
-            <input type="text" name="namaLengkap" id="create_namaLengkap" value="{{ !old('_method') ? old('namaLengkap') : '' }}"
+            <label for="create_namaLengkap" class="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-1.5">Nama Lengkap <span class="text-red-500">*</span></label>
+            <input type="text" name="namaLengkap" id="create_namaLengkap" value="{{ !old('_method') ? old('namaLengkap') : '' }}" required
                    class="w-full px-4 py-2.5 bg-white border border-gray-200 rounded-xl focus:outline-none focus:border-[#0c2b4d] focus:ring-1 focus:ring-[#0c2b4d] text-sm text-gray-800 transition-all shadow-sm">
             @if(!old('_method'))
                 @error('namaLengkap') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
@@ -44,7 +44,7 @@
         </div>
 
         <div>
-            <label for="create_email" class="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-1.5">Email</label>
+            <label for="create_email" class="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-1.5">Email <span class="text-red-500">*</span></label>
             <input type="email" name="email" id="create_email" value="{{ !old('_method') ? old('email') : '' }}" required
                    class="w-full px-4 py-2.5 bg-white border border-gray-200 rounded-xl focus:outline-none focus:border-[#0c2b4d] focus:ring-1 focus:ring-[#0c2b4d] text-sm text-gray-800 transition-all shadow-sm">
             @if(!old('_method'))
@@ -55,8 +55,8 @@
 
     <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
         <div>
-            <label for="create_noTelpon" class="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-1.5">No. Telepon Murid</label>
-            <input type="text" name="noTelpon" id="create_noTelpon" value="{{ !old('_method') ? old('noTelpon') : '' }}"
+            <label for="create_noTelpon" class="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-1.5">No. Telepon Murid <span class="text-red-500">*</span></label>
+            <input type="text" name="noTelpon" id="create_noTelpon" value="{{ !old('_method') ? old('noTelpon') : '' }}" required
                    class="w-full px-4 py-2.5 bg-white border border-gray-200 rounded-xl focus:outline-none focus:border-[#0c2b4d] focus:ring-1 focus:ring-[#0c2b4d] text-sm text-gray-800 transition-all shadow-sm">
             @if(!old('_method'))
                 @error('noTelpon') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
@@ -64,8 +64,8 @@
         </div>
 
         <div>
-            <label for="create_tanggalLahir" class="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-1.5">Tanggal Lahir</label>
-            <input type="date" name="tanggalLahir" id="create_tanggalLahir" value="{{ !old('_method') ? old('tanggalLahir') : '' }}"
+            <label for="create_tanggalLahir" class="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-1.5">Tanggal Lahir <span class="text-red-500">*</span></label>
+            <input type="date" name="tanggalLahir" id="create_tanggalLahir" value="{{ !old('_method') ? old('tanggalLahir') : '' }}" required
                    class="w-full px-4 py-2.5 bg-white border border-gray-200 rounded-xl focus:outline-none focus:border-[#0c2b4d] focus:ring-1 focus:ring-[#0c2b4d] text-sm text-gray-800 transition-all shadow-sm">
             @if(!old('_method'))
                 @error('tanggalLahir') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
@@ -74,8 +74,8 @@
     </div>
 
     <div>
-        <label for="create_alamat" class="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-1.5">Alamat</label>
-        <input type="text" name="alamat" id="create_alamat" value="{{ !old('_method') ? old('alamat') : '' }}"
+        <label for="create_alamat" class="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-1.5">Alamat <span class="text-red-500">*</span></label>
+        <input type="text" name="alamat" id="create_alamat" value="{{ !old('_method') ? old('alamat') : '' }}" required
                class="w-full px-4 py-2.5 bg-white border border-gray-200 rounded-xl focus:outline-none focus:border-[#0c2b4d] focus:ring-1 focus:ring-[#0c2b4d] text-sm text-gray-800 transition-all shadow-sm">
         @if(!old('_method'))
             @error('alamat') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
@@ -84,8 +84,8 @@
 
     <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
         <div>
-            <label for="create_namaOrangTua" class="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-1.5">Nama Orang Tua</label>
-            <input type="text" name="namaOrangTua" id="create_namaOrangTua" value="{{ !old('_method') ? old('namaOrangTua') : '' }}"
+            <label for="create_namaOrangTua" class="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-1.5">Nama Orang Tua <span class="text-red-500">*</span></label>
+            <input type="text" name="namaOrangTua" id="create_namaOrangTua" value="{{ !old('_method') ? old('namaOrangTua') : '' }}" required
                    class="w-full px-4 py-2.5 bg-white border border-gray-200 rounded-xl focus:outline-none focus:border-[#0c2b4d] focus:ring-1 focus:ring-[#0c2b4d] text-sm text-gray-800 transition-all shadow-sm">
             @if(!old('_method'))
                 @error('namaOrangTua') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
@@ -93,8 +93,8 @@
         </div>
 
         <div>
-            <label for="create_no_telepon_orang_tua" class="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-1.5">No. Telp Orang Tua (WhatsApp)</label>
-            <input type="text" name="no_telepon_orang_tua" id="create_no_telepon_orang_tua" value="{{ !old('_method') ? old('no_telepon_orang_tua') : '' }}" placeholder="Contoh: 628123456789"
+            <label for="create_no_telepon_orang_tua" class="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-1.5">No. Telp Orang Tua (WhatsApp) <span class="text-red-500">*</span></label>
+            <input type="text" name="no_telepon_orang_tua" id="create_no_telepon_orang_tua" value="{{ !old('_method') ? old('no_telepon_orang_tua') : '' }}" required placeholder="Contoh: 628123456789"
                    class="w-full px-4 py-2.5 bg-white border border-gray-200 rounded-xl focus:outline-none focus:border-[#0c2b4d] focus:ring-1 focus:ring-[#0c2b4d] text-sm text-gray-800 transition-all shadow-sm">
             @if(!old('_method'))
                 @error('no_telepon_orang_tua') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
@@ -104,7 +104,7 @@
 
     <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
         <div>
-            <label for="create_nisn" class="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-1.5">NISN (10 Digit)</label>
+            <label for="create_nisn" class="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-1.5">NISN (10 Digit) <span class="text-red-500">*</span></label>
             <input type="text" name="nisn" id="create_nisn" value="{{ !old('_method') ? old('nisn') : '' }}" required
                    class="w-full px-4 py-2.5 bg-white border border-gray-200 rounded-xl focus:outline-none focus:border-[#0c2b4d] focus:ring-1 focus:ring-[#0c2b4d] text-sm text-gray-800 transition-all shadow-sm">
             @if(!old('_method'))
@@ -113,7 +113,7 @@
         </div>
 
         <div>
-            <label for="create_classroom_id" class="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-1.5">Kelas</label>
+            <label for="create_classroom_id" class="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-1.5">Kelas <span class="text-red-500">*</span></label>
             <select name="classroom_id" id="create_classroom_id" required
                     class="w-full px-4 py-2.5 bg-white border border-gray-200 rounded-xl focus:outline-none focus:border-[#0c2b4d] focus:ring-1 focus:ring-[#0c2b4d] text-sm text-gray-800 transition-all shadow-sm">
                 <option value="" disabled {{ !old('classroom_id') ? 'selected' : '' }}>Pilih Kelas</option>

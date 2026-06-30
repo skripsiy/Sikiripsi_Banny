@@ -11,7 +11,6 @@
             name: {{ json_encode(old('name') ?? '') }},
             username: {{ json_encode(old('username') ?? '') }},
             email: {{ json_encode(old('email') ?? '') }},
-            nuptk: {{ json_encode(old('nuptk') ?? '') }},
             nip: {{ json_encode(old('nip') ?? '') }},
             fullname: {{ json_encode(old('fullname') ?? '') }},
             tanggalLahir: {{ json_encode(old('tanggalLahir') ?? '') }},
@@ -89,7 +88,7 @@
                                     <th class="px-6 py-4 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">Nama Lengkap</th>
                                     <th class="px-6 py-4 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">Username</th>
                                     <th class="px-6 py-4 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">Email</th>
-                                    <th class="px-6 py-4 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">NUPTK / NIP</th>
+                                    <th class="px-6 py-4 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">NIP</th>
                                     <th class="px-6 py-4 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">WhatsApp</th>
                                     <th class="px-6 py-4 text-center text-xs font-bold text-gray-500 uppercase tracking-wider w-36">Aksi</th>
                                 </tr>
@@ -103,8 +102,7 @@
                                         <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ $userObj->username ?? '-' }}</td>
                                         <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ $userObj->email }}</td>
                                         <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                                            <span class="block">NUPTK: {{ $userObj->guru->nuptk ?? '-' }}</span>
-                                            <span class="block text-[11px] text-gray-400 mt-0.5">NIP: {{ $userObj->guru->nip ?? '-' }}</span>
+                                            {{ $userObj->guru->nip ?? '-' }}
                                         </td>
                                         <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ $userObj->guru->noWhatsapp ?? '-' }}</td>
                                         <td class="px-6 py-4 whitespace-nowrap text-sm text-center font-medium">
@@ -116,7 +114,6 @@
                                                         name: {{ json_encode($userObj->name) }},
                                                         username: {{ json_encode($userObj->username ?? '') }},
                                                         email: {{ json_encode($userObj->email) }},
-                                                        nuptk: {{ json_encode($userObj->guru->nuptk ?? '') }},
                                                         nip: {{ json_encode($userObj->guru->nip ?? '') }},
                                                         fullname: {{ json_encode($userObj->guru->fullname ?? '') }},
                                                         tanggalLahir: {{ json_encode($userObj->guru->tanggalLahir ?? '') }},

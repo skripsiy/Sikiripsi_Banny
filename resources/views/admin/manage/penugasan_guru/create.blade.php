@@ -15,7 +15,7 @@
 
     <!-- Subject -->
     <div>
-        <label for="create_mata_pelajaran_id" class="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-2">Mata Pelajaran</label>
+        <label for="create_mata_pelajaran_id" class="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-2">Mata Pelajaran <span class="text-red-500">*</span></label>
         <select name="mata_pelajaran_id" id="create_mata_pelajaran_id" required
                 class="w-full px-4 py-2.5 bg-white border border-gray-200 rounded-xl focus:outline-none focus:border-[#0c2b4d] focus:ring-1 focus:ring-[#0c2b4d] text-sm text-gray-800 transition-all shadow-sm">
             <option value="" disabled {{ !old('mata_pelajaran_id') ? 'selected' : '' }}>-- Pilih Mata Pelajaran --</option>
@@ -37,7 +37,7 @@
 
     <!-- Guru -->
     <div>
-        <label for="create_guru_id" class="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-2">Guru Pengampu</label>
+        <label for="create_guru_id" class="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-2">Guru Pengampu <span class="text-red-500">*</span></label>
         <select name="guru_id" id="create_guru_id" required
                 class="w-full px-4 py-2.5 bg-white border border-gray-200 rounded-xl focus:outline-none focus:border-[#0c2b4d] focus:ring-1 focus:ring-[#0c2b4d] text-sm text-gray-800 transition-all shadow-sm">
             <option value="" disabled {{ !old('guru_id') ? 'selected' : '' }}>-- Pilih Guru --</option>

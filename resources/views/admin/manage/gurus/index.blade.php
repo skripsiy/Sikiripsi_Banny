@@ -24,20 +24,20 @@
         <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-4 mb-6">
             <h3 class="text-base font-bold text-gray-800">Daftar Akun Guru</h3>
             
-            <div class="flex flex-wrap items-center gap-3">
+            <div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 w-full lg:w-auto">
                 <!-- Import Form -->
-                <form action="{{ route('admin.manage.gurus.import') }}" method="POST" enctype="multipart/form-data" class="flex items-center gap-2 bg-white px-4 py-2 border border-gray-100 rounded-xl shadow-sm">
+                <form action="{{ route('admin.manage.gurus.import') }}" method="POST" enctype="multipart/form-data" class="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 bg-white p-3 sm:px-4 sm:py-2 border border-gray-100 rounded-xl shadow-sm w-full sm:w-auto">
                     @csrf
                     <input type="file" name="file" accept=".xlsx,.xls,.csv" required 
-                           class="text-xs text-gray-500 file:mr-3 file:py-1 file:px-2.5 file:rounded-lg file:border-0 file:text-xs file:font-bold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100 cursor-pointer">
-                    <button type="submit" class="bg-emerald-600 hover:bg-emerald-700 text-white px-3.5 py-1.5 rounded-lg text-xs font-bold shadow-sm transition-all duration-150 cursor-pointer select-none">
+                           class="text-xs text-gray-500 file:mr-3 file:py-1 file:px-2.5 file:rounded-lg file:border-0 file:text-xs file:font-bold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100 cursor-pointer w-full sm:w-auto">
+                    <button type="submit" class="bg-emerald-600 hover:bg-emerald-700 text-white px-3.5 py-1.5 rounded-lg text-xs font-bold shadow-sm transition-all duration-150 cursor-pointer select-none w-full sm:w-auto text-center">
                         Import Excel
                     </button>
                 </form>
 
                 <!-- Download Template -->
                 <a href="{{ route('admin.manage.gurus.template') }}" 
-                   class="bg-white hover:bg-gray-50 text-gray-700 px-4 py-2.5 border border-gray-200 rounded-xl text-xs font-bold transition-all duration-150 shadow-sm flex items-center gap-1.5">
+                   class="bg-white hover:bg-gray-50 text-gray-700 px-4 py-2.5 border border-gray-200 rounded-xl text-xs font-bold transition-all duration-150 shadow-sm flex items-center justify-center gap-1.5 w-full sm:w-auto">
                     <svg class="w-4 h-4 text-gray-500" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path>
                     </svg>
@@ -46,7 +46,7 @@
 
                 <!-- Add Button -->
                 <button @click="showCreateModal = true" 
-                        class="bg-[#0c2b4d] hover:bg-[#07192d] text-white px-4 py-2.5 rounded-xl text-xs font-bold transition-all duration-150 shadow-sm cursor-pointer select-none">
+                        class="bg-[#0c2b4d] hover:bg-[#07192d] text-white px-4 py-2.5 rounded-xl text-xs font-bold transition-all duration-150 shadow-sm cursor-pointer select-none w-full sm:w-auto text-center">
                     + Tambah Guru
                 </button>
             </div>
@@ -79,7 +79,7 @@
             <!-- Decorative Top Gradient Line -->
             <div class="h-1.5 bg-gradient-to-r from-[#0c2b4d] to-[#1a4a7d]"></div>
 
-            <div class="p-6">
+            <div class="p-3 sm:p-6">
                 <div class="overflow-x-auto font-sans">
                     @if ($gurus->isNotEmpty())
                         <table class="min-w-full divide-y divide-gray-100">
@@ -169,7 +169,7 @@
 
             <div x-show="showCreateModal" x-transition:enter="ease-out duration-300" x-transition:enter-start="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95" x-transition:enter-end="opacity-100 translate-y-0 sm:scale-100" x-transition:leave="ease-in duration-200" x-transition:leave-start="opacity-100 translate-y-0 sm:scale-100" x-transition:leave-end="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95" class="bg-white rounded-2xl overflow-hidden shadow-2xl transform transition-all w-full max-w-xl mx-auto z-10 border border-gray-100">
                 <div class="h-1.5 bg-gradient-to-r from-[#0c2b4d] to-[#1a4a7d]"></div>
-                <div class="p-8">
+                <div class="p-4 sm:p-6 lg:p-8">
                     @include('admin.manage.gurus.create')
                 </div>
             </div>
@@ -183,7 +183,7 @@
 
             <div x-show="showEditModal" x-transition:enter="ease-out duration-300" x-transition:enter-start="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95" x-transition:enter-end="opacity-100 translate-y-0 sm:scale-100" x-transition:leave="ease-in duration-200" x-transition:leave-start="opacity-100 translate-y-0 sm:scale-100" x-transition:leave-end="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95" class="bg-white rounded-2xl overflow-hidden shadow-2xl transform transition-all w-full max-w-xl mx-auto z-10 border border-gray-100">
                 <div class="h-1.5 bg-gradient-to-r from-[#0c2b4d] to-[#1a4a7d]"></div>
-                <div class="p-8">
+                <div class="p-4 sm:p-6 lg:p-8">
                     @include('admin.manage.gurus.edit')
                 </div>
             </div>

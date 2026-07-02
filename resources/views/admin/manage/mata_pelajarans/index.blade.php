@@ -29,7 +29,7 @@
         }
     }">
         <!-- Header Actions -->
-        <div class="flex justify-between items-center mb-6">
+        <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 sm:gap-0 mb-6">
             <h3 class="text-base font-bold text-gray-800">Daftar Mata Pelajaran</h3>
             <button @click="openCreateModal()" 
                     class="bg-[#0c2b4d] hover:bg-[#07192d] text-white px-4 py-2.5 rounded-lg text-sm font-semibold transition-colors shadow-sm cursor-pointer select-none">
@@ -53,7 +53,7 @@
             <!-- Decorative Top Gradient Line -->
             <div class="h-1.5 bg-gradient-to-r from-[#0c2b4d] to-[#1a4a7d]"></div>
 
-            <div class="p-6">
+            <div class="p-3 sm:p-6">
                 <div class="overflow-x-auto font-sans">
                     @if ($mata_pelajarans->isNotEmpty())
                         <table class="min-w-full divide-y divide-gray-100">
@@ -154,7 +154,7 @@
 
             <div x-show="showCreateModal" x-transition:enter="ease-out duration-300" x-transition:enter-start="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95" x-transition:enter-end="opacity-100 translate-y-0 sm:scale-100" x-transition:leave="ease-in duration-200" x-transition:leave-start="opacity-100 translate-y-0 sm:scale-100" x-transition:leave-end="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95" class="bg-white rounded-2xl overflow-hidden shadow-2xl transform transition-all w-full max-w-xl mx-auto z-10 border border-gray-100">
                 <div class="h-1.5 bg-gradient-to-r from-[#0c2b4d] to-[#1a4a7d]"></div>
-                <div class="p-8">
+                <div class="p-4 sm:p-6 lg:p-8">
                     @include('admin.manage.mata_pelajarans.create')
                 </div>
             </div>
@@ -168,7 +168,7 @@
 
             <div x-show="showEditModal" x-transition:enter="ease-out duration-300" x-transition:enter-start="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95" x-transition:enter-end="opacity-100 translate-y-0 sm:scale-100" x-transition:leave="ease-in duration-200" x-transition:leave-start="opacity-100 translate-y-0 sm:scale-100" x-transition:leave-end="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95" class="bg-white rounded-2xl overflow-hidden shadow-2xl transform transition-all w-full max-w-xl mx-auto z-10 border border-gray-100">
                 <div class="h-1.5 bg-gradient-to-r from-[#0c2b4d] to-[#1a4a7d]"></div>
-                <div class="p-8">
+                <div class="p-4 sm:p-6 lg:p-8">
                     @include('admin.manage.mata_pelajarans.edit')
                 </div>
             </div>

@@ -15,9 +15,33 @@
         @vite(['resources/css/app.css', 'resources/js/app.js'])
         <script src="https://cdn.jsdelivr.net/npm/@hotwired/turbo@8.0.4/dist/turbo.es2015-umd.js" defer></script>
     </head>
-    <body class="font-sans antialiased bg-gray-50 text-gray-900 h-screen overflow-hidden" x-data="{ sidebarOpen: true }">
+    <body class="font-sans antialiased bg-gray-50 text-gray-900 h-screen overflow-hidden" 
+          x-data="{ 
+              sidebarOpen: window.innerWidth >= 1024,
+              isMobile: window.innerWidth < 1024,
+              handleResize() {
+                  this.isMobile = window.innerWidth < 1024;
+                  if (this.isMobile) {
+                      this.sidebarOpen = false;
+                  }
+              }
+          }"
+          x-init="handleResize()"
+          @resize.window.debounce.150ms="handleResize()">
         <div class="h-screen flex flex-row overflow-hidden">
             
+            <!-- Mobile Sidebar Backdrop -->
+            <div x-show="sidebarOpen && isMobile" 
+                 x-transition:enter="transition ease-out duration-300"
+                 x-transition:enter-start="opacity-0"
+                 x-transition:enter-end="opacity-100"
+                 x-transition:leave="transition ease-in duration-200"
+                 x-transition:leave-start="opacity-100"
+                 x-transition:leave-end="opacity-0"
+                 class="sidebar-backdrop lg:hidden"
+                 @click="sidebarOpen = false"
+                 style="display: none;"></div>
+
             <!-- Sidebar Component -->
             <x-sidebar />
 
@@ -34,7 +58,7 @@
                 </x-topbar>
 
                 <!-- Page Content -->
-                <main class="flex-1 p-8">
+                <main class="flex-1 p-4 sm:p-6 lg:p-8">
                     {{ $slot }}
                 </main>
             </div>

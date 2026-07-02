@@ -17,7 +17,7 @@
         </div>
 
         <!-- Module Info Banner -->
-        <div class="bg-[#0c2b4d] text-white p-6 rounded-2xl shadow-lg border border-gray-150 mb-6 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+        <div class="bg-[#0c2b4d] text-white p-4 sm:p-6 rounded-2xl shadow-lg border border-gray-150 mb-6 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
             <div>
                 <div class="flex flex-wrap gap-2">
                     <span class="bg-blue-500/20 text-blue-200 border border-blue-500/30 text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wider">
@@ -40,7 +40,7 @@
                     </span>
                 </div>
             </div>
-            <div class="flex items-center gap-2">
+            <div class="flex flex-wrap items-center gap-2">
                 <!-- Absensi Saya Button -->
                 <a href="{{ route('murid.learning-modules.absensi.index', [$learningModule->id, 'semester_id' => $selectedSemester?->id]) }}"
                    class="inline-flex items-center gap-1.5 font-bold px-4 py-2.5 rounded-xl text-xs bg-white/10 hover:bg-white/20 text-white transition-all border border-white/10 select-none cursor-pointer">
@@ -63,10 +63,10 @@
 
 
         <!-- Statistics / Overview Cards Grid -->
-        <div class="grid grid-cols-2 md:grid-cols-6 gap-4 mb-6">
+        <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 gap-3 sm:gap-4 mb-6">
             <!-- Absensi Saya Card -->
             <a href="{{ route('murid.learning-modules.absensi.index', [$learningModule->id, 'semester_id' => $selectedSemester?->id]) }}"
-               class="group/card bg-white border border-gray-100 hover:border-blue-200 hover:shadow-md rounded-2xl p-4 transition-all duration-200 cursor-pointer select-none">
+               class="group/card bg-white border border-gray-100 hover:border-blue-200 hover:shadow-md rounded-2xl p-3 sm:p-4 transition-all duration-200 cursor-pointer select-none">
                 <div class="flex items-center gap-3">
                     <div class="w-10 h-10 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center flex-shrink-0">
                         <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
@@ -85,7 +85,7 @@
 
             <!-- Rekap Nilai Card -->
             <a href="{{ route('murid.learning-modules.rekap-nilai', [$learningModule->id, 'semester_id' => $selectedSemester?->id]) }}"
-               class="group/card bg-white border border-gray-100 hover:border-emerald-200 hover:shadow-md rounded-2xl p-4 transition-all duration-200 cursor-pointer select-none">
+               class="group/card bg-white border border-gray-100 hover:border-emerald-200 hover:shadow-md rounded-2xl p-3 sm:p-4 transition-all duration-200 cursor-pointer select-none">
                 <div class="flex items-center gap-3">
                     <div class="w-10 h-10 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center flex-shrink-0">
                         <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
@@ -104,7 +104,7 @@
 
             <!-- Materi Card -->
             <a href="{{ route('murid.learning-modules.materis.index', [$learningModule->id, 'semester_id' => $selectedSemester?->id]) }}"
-               class="group/card bg-white border border-gray-100 hover:border-indigo-200 hover:shadow-md rounded-2xl p-4 transition-all duration-200 cursor-pointer select-none">
+               class="group/card bg-white border border-gray-100 hover:border-indigo-200 hover:shadow-md rounded-2xl p-3 sm:p-4 transition-all duration-200 cursor-pointer select-none">
                 <div class="flex items-center gap-3">
                     <div class="w-10 h-10 rounded-xl bg-indigo-50 text-indigo-600 flex items-center justify-center flex-shrink-0">
                         <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
@@ -123,7 +123,7 @@
 
             <!-- Tugas Card -->
             <a href="{{ route('murid.learning-modules.tugas.index', [$learningModule->id, 'semester_id' => $selectedSemester?->id]) }}"
-               class="group/card bg-white border border-gray-100 hover:border-rose-200 hover:shadow-md rounded-2xl p-4 transition-all duration-200 cursor-pointer select-none">
+               class="group/card bg-white border border-gray-100 hover:border-rose-200 hover:shadow-md rounded-2xl p-3 sm:p-4 transition-all duration-200 cursor-pointer select-none">
                 <div class="flex items-center gap-3">
                     <div class="w-10 h-10 rounded-xl bg-rose-50 text-rose-600 flex items-center justify-center flex-shrink-0">
                         <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
@@ -142,7 +142,7 @@
 
             <!-- Kuis Card -->
             <a href="{{ route('murid.learning-modules.quizzes.index', [$learningModule->id, 'semester_id' => $selectedSemester?->id]) }}"
-               class="group/card bg-white border border-gray-100 hover:border-amber-200 hover:shadow-md rounded-2xl p-4 transition-all duration-200 cursor-pointer select-none">
+               class="group/card bg-white border border-gray-100 hover:border-amber-200 hover:shadow-md rounded-2xl p-3 sm:p-4 transition-all duration-200 cursor-pointer select-none">
                 <div class="flex items-center gap-3">
                     <div class="w-10 h-10 rounded-xl bg-amber-50 text-amber-600 flex items-center justify-center flex-shrink-0">
                         <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
@@ -161,7 +161,7 @@
 
             <!-- Ujian Card -->
             <a href="{{ route('murid.learning-modules.ujians.index', [$learningModule->id, 'semester_id' => $selectedSemester?->id]) }}"
-               class="group/card bg-white border border-gray-100 hover:border-purple-200 hover:shadow-md rounded-2xl p-4 transition-all duration-200 cursor-pointer select-none">
+               class="group/card bg-white border border-gray-100 hover:border-purple-200 hover:shadow-md rounded-2xl p-3 sm:p-4 transition-all duration-200 cursor-pointer select-none">
                 <div class="flex items-center gap-3">
                     <div class="w-10 h-10 rounded-xl bg-purple-50 text-purple-600 flex items-center justify-center flex-shrink-0">
                         <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
@@ -196,7 +196,7 @@
                     return matchesType && matchesTime;
                 });
             }
-        }" class="bg-white shadow-lg border border-gray-100 rounded-2xl p-6 mt-6">
+        }" class="bg-white shadow-lg border border-gray-100 rounded-2xl p-4 sm:p-6 mt-6">
             <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6 pb-4 border-b border-gray-100">
                 <div>
                     <h3 class="text-base font-bold text-gray-800 flex items-center gap-2 select-none">

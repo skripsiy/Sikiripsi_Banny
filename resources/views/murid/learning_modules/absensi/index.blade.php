@@ -17,7 +17,7 @@
         </div>
 
         <!-- Module Info Banner -->
-        <div class="bg-[#0c2b4d] text-white p-6 rounded-2xl shadow-lg border border-gray-150 mb-6 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+        <div class="bg-[#0c2b4d] text-white p-4 sm:p-6 rounded-2xl shadow-lg border border-gray-150 mb-6 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
             <div>
                 <div class="flex flex-wrap gap-2">
                     <span class="bg-blue-500/20 text-blue-200 border border-blue-500/30 text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wider">
@@ -38,8 +38,8 @@
         </div>
 
         <!-- Main Content Area -->
-        <div class="bg-white shadow-lg rounded-2xl border border-gray-100 p-6">
-            <div class="flex justify-between items-center mb-6">
+        <div class="bg-white shadow-lg rounded-2xl border border-gray-100 p-3 sm:p-6">
+            <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 sm:gap-0 mb-6">
                 <h3 class="text-base font-bold text-gray-800">Log Kehadiran Pribadi</h3>
                 <a href="{{ route('murid.learning-modules.izin.index', $learningModule->id) }}"
                    class="bg-[#0c2b4d] hover:bg-[#07192d] text-white px-4 py-2.5 rounded-xl text-xs font-bold transition-all shadow-sm cursor-pointer select-none">

@@ -1,11 +1,9 @@
 <x-app-layout>
     <x-slot name="header">
-        <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-            {{ __('Dashboard') }}
-        </h2>
+        {{ __('') }}
     </x-slot>
 
-    <div class="py-6 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 font-sans">
+    <div class="py-4 sm:py-6 max-w-7xl mx-auto px-2 sm:px-4 lg:px-8 font-sans">
         
         <!-- Status Notification -->
         @if (session('status'))
@@ -26,7 +24,7 @@
         @endif
         
         <!-- Welcome Card -->
-        <div class="bg-[#0c2b4d] text-white p-6 rounded-2xl shadow-lg border border-gray-150 mb-6 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+        <div class="bg-[#0c2b4d] text-white p-4 sm:p-6 rounded-2xl shadow-lg border border-gray-150 mb-6 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
             <div>
                 <span class="bg-blue-500/20 text-blue-200 border border-blue-500/30 text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wider select-none">
                     Selamat Datang
@@ -34,7 +32,7 @@
                 <h2 class="text-xl font-bold mt-2.5">Halo, {{ auth()->user()->name }}!</h2>
                 <p class="text-xs text-blue-100/70 mt-1 max-w-xl">Anda masuk sebagai <strong class="text-white uppercase">{{ auth()->user()->role }}</strong>. Silakan kelola modul pembelajaran, pantau absensi, dan lihat aktivitas terbaru di sistem E-Learning & Absensi SMKN 1 Jakarta.</p>
             </div>
-            <div class="bg-white/10 px-4 py-3 rounded-2xl border border-white/10 text-center select-none">
+            <div class="bg-white/10 px-4 py-3 rounded-2xl border border-white/10 text-center select-none w-full md:w-auto">
                 <span class="text-[10px] uppercase font-bold text-blue-200 tracking-wider block">Hari Ini</span>
                 <span class="text-sm font-extrabold">{{ \Carbon\Carbon::now()->translatedFormat('l, d F Y') }}</span>
             </div>
@@ -42,12 +40,12 @@
 
         @if(auth()->user()->role === 'admin')
             <!-- Admin Dashboard Widgets -->
-            <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
                 <!-- Total Guru -->
-                <div class="bg-white p-6 rounded-2xl shadow-lg border border-gray-100 flex items-center justify-between">
+                <div class="bg-white p-4 sm:p-6 rounded-2xl shadow-lg border border-gray-100 flex items-center justify-between">
                     <div>
-                        <span class="text-xs font-bold text-gray-400 uppercase tracking-wider">Total Guru</span>
-                        <h3 class="text-3xl font-extrabold text-[#0c2b4d] mt-1">{{ $data['total_guru'] }}</h3>
+                        <span class="text-[10px] sm:text-xs font-bold text-gray-400 uppercase tracking-wider">Total Guru</span>
+                        <h3 class="text-2xl sm:text-3xl font-extrabold text-[#0c2b4d] mt-1">{{ $data['total_guru'] }}</h3>
                         <a href="{{ route('admin.manage.gurus.index') }}" class="text-[11px] text-[#0c2b4d] hover:underline font-bold mt-2.5 block">Kelola Guru &rarr;</a>
                     </div>
                     <div class="p-3 bg-blue-50 text-[#0c2b4d] rounded-xl">
@@ -58,10 +56,10 @@
                 </div>
 
                 <!-- Total Murid -->
-                <div class="bg-white p-6 rounded-2xl shadow-lg border border-gray-100 flex items-center justify-between">
+                <div class="bg-white p-4 sm:p-6 rounded-2xl shadow-lg border border-gray-100 flex items-center justify-between">
                     <div>
-                        <span class="text-xs font-bold text-gray-400 uppercase tracking-wider">Total Murid</span>
-                        <h3 class="text-3xl font-extrabold text-indigo-605 mt-1">{{ $data['total_murid'] }}</h3>
+                        <span class="text-[10px] sm:text-xs font-bold text-gray-400 uppercase tracking-wider">Total Murid</span>
+                        <h3 class="text-2xl sm:text-3xl font-extrabold text-indigo-605 mt-1">{{ $data['total_murid'] }}</h3>
                         <a href="{{ route('admin.manage.murids.index') }}" class="text-[11px] text-indigo-600 hover:underline font-bold mt-2.5 block">Kelola Murid &rarr;</a>
                     </div>
                     <div class="p-3 bg-indigo-50 text-indigo-600 rounded-xl">
@@ -72,10 +70,10 @@
                 </div>
 
                 <!-- Total Kelas -->
-                <div class="bg-white p-6 rounded-2xl shadow-lg border border-gray-100 flex items-center justify-between">
+                <div class="bg-white p-4 sm:p-6 rounded-2xl shadow-lg border border-gray-100 flex items-center justify-between">
                     <div>
-                        <span class="text-xs font-bold text-gray-400 uppercase tracking-wider">Kelas Aktif</span>
-                        <h3 class="text-3xl font-extrabold text-emerald-600 mt-1">{{ $data['total_kelas'] }}</h3>
+                        <span class="text-[10px] sm:text-xs font-bold text-gray-400 uppercase tracking-wider">Kelas Aktif</span>
+                        <h3 class="text-2xl sm:text-3xl font-extrabold text-emerald-600 mt-1">{{ $data['total_kelas'] }}</h3>
                         <a href="{{ route('admin.manage.classrooms.index') }}" class="text-[11px] text-emerald-600 hover:underline font-bold mt-2.5 block">Kelola Kelas &rarr;</a>
                     </div>
                     <div class="p-3 bg-emerald-50 text-emerald-600 rounded-xl">
@@ -86,10 +84,10 @@
                 </div>
 
                 <!-- Total Modul -->
-                <div class="bg-white p-6 rounded-2xl shadow-lg border border-gray-100 flex items-center justify-between">
+                <div class="bg-white p-4 sm:p-6 rounded-2xl shadow-lg border border-gray-100 flex items-center justify-between">
                     <div>
-                        <span class="text-xs font-bold text-gray-400 uppercase tracking-wider">Modul Pembelajaran</span>
-                        <h3 class="text-3xl font-extrabold text-amber-600 mt-1">{{ $data['total_modul'] }}</h3>
+                        <span class="text-[10px] sm:text-xs font-bold text-gray-400 uppercase tracking-wider">Modul Pembelajaran</span>
+                        <h3 class="text-2xl sm:text-3xl font-extrabold text-amber-600 mt-1">{{ $data['total_modul'] }}</h3>
                         <span class="text-[11px] text-gray-400 font-bold mt-2.5 block">Total modul terdaftar</span>
                     </div>
                     <div class="p-3 bg-amber-50 text-amber-600 rounded-xl">
@@ -102,9 +100,9 @@
 
         @elseif(auth()->user()->role === 'guru')
             <!-- Guru Dashboard Widgets -->
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3 sm:gap-6">
                 <!-- Modul Pembelajaran -->
-                <div class="bg-white p-6 rounded-2xl shadow-lg border border-gray-100 flex items-center justify-between">
+                <div class="bg-white p-4 sm:p-6 rounded-2xl shadow-lg border border-gray-100 flex items-center justify-between">
                     <div>
                         <span class="text-xs font-bold text-gray-400 uppercase tracking-wider">Modul Aktif Anda</span>
                         <h3 class="text-3xl font-extrabold text-[#0c2b4d] mt-1">{{ $data['total_modul'] }}</h3>
@@ -118,9 +116,9 @@
                 </div>
 
                 <!-- Pending Grades -->
-                <div class="bg-white p-6 rounded-2xl shadow-lg border border-gray-100 flex items-center justify-between">
+                <div class="bg-white p-4 sm:p-6 rounded-2xl shadow-lg border border-gray-100 flex items-center justify-between">
                     <div>
-                        <span class="text-xs font-bold text-gray-400 uppercase tracking-wider">Pending Penilaian Tugas</span>
+                        <span class="text-[10px] sm:text-xs font-bold text-gray-400 uppercase tracking-wider">Pending Penilaian Tugas</span>
                         <h3 class="text-3xl font-extrabold text-rose-600 mt-1">{{ $data['pending_grades'] }}</h3>
                         <span class="text-[11px] text-gray-400 font-bold mt-2.5 block">Tugas murid belum dinilai</span>
                     </div>
@@ -132,9 +130,9 @@
                 </div>
 
                 <!-- Pending Izin Requests -->
-                <div class="bg-white p-6 rounded-2xl shadow-lg border border-gray-100 flex items-center justify-between">
+                <div class="bg-white p-4 sm:p-6 rounded-2xl shadow-lg border border-gray-100 flex items-center justify-between">
                     <div>
-                        <span class="text-xs font-bold text-gray-400 uppercase tracking-wider">Pending Persetujuan Izin</span>
+                        <span class="text-[10px] sm:text-xs font-bold text-gray-400 uppercase tracking-wider">Pending Persetujuan Izin</span>
                         <h3 class="text-3xl font-extrabold text-amber-600 mt-1">{{ $data['pending_izins'] }}</h3>
                         <span class="text-[11px] text-gray-400 font-bold mt-2.5 block">Permohonan izin belum diproses</span>
                     </div>
@@ -148,9 +146,9 @@
 
         @elseif(auth()->user()->role === 'murid')
             <!-- Murid Dashboard Widgets -->
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3 sm:gap-6">
                 <!-- Modul Pembelajaran Tersedia -->
-                <div class="bg-white p-6 rounded-2xl shadow-lg border border-gray-100 flex items-center justify-between">
+                <div class="bg-white p-4 sm:p-6 rounded-2xl shadow-lg border border-gray-100 flex items-center justify-between">
                     <div>
                         <span class="text-xs font-bold text-gray-400 uppercase tracking-wider">Modul Tersedia</span>
                         <h3 class="text-3xl font-extrabold text-[#0c2b4d] mt-1">{{ $data['total_modul'] }}</h3>
@@ -164,9 +162,9 @@
                 </div>
 
                 <!-- Tugas Belum Dikumpulkan -->
-                <div class="bg-white p-6 rounded-2xl shadow-lg border border-gray-100 flex items-center justify-between">
+                <div class="bg-white p-4 sm:p-6 rounded-2xl shadow-lg border border-gray-100 flex items-center justify-between">
                     <div>
-                        <span class="text-xs font-bold text-gray-400 uppercase tracking-wider">Tugas Aktif (Belum Kumpul)</span>
+                        <span class="text-[10px] sm:text-xs font-bold text-gray-400 uppercase tracking-wider">Tugas Aktif (Belum Kumpul)</span>
                         <h3 class="text-3xl font-extrabold text-rose-600 mt-1">{{ $data['unsubmitted_tasks'] }}</h3>
                         <span class="text-[11px] text-gray-400 font-bold mt-2.5 block">Selesaikan tugas sebelum deadline</span>
                     </div>
@@ -178,9 +176,9 @@
                 </div>
 
                 <!-- Persentase Kehadiran -->
-                <div class="bg-white p-6 rounded-2xl shadow-lg border border-gray-100 flex items-center justify-between">
+                <div class="bg-white p-4 sm:p-6 rounded-2xl shadow-lg border border-gray-100 flex items-center justify-between">
                     <div>
-                        <span class="text-xs font-bold text-gray-400 uppercase tracking-wider">Persentase Kehadiran</span>
+                        <span class="text-[10px] sm:text-xs font-bold text-gray-400 uppercase tracking-wider">Persentase Kehadiran</span>
                         <h3 class="text-3xl font-extrabold text-emerald-600 mt-1">{{ $data['attendance_percentage'] }}%</h3>
                         <span class="text-[11px] text-gray-400 font-bold mt-2.5 block">Kehadiran semester ini</span>
                     </div>

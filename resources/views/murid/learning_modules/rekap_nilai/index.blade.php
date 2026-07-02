@@ -17,7 +17,7 @@
         </div>
 
         <!-- Module Info Banner -->
-        <div class="bg-[#0c2b4d] text-white p-6 rounded-2xl shadow-lg border border-gray-150 mb-6 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+        <div class="bg-[#0c2b4d] text-white p-4 sm:p-6 rounded-2xl shadow-lg border border-gray-150 mb-6 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
             <div>
                 <div class="flex flex-wrap gap-2">
                     <span class="bg-blue-500/20 text-blue-200 border border-blue-500/30 text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wider">
@@ -100,7 +100,7 @@
         </div>
 
         <!-- Detail Table -->
-        <div class="bg-white shadow-lg rounded-2xl border border-gray-100 p-6">
+        <div class="bg-white shadow-lg rounded-2xl border border-gray-100 p-3 sm:p-6">
             <h3 class="text-base font-bold text-gray-800 mb-4">Laporan Rincian Tugas</h3>
             
             @if($tugas->isNotEmpty())

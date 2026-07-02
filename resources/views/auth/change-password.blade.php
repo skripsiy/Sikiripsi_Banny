@@ -19,7 +19,7 @@
             <!-- Decorative concentric ring accent -->
             <div class="absolute -top-24 -right-24 w-48 h-48 rounded-full border-[12px] border-blue-500/5 pointer-events-none"></div>
             
-            <div class="p-8">
+            <div class="p-4 sm:p-6 lg:p-8">
                 <!-- Icon and Title -->
                 <div class="flex flex-col items-center mb-6 text-center">
                     <div class="w-16 h-16 bg-blue-50 text-[#0c2b4d] rounded-2xl flex items-center justify-center mb-4 shadow-inner">

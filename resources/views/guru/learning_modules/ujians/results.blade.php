@@ -25,7 +25,7 @@
         </div>
 
         <!-- Info Banner -->
-        <div class="bg-[#0c2b4d] text-white p-6 rounded-2xl shadow-lg border border-gray-150 mb-6 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+        <div class="bg-[#0c2b4d] text-white p-4 sm:p-6 rounded-2xl shadow-lg border border-gray-150 mb-6 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
             <div>
                 <div class="flex flex-wrap gap-2">
                     <span class="bg-blue-500/20 text-blue-200 border border-blue-500/30 text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wider">
@@ -141,7 +141,7 @@
             <div x-show="showGradeModal" x-transition:enter="ease-out duration-300" x-transition:enter-start="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95" x-transition:enter-end="opacity-100 translate-y-0 sm:scale-100" x-transition:leave="ease-in duration-200" x-transition:leave-start="opacity-100 translate-y-0 sm:scale-100" x-transition:leave-end="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95" class="bg-white rounded-2xl overflow-hidden shadow-2xl transform transition-all w-full max-w-2xl mx-auto z-10 border border-gray-100">
                 <div class="h-1.5 bg-gradient-to-r from-[#0c2b4d] to-[#1a4a7d]"></div>
                 
-                <div class="p-8 max-h-[85vh] overflow-y-auto">
+                <div class="p-4 sm:p-6 lg:p-8 max-h-[85vh] overflow-y-auto">
                     <h3 class="text-base font-bold text-gray-800 mb-1">Lembar Jawaban Murid</h3>
                     <p class="text-[11px] text-gray-400 mb-6" x-text="'Review jawaban untuk: ' + gradeAttemptData.name"></p>
                     

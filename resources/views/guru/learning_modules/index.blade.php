@@ -17,14 +17,14 @@
         editUrl: '{{ old('id') ? route('guru.learning-modules.update', old('id')) : '' }}'
     }">
         <!-- Header Actions -->
-        <div class="flex justify-between items-center mb-6">
+        <div class="flex flex-col sm:flex-row justify-between items-stretch sm:items-center gap-3 sm:gap-0 mb-6">
             <div>
                 <h3 class="text-base font-bold text-gray-800">Daftar Modul Pembelajaran Anda</h3>
                 <p class="text-xs text-gray-400 mt-0.5">Kelola seluruh materi, tugas, kuis, ujian, dan absensi modul Anda.</p>
             </div>
             @if ($mata_pelajarans->isNotEmpty())
                 <button @click="showCreateModal = true" 
-                        class="bg-[#0c2b4d] hover:bg-[#07192d] text-white px-4 py-2.5 rounded-xl text-xs font-bold transition-all shadow-sm flex items-center gap-1.5 cursor-pointer select-none">
+                        class="bg-[#0c2b4d] hover:bg-[#07192d] text-white px-4 py-2.5 rounded-xl text-xs font-bold transition-all shadow-sm flex items-center justify-center gap-1.5 cursor-pointer select-none w-full sm:w-auto">
                     <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4"></path>
                     </svg>
@@ -54,16 +54,16 @@
             </div>
 
             <!-- Filter Dropdown -->
-            <div class="flex items-center gap-3 w-full md:w-auto justify-end">
-                <form method="GET" action="{{ route('guru.learning-modules.index') }}" class="flex items-center gap-2.5 w-full md:w-auto">
-                    <span class="text-xs font-bold text-gray-400 uppercase tracking-wider whitespace-nowrap flex items-center gap-1.5">
+            <div class="flex items-center gap-3 w-full md:w-auto justify-stretch">
+                <form method="GET" action="{{ route('guru.learning-modules.index') }}" class="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 w-full md:w-auto">
+                    <span class="text-[10px] sm:text-xs font-bold text-gray-400 uppercase tracking-wider whitespace-nowrap flex items-center gap-1.5">
                         <svg class="w-3.5 h-3.5 text-gray-400" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
                         </svg>
                         Tahun Ajaran:
                     </span>
                     <select name="tahun_akademik_id" id="filter_tahun_akademik_id" onchange="this.form.submit()"
-                            class="px-4 py-2.5 bg-gray-50 border border-gray-150 rounded-xl text-xs text-gray-700 font-semibold focus:outline-none focus:bg-white focus:border-[#0c2b4d] transition-all shadow-sm cursor-pointer min-w-[150px]">
+                            class="px-4 py-2.5 bg-gray-50 border border-gray-150 rounded-xl text-xs text-gray-700 font-semibold focus:outline-none focus:bg-white focus:border-[#0c2b4d] transition-all shadow-sm cursor-pointer w-full sm:w-auto sm:min-w-[150px]">
                         <option value="all" {{ $selectedAcademicYearId == 'all' ? 'selected' : '' }}>Semua Tahun Ajaran</option>
                         @foreach($academicYears as $ay)
                             <option value="{{ $ay->id }}" {{ $selectedAcademicYearId == $ay->id ? 'selected' : '' }}>
@@ -74,7 +74,6 @@
                 </form>
             </div>
         </div>
-
         <!-- Status Notification -->
         @if (session('status'))
             <div class="mb-6 p-4 bg-green-50 border border-green-200 text-green-700 rounded-lg text-sm font-medium shadow-sm">
@@ -220,7 +219,7 @@
 
                 <div x-show="showCreateModal" x-transition:enter="ease-out duration-300" x-transition:enter-start="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95" x-transition:enter-end="opacity-100 translate-y-0 sm:scale-100" x-transition:leave="ease-in duration-200" x-transition:leave-start="opacity-100 translate-y-0 sm:scale-100" x-transition:leave-end="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95" class="bg-white rounded-2xl overflow-hidden shadow-2xl transform transition-all w-full max-w-xl mx-auto z-10 border border-gray-100">
                     <div class="h-1.5 bg-gradient-to-r from-[#0c2b4d] to-[#1a4a7d]"></div>
-                    <div class="p-8">
+                    <div class="p-4 sm:p-6 lg:p-8">
                         @include('guru.learning_modules.create')
                     </div>
                 </div>
@@ -234,7 +233,7 @@
 
                 <div x-show="showEditModal" x-transition:enter="ease-out duration-300" x-transition:enter-start="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95" x-transition:enter-end="opacity-100 translate-y-0 sm:scale-100" x-transition:leave="ease-in duration-200" x-transition:leave-start="opacity-100 translate-y-0 sm:scale-100" x-transition:leave-end="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95" class="bg-white rounded-2xl overflow-hidden shadow-2xl transform transition-all w-full max-w-xl mx-auto z-10 border border-gray-100">
                     <div class="h-1.5 bg-gradient-to-r from-[#0c2b4d] to-[#1a4a7d]"></div>
-                    <div class="p-8">
+                    <div class="p-4 sm:p-6 lg:p-8">
                         @include('guru.learning_modules.edit')
                     </div>
                 </div>

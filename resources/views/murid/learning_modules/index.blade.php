@@ -7,13 +7,13 @@
         searchQuery: ''
     }">
         <!-- Header Actions -->
-        <div class="flex justify-between items-center mb-6">
+        <div class="flex flex-col sm:flex-row justify-between items-stretch sm:items-center gap-3 sm:gap-0 mb-6">
             <div>
                 <h3 class="text-base font-bold text-gray-800">Modul Pembelajaran Anda</h3>
                 <p class="text-xs text-gray-400 mt-0.5">Akses materi pelajaran, tugas, kuis, ujian, dan riwayat absensi Anda.</p>
             </div>
             @if($classroom)
-                <span class="bg-blue-50 text-blue-700 border border-blue-100 px-3.5 py-1.5 rounded-xl text-xs font-bold shadow-sm">
+                <span class="bg-blue-50 text-blue-700 border border-blue-100 px-3.5 py-1.5 rounded-xl text-xs font-bold shadow-sm w-full sm:w-auto text-center">
                     Kelas: {{ $classroom->nama_kelas }} ({{ $classroom->tahunAkademik->tahun_ajaran ?? '-' }})
                 </span>
             @endif

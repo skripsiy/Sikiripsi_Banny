@@ -4,7 +4,7 @@
     </x-slot>
 
     <div class="py-4 sm:py-6 max-w-7xl mx-auto px-2 sm:px-4 lg:px-8 font-sans">
-        
+
         <!-- Status Notification -->
         @if (session('status'))
             <div class="mb-6 p-4 bg-green-50 border border-green-200 text-green-700 rounded-2xl text-sm font-medium shadow-sm flex items-center gap-2">
@@ -22,7 +22,7 @@
                 <span>{{ session('error') }}</span>
             </div>
         @endif
-        
+
         <!-- Welcome Card -->
         <div class="bg-[#0c2b4d] text-white p-4 sm:p-6 rounded-2xl shadow-lg border border-gray-150 mb-6 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
             <div>
@@ -125,20 +125,6 @@
                     <div class="p-3 bg-rose-50 text-rose-600 rounded-xl">
                         <svg class="w-8 h-8" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 112 2h2a2 2 0 012-2"></path>
-                        </svg>
-                    </div>
-                </div>
-
-                <!-- Pending Izin Requests -->
-                <div class="bg-white p-4 sm:p-6 rounded-2xl shadow-lg border border-gray-100 flex items-center justify-between">
-                    <div>
-                        <span class="text-[10px] sm:text-xs font-bold text-gray-400 uppercase tracking-wider">Pending Persetujuan Izin</span>
-                        <h3 class="text-3xl font-extrabold text-amber-600 mt-1">{{ $data['pending_izins'] }}</h3>
-                        <span class="text-[11px] text-gray-400 font-bold mt-2.5 block">Permohonan izin belum diproses</span>
-                    </div>
-                    <div class="p-3 bg-amber-50 text-amber-600 rounded-xl">
-                        <svg class="w-8 h-8" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
                         </svg>
                     </div>
                 </div>

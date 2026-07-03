@@ -326,56 +326,6 @@ describe('Murid Learning Module Access', function () {
             $soal->id => 'OOP adalah Pemrograman Berorientasi Objek.',
         ]);
     });
-
-    it('allows student to view their permission requests index', function () {
-        $response = $this->actingAs($this->muridUserRpl)->get(route('murid.learning-modules.izin.index', $this->moduleRpl->id));
-        $response->assertOk();
-        $response->assertViewIs('murid.learning_modules.izin.index');
-        $response->assertSee('Riwayat Permohonan Izin');
-    });
-
-    it('redirects the student from create route to index with open modal session', function () {
-        $response = $this->actingAs($this->muridUserRpl)->get(route('murid.learning-modules.izin.create', $this->moduleRpl->id));
-        $response->assertRedirect(route('murid.learning-modules.izin.index', $this->moduleRpl->id));
-        $response->assertSessionHas('open_create_modal', true);
-    });
-
-    it('saves a permission request successfully when valid data and file is provided', function () {
-        \Illuminate\Support\Facades\Storage::fake('public');
-        $file = \Illuminate\Http\UploadedFile::fake()->create('document.pdf', 100);
-
-        $response = $this->actingAs($this->muridUserRpl)->post(route('murid.learning-modules.izin.store', $this->moduleRpl->id), [
-            'date' => '2026-06-15',
-            'jenis_izin' => 'sakit',
-            'alasan' => 'Demam tinggi.',
-            'file' => $file,
-        ]);
-
-        $response->assertRedirect(route('murid.learning-modules.izin.index', $this->moduleRpl->id));
-        $response->assertSessionHas('status', 'Permohonan izin berhasil dikirim.');
-
-        $this->assertDatabaseHas('izin_requests', [
-            'learning_module_id' => $this->moduleRpl->id,
-            'murid_id' => $this->muridRpl->id,
-            'date' => '2026-06-15 00:00:00',
-            'jenis_izin' => 'sakit',
-            'alasan' => 'Demam tinggi.',
-            'status' => 'pending',
-        ]);
-    });
-
-    it('fails validation when uploading invalid file type or large file', function () {
-        \Illuminate\Support\Facades\Storage::fake('public');
-        $file = \Illuminate\Http\UploadedFile::fake()->create('document.txt', 100);
-
-        $response = $this->actingAs($this->muridUserRpl)->post(route('murid.learning-modules.izin.store', $this->moduleRpl->id), [
-            'date' => '2026-06-15',
-            'jenis_izin' => 'sakit',
-            'alasan' => 'Demam tinggi.',
-            'file' => $file,
-        ]);
-
-        $response->assertSessionHasErrors(['file']);
-    });
 });
+
 

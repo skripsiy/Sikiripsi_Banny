@@ -7,7 +7,7 @@
 
         <!-- Back Button (outside header) -->
         <div class="mb-4">
-            <a href="{{ route('murid.learning-modules.show', [$learningModule->id, 'semester_id' => $selectedSemester?->id]) }}" 
+            <a href="{{ route('murid.learning-modules.show', [$learningModule->id, 'semester_id' => $selectedSemester?->id]) }}"
                class="inline-flex items-center gap-1.5 text-gray-500 hover:text-gray-800 font-bold text-xs transition-colors select-none">
                 <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7"></path>
@@ -41,10 +41,6 @@
         <div class="bg-white shadow-lg rounded-2xl border border-gray-100 p-3 sm:p-6">
             <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 sm:gap-0 mb-6">
                 <h3 class="text-base font-bold text-gray-800">Log Kehadiran Pribadi</h3>
-                <a href="{{ route('murid.learning-modules.izin.index', $learningModule->id) }}"
-                   class="bg-[#0c2b4d] hover:bg-[#07192d] text-white px-4 py-2.5 rounded-xl text-xs font-bold transition-all shadow-sm cursor-pointer select-none">
-                    Ajukan Izin Digital
-                </a>
             </div>
 
             @if ($absensis->isNotEmpty())

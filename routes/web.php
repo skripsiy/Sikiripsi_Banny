@@ -34,9 +34,6 @@ Route::get('/dashboard', function () {
         $data['pending_grades'] = \App\Models\TugasSubmission::whereIn('learning_module_tugas_id', $tugasIds)
             ->whereNull('nilai')
             ->count();
-        $data['pending_izins'] = \App\Models\IzinRequest::whereIn('learning_module_id', $moduleIds)
-            ->where('status', 'pending')
-            ->count();
     } elseif ($user->role === 'murid') {
         $murid = $user->murid;
         if ($murid) {
@@ -50,13 +47,13 @@ Route::get('/dashboard', function () {
                                     ->orWhere('jurusan_id', $classroom->jurusan_id);
                               });
                     })->get();
-                
+
                 $data['total_modul'] = $modules->count();
 
                 $moduleIds = $modules->pluck('id');
                 $tugasList = \App\Models\LearningModuleTugas::whereIn('learning_module_id', $moduleIds)->get();
                 $submittedTugasIds = \App\Models\TugasSubmission::where('murid_id', $murid->id)->pluck('learning_module_tugas_id')->toArray();
-                
+
                 $unsubmittedCount = 0;
                 foreach ($tugasList as $t) {
                     if (!in_array($t->id, $submittedTugasIds)) {
@@ -127,7 +124,7 @@ Route::middleware(['auth', 'role:guru'])->prefix('guru')->name('guru.')->group(f
     Route::resource('learning-modules.tugas', \App\Http\Controllers\TugasController::class)->except(['show']);
     Route::get('learning-modules/{learning_module}/tugas/{tuga}/submissions', [\App\Http\Controllers\TugasController::class, 'submissions'])->name('learning-modules.tugas.submissions');
     Route::post('learning-modules/{learning_module}/tugas/submissions/{submission}/grade', [\App\Http\Controllers\TugasController::class, 'grade'])->name('learning-modules.tugas.grade');
-    
+
     // Bank Soal
     Route::resource('bank-soal', \App\Http\Controllers\BankSoalController::class)->except(['show']);
 
@@ -153,9 +150,6 @@ Route::middleware(['auth', 'role:guru'])->prefix('guru')->name('guru.')->group(f
     Route::get('learning-modules/{learning_module}/absensi', [\App\Http\Controllers\LearningModuleController::class, 'absensi'])->name('learning-modules.absensi.index');
     Route::get('learning-modules/{learning_module}/rekap-absensi', [\App\Http\Controllers\LearningModuleController::class, 'rekapAbsensi'])->name('learning-modules.rekap-absensi');
     Route::get('learning-modules/{learning_module}/export-absensi', [\App\Http\Controllers\LearningModuleController::class, 'exportAbsensi'])->name('learning-modules.export-absensi');
-    Route::get('learning-modules/{learning_module}/izin', [\App\Http\Controllers\IzinRequestController::class, 'listPending'])->name('learning-modules.izin.index');
-    Route::post('learning-modules/{learning_module}/izin/{izin_request}/approve', [\App\Http\Controllers\IzinRequestController::class, 'approve'])->name('learning-modules.izin.approve');
-    Route::post('learning-modules/{learning_module}/izin/{izin_request}/reject', [\App\Http\Controllers\IzinRequestController::class, 'reject'])->name('learning-modules.izin.reject');
 });
 
 Route::middleware(['auth', 'role:murid'])->prefix('murid')->name('murid.')->group(function () {
@@ -165,7 +159,7 @@ Route::middleware(['auth', 'role:murid'])->prefix('murid')->name('murid.')->grou
     Route::get('learning-modules/{learning_module}/tugas', [\App\Http\Controllers\MuridLearningModuleController::class, 'tugas'])->name('learning-modules.tugas.index');
     Route::post('learning-modules/{learning_module}/tugas/{tuga}/submit', [\App\Http\Controllers\TugasSubmissionController::class, 'store'])->name('learning-modules.tugas.submit');
     Route::get('learning-modules/{learning_module}/rekap-nilai', [\App\Http\Controllers\MuridLearningModuleController::class, 'rekapNilai'])->name('learning-modules.rekap-nilai');
-    
+
     // Quiz online taking
     Route::get('learning-modules/{learning_module}/quizzes', [\App\Http\Controllers\MuridLearningModuleController::class, 'quizzes'])->name('learning-modules.quizzes.index');
     Route::post('learning-modules/{learning_module}/quizzes/{quiz}/start', [\App\Http\Controllers\MuridLearningModuleController::class, 'startQuiz'])->name('learning-modules.quizzes.start');
@@ -183,9 +177,6 @@ Route::middleware(['auth', 'role:murid'])->prefix('murid')->name('murid.')->grou
     Route::get('learning-modules/{learning_module}/ujians/{ujian}/result', [\App\Http\Controllers\MuridLearningModuleController::class, 'ujianResult'])->name('learning-modules.ujians.result');
 
     Route::get('learning-modules/{learning_module}/absensi', [\App\Http\Controllers\MuridLearningModuleController::class, 'absensi'])->name('learning-modules.absensi.index');
-    Route::get('learning-modules/{learning_module}/izin', [\App\Http\Controllers\IzinRequestController::class, 'index'])->name('learning-modules.izin.index');
-    Route::get('learning-modules/{learning_module}/izin/create', [\App\Http\Controllers\IzinRequestController::class, 'create'])->name('learning-modules.izin.create');
-    Route::post('learning-modules/{learning_module}/izin', [\App\Http\Controllers\IzinRequestController::class, 'store'])->name('learning-modules.izin.store');
 });
 
 require __DIR__.'/auth.php';

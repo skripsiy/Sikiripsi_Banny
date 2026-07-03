@@ -128,6 +128,20 @@
                         </svg>
                     </div>
                 </div>
+
+                <!-- Pending Izin Requests -->
+                <div class="bg-white p-4 sm:p-6 rounded-2xl shadow-lg border border-gray-100 flex items-center justify-between">
+                    <div>
+                        <span class="text-[10px] sm:text-xs font-bold text-gray-400 uppercase tracking-wider">Pending Persetujuan Izin</span>
+                        <h3 class="text-3xl font-extrabold text-amber-600 mt-1">{{ $data['pending_izins'] }}</h3>
+                        <span class="text-[11px] text-gray-400 font-bold mt-2.5 block">Permohonan izin belum diproses</span>
+                    </div>
+                    <div class="p-3 bg-amber-50 text-amber-600 rounded-xl">
+                        <svg class="w-8 h-8" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                        </svg>
+                    </div>
+                </div>
             </div>
 
         @elseif(auth()->user()->role === 'murid')

@@ -53,13 +53,6 @@
             <div class="flex flex-col sm:flex-row justify-between sm:items-center gap-4 mb-6">
                 <div class="flex items-center gap-3">
                     <h3 class="text-base font-bold text-gray-800">Absensi Kehadiran Siswa</h3>
-                    <a href="{{ route('guru.learning-modules.izin.index', $learningModule->id) }}"
-                       class="inline-flex items-center gap-1.5 bg-[#0c2b4d] hover:bg-[#07192d] text-white px-3 py-1.5 rounded-xl text-[10px] font-bold transition-all shadow-sm cursor-pointer select-none">
-                        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
-                        </svg>
-                        Review Izin Digital
-                    </a>
                     <a href="{{ route('guru.learning-modules.rekap-absensi', $learningModule->id) }}"
                        class="inline-flex items-center gap-1.5 bg-emerald-600 hover:bg-emerald-700 text-white px-3 py-1.5 rounded-xl text-[10px] font-bold transition-all shadow-sm cursor-pointer select-none">
                         <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">

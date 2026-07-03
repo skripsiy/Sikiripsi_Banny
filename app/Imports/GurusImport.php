@@ -18,7 +18,6 @@ class GurusImport implements ToCollection, WithHeadingRow, WithValidation
         DB::transaction(function () use ($rows) {
             foreach ($rows as $row) {
                 $user = User::create([
-                    'name'                 => $row['name'],
                     'username'             => $row['username'] ?? null,
                     'email'                => $row['email'],
                     'password'             => Hash::make('ChangeMe@123'),
@@ -54,7 +53,6 @@ class GurusImport implements ToCollection, WithHeadingRow, WithValidation
     public function rules(): array
     {
         return [
-            'name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'string', 'email', 'max:255', 'unique:users,email'],
             'nip' => ['required', 'string', 'max:50', 'unique:gurus,nip'],
             'username' => ['required', 'string', 'max:255', 'unique:users,username'],

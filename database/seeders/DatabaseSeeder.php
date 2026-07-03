@@ -21,7 +21,6 @@ class DatabaseSeeder extends Seeder
     {
         // 1. Seed Admin
         $adminUser = User::create([
-            'name' => 'Admin SMKN 1 Jakarta',
             'username' => 'admin_smk',
             'email' => 'admin@smkn1jakarta.sch.id',
             'password' => Hash::make('password'),
@@ -36,7 +35,6 @@ class DatabaseSeeder extends Seeder
 
         // 2. Seed Guru
         $guruUser = User::create([
-            'name' => 'Budi Handoko, S.Pd.',
             'username' => 'budi_handoko',
             'email' => 'budi@smkn1jakarta.sch.id',
             'password' => Hash::make('password'),
@@ -86,7 +84,6 @@ class DatabaseSeeder extends Seeder
 
         // 4. Seed Murid
         $muridUser = User::create([
-            'name' => 'Aji Pratama',
             'username' => 'aji_pratama',
             'email' => 'aji@smkn1jakarta.sch.id',
             'password' => Hash::make('password'),

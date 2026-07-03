@@ -21,26 +21,24 @@ class GuruManagementController extends Controller
         $sheet = $spreadsheet->getActiveSheet();
 
         // Column Headings
-        $sheet->setCellValue('A1', 'name');
-        $sheet->setCellValue('B1', 'email');
-        $sheet->setCellValue('C1', 'nip');
-        $sheet->setCellValue('D1', 'fullname');
-        $sheet->setCellValue('E1', 'tanggal_lahir');
-        $sheet->setCellValue('F1', 'alamat');
-        $sheet->setCellValue('G1', 'no_whatsapp');
-        $sheet->setCellValue('H1', 'gelar');
-        $sheet->setCellValue('I1', 'username');
+        $sheet->setCellValue('A1', 'email');
+        $sheet->setCellValue('B1', 'nip');
+        $sheet->setCellValue('C1', 'fullname');
+        $sheet->setCellValue('D1', 'tanggal_lahir');
+        $sheet->setCellValue('E1', 'alamat');
+        $sheet->setCellValue('F1', 'no_whatsapp');
+        $sheet->setCellValue('G1', 'gelar');
+        $sheet->setCellValue('H1', 'username');
 
         // Sample Data Row
-        $sheet->setCellValue('A2', 'Budi Handoko, S.Pd.');
-        $sheet->setCellValue('B2', 'budi@smkn1jakarta.sch.id');
-        $sheet->setCellValue('C2', '198501012010011002');
-        $sheet->setCellValue('D2', 'Budi Handoko');
-        $sheet->setCellValue('E2', '1985-01-01');
-        $sheet->setCellValue('F2', 'Jl. Merdeka No. 10, Jakarta');
-        $sheet->setCellValue('G2', '6281234567890');
-        $sheet->setCellValue('H2', 'S.Pd.');
-        $sheet->setCellValue('I2', 'budi_handoko');
+        $sheet->setCellValue('A2', 'budi@smkn1jakarta.sch.id');
+        $sheet->setCellValue('B2', '198501012010011002');
+        $sheet->setCellValue('C2', 'Budi Handoko');
+        $sheet->setCellValue('D2', '1985-01-01');
+        $sheet->setCellValue('E2', 'Jl. Merdeka No. 10, Jakarta');
+        $sheet->setCellValue('F2', '6281234567890');
+        $sheet->setCellValue('G2', 'S.Pd.');
+        $sheet->setCellValue('H2', 'budi_handoko');
 
         $writer = new Xlsx($spreadsheet);
 
@@ -89,7 +87,6 @@ class GuruManagementController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'name' => ['required', 'string', 'max:255'],
             'username' => ['required', 'string', 'max:255', 'unique:users,username'],
             'email' => ['required', 'string', 'email', 'max:255', 'unique:'.User::class],
             'password' => ['required', 'confirmed', Rules\Password::defaults()],
@@ -102,7 +99,6 @@ class GuruManagementController extends Controller
         ]);
 
         $user = User::create([
-            'name' => $request->name,
             'username' => $request->username,
             'email' => $request->email,
             'password' => Hash::make($request->password),
@@ -134,7 +130,6 @@ class GuruManagementController extends Controller
     public function update(Request $request, User $guru)
     {
         $request->validate([
-            'name' => ['required', 'string', 'max:255'],
             'username' => ['required', 'string', 'max:255', 'unique:users,username,'.$guru->id],
             'email' => ['required', 'string', 'email', 'max:255', 'unique:users,email,'.$guru->id],
             'password' => ['nullable', 'confirmed', Rules\Password::defaults()],
@@ -147,7 +142,6 @@ class GuruManagementController extends Controller
         ]);
 
         $guru->update([
-            'name' => $request->name,
             'username' => $request->username,
             'email' => $request->email,
         ]);

@@ -27,8 +27,8 @@ class SemesterManagementController extends Controller
         $request->validate([
             'tahun_akademik_id' => ['required', 'exists:tahun_akademiks,id'],
             'semester' => [
-                'required', 
-                'string', 
+                'required',
+                'string',
                 Rule::in(['ganjil', 'genap']),
                 Rule::unique('semesters')
                     ->where('tahun_akademik_id', $request->tahun_akademik_id)
@@ -68,8 +68,8 @@ class SemesterManagementController extends Controller
         $request->validate([
             'tahun_akademik_id' => ['required', 'exists:tahun_akademiks,id'],
             'semester' => [
-                'required', 
-                'string', 
+                'required',
+                'string',
                 Rule::in(['ganjil', 'genap']),
                 Rule::unique('semesters')
                     ->where('tahun_akademik_id', $request->tahun_akademik_id)

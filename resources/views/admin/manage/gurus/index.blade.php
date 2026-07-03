@@ -8,7 +8,6 @@
         showEditModal: {{ $errors->any() && old('_method') === 'PUT' ? 'true' : 'false' }},
         editData: {
             id: '{{ old('id') ?? '' }}',
-            name: {{ json_encode(old('name') ?? '') }},
             username: {{ json_encode(old('username') ?? '') }},
             email: {{ json_encode(old('email') ?? '') }},
             nip: {{ json_encode(old('nip') ?? '') }},
@@ -111,7 +110,6 @@
                                                     showEditModal = true;
                                                     editData = {
                                                         id: '{{ $userObj->id }}',
-                                                        name: {{ json_encode($userObj->name) }},
                                                         username: {{ json_encode($userObj->username ?? '') }},
                                                         email: {{ json_encode($userObj->email) }},
                                                         nip: {{ json_encode($userObj->guru->nip ?? '') }},
@@ -167,7 +165,7 @@
                 <div class="absolute inset-0 bg-gray-900/60 backdrop-blur-sm"></div>
             </div>
 
-            <div x-show="showCreateModal" x-transition:enter="ease-out duration-300" x-transition:enter-start="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95" x-transition:enter-end="opacity-100 translate-y-0 sm:scale-100" x-transition:leave="ease-in duration-200" x-transition:leave-start="opacity-100 translate-y-0 sm:scale-100" x-transition:leave-end="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95" class="bg-white rounded-2xl overflow-hidden shadow-2xl transform transition-all w-full max-w-xl mx-auto z-10 border border-gray-100">
+            <div x-show="showCreateModal" x-transition:enter="ease-out duration-300" x-transition:enter-start="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95" x-transition:enter-end="opacity-100 translate-y-0 sm:scale-100" x-transition:leave="ease-in duration-200" x-transition:leave-start="opacity-100 translate-y-0 sm:scale-100" x-transition:leave-end="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95" class="bg-white rounded-2xl max-h-[90vh] overflow-y-auto shadow-2xl transform transition-all w-full max-w-xl mx-auto z-10 border border-gray-100">
                 <div class="h-1.5 bg-gradient-to-r from-[#0c2b4d] to-[#1a4a7d]"></div>
                 <div class="p-4 sm:p-6 lg:p-8">
                     @include('admin.manage.gurus.create')
@@ -181,7 +179,7 @@
                 <div class="absolute inset-0 bg-gray-900/60 backdrop-blur-sm"></div>
             </div>
 
-            <div x-show="showEditModal" x-transition:enter="ease-out duration-300" x-transition:enter-start="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95" x-transition:enter-end="opacity-100 translate-y-0 sm:scale-100" x-transition:leave="ease-in duration-200" x-transition:leave-start="opacity-100 translate-y-0 sm:scale-100" x-transition:leave-end="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95" class="bg-white rounded-2xl overflow-hidden shadow-2xl transform transition-all w-full max-w-xl mx-auto z-10 border border-gray-100">
+            <div x-show="showEditModal" x-transition:enter="ease-out duration-300" x-transition:enter-start="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95" x-transition:enter-end="opacity-100 translate-y-0 sm:scale-100" x-transition:leave="ease-in duration-200" x-transition:leave-start="opacity-100 translate-y-0 sm:scale-100" x-transition:leave-end="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95" class="bg-white rounded-2xl max-h-[90vh] overflow-y-auto shadow-2xl transform transition-all w-full max-w-xl mx-auto z-10 border border-gray-100">
                 <div class="h-1.5 bg-gradient-to-r from-[#0c2b4d] to-[#1a4a7d]"></div>
                 <div class="p-4 sm:p-6 lg:p-8">
                     @include('admin.manage.gurus.edit')

@@ -15,16 +15,16 @@
 
     <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
         <div>
-            <label for="create_name" class="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-1.5">Nama Tampilan (Display Name) <span class="text-red-500">*</span></label>
-            <input type="text" name="name" id="create_name" value="{{ !old('_method') ? old('name') : '' }}" required autofocus
+            <label for="create_namaLengkap" class="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-1.5">Nama Lengkap <span class="text-red-500">*</span></label>
+            <input type="text" name="namaLengkap" id="create_namaLengkap" value="{{ !old('_method') ? old('namaLengkap') : '' }}" required autofocus
                    class="w-full px-4 py-2.5 bg-white border border-gray-200 rounded-xl focus:outline-none focus:border-[#0c2b4d] focus:ring-1 focus:ring-[#0c2b4d] text-sm text-gray-800 transition-all shadow-sm">
             @if(!old('_method'))
-                @error('name') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
+                @error('namaLengkap') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
             @endif
         </div>
 
         <div>
-            <label for="create_username" class="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-1.5">Username Login <span class="text-red-500">*</span></label>
+            <label for="create_username" class="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-1.5">Username <span class="text-red-500">*</span></label>
             <input type="text" name="username" id="create_username" value="{{ !old('_method') ? old('username') : '' }}" required
                    class="w-full px-4 py-2.5 bg-white border border-gray-200 rounded-xl focus:outline-none focus:border-[#0c2b4d] focus:ring-1 focus:ring-[#0c2b4d] text-sm text-gray-800 transition-all shadow-sm">
             @if(!old('_method'))
@@ -34,15 +34,6 @@
     </div>
 
     <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-        <div>
-            <label for="create_namaLengkap" class="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-1.5">Nama Lengkap <span class="text-red-500">*</span></label>
-            <input type="text" name="namaLengkap" id="create_namaLengkap" value="{{ !old('_method') ? old('namaLengkap') : '' }}" required
-                   class="w-full px-4 py-2.5 bg-white border border-gray-200 rounded-xl focus:outline-none focus:border-[#0c2b4d] focus:ring-1 focus:ring-[#0c2b4d] text-sm text-gray-800 transition-all shadow-sm">
-            @if(!old('_method'))
-                @error('namaLengkap') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
-            @endif
-        </div>
-
         <div>
             <label for="create_email" class="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-1.5">Email <span class="text-red-500">*</span></label>
             <input type="email" name="email" id="create_email" value="{{ !old('_method') ? old('email') : '' }}" required

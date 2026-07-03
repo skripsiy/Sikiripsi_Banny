@@ -17,16 +17,16 @@
 
     <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
         <div>
-            <label for="edit_name" class="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-1.5">Nama Tampilan (Display Name) <span class="text-red-500">*</span></label>
-            <input type="text" name="name" id="edit_name" x-model="editData.name" required
+            <label for="edit_fullname" class="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-1.5">Nama Lengkap <span class="text-red-500">*</span></label>
+            <input type="text" name="fullname" id="edit_fullname" x-model="editData.fullname" required
                    class="w-full px-4 py-2.5 bg-white border border-gray-200 rounded-xl focus:outline-none focus:border-[#0c2b4d] focus:ring-1 focus:ring-[#0c2b4d] text-sm text-gray-800 transition-all shadow-sm">
             @if(old('_method') === 'PUT')
-                @error('name') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
+                @error('fullname') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
             @endif
         </div>
 
         <div>
-            <label for="edit_username" class="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-1.5">Username Login <span class="text-red-500">*</span></label>
+            <label for="edit_username" class="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-1.5">Username <span class="text-red-500">*</span></label>
             <input type="text" name="username" id="edit_username" x-model="editData.username" required
                    class="w-full px-4 py-2.5 bg-white border border-gray-200 rounded-xl focus:outline-none focus:border-[#0c2b4d] focus:ring-1 focus:ring-[#0c2b4d] text-sm text-gray-800 transition-all shadow-sm">
             @if(old('_method') === 'PUT')
@@ -36,15 +36,6 @@
     </div>
 
     <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-        <div>
-            <label for="edit_fullname" class="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-1.5">Nama Lengkap <span class="text-red-500">*</span></label>
-            <input type="text" name="fullname" id="edit_fullname" x-model="editData.fullname" required
-                   class="w-full px-4 py-2.5 bg-white border border-gray-200 rounded-xl focus:outline-none focus:border-[#0c2b4d] focus:ring-1 focus:ring-[#0c2b4d] text-sm text-gray-800 transition-all shadow-sm">
-            @if(old('_method') === 'PUT')
-                @error('fullname') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
-            @endif
-        </div>
-
         <div>
             <label for="edit_gelar" class="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-1.5">Gelar Akademik (Misal: S.Pd, M.Kom) <span class="text-red-500">*</span></label>
             <input type="text" name="gelar" id="edit_gelar" x-model="editData.gelar" required

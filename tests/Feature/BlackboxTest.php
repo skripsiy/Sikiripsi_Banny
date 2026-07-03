@@ -10,7 +10,6 @@ uses(RefreshDatabase::class);
 function validMuridPayload(array $overrides = []): array
 {
     return array_merge([
-        'name' => 'Student Name',
         'username' => 'student_' . rand(1000, 9999),
         'email' => 'student' . rand(1000, 9999) . '@stovia.sch.id',
         'password' => 'password123',
@@ -28,7 +27,6 @@ function validMuridPayload(array $overrides = []): array
 function validGuruPayload(array $overrides = []): array
 {
     return array_merge([
-        'name' => 'Guru Baru',
         'username' => 'guru_' . rand(1000, 9999),
         'email' => 'guru' . rand(1000, 9999) . '@stovia.sch.id',
         'password' => 'ChangeMe@123',
@@ -108,11 +106,11 @@ describe('Equivalence Partitioning (EP) - Email & Required Fields Validation', f
 
     it('rejects empty required field partition', function () {
         $response = $this->actingAs($this->admin)->post(route('admin.manage.murids.store'), validMuridPayload([
-            'name' => '',
+            'namaLengkap' => '',
             'classroom_id' => $this->classroom->id,
         ]));
 
-        $response->assertSessionHasErrors('name');
+        $response->assertSessionHasErrors('namaLengkap');
     });
 
     it('sets must_change_password to true for manually created gurus', function () {

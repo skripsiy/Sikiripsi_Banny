@@ -11,12 +11,24 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 
-#[Fillable(['name', 'email', 'username', 'password', 'role', 'must_change_password'])]
+#[Fillable(['email', 'username', 'password', 'role', 'must_change_password'])]
 #[Hidden(['password', 'remember_token'])]
 class User extends Authenticatable
 {
     /** @use HasFactory<UserFactory> */
     use HasFactory, Notifiable, SoftDeletes;
+
+    public function getNameAttribute()
+    {
+        if ($this->role === 'admin') {
+            return $this->admin?->fullname ?? $this->username;
+        } elseif ($this->role === 'guru') {
+            return $this->guru?->fullname ?? $this->username;
+        } elseif ($this->role === 'murid') {
+            return $this->murid?->namaLengkap ?? $this->username;
+        }
+        return $this->username;
+    }
 
     /**
      * Get the attributes that should be cast.

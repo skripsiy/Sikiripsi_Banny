@@ -27,7 +27,6 @@ class MuridsImport implements ToCollection, WithHeadingRow, WithValidation
                     ->first();
 
                 $user = User::create([
-                    'name'                 => $row['name'],
                     'username'             => $row['username'] ?? null,
                     'email'                => $row['email'],
                     'password'             => Hash::make('ChangeMe@123'),
@@ -68,7 +67,6 @@ class MuridsImport implements ToCollection, WithHeadingRow, WithValidation
     public function rules(): array
     {
         return [
-            'name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'string', 'email', 'max:255', 'unique:users,email'],
             'nisn' => ['required', 'string', 'max:50'],
             'no_telepon_orang_tua' => ['required', 'string', 'max:20'],

@@ -24,11 +24,11 @@ class AdminManagementController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'username' => ['required', 'string', 'max:255', 'unique:users,username'],
-            'email' => ['required', 'string', 'email', 'max:255', 'unique:'.User::class],
+            'username' => ['required', 'string', 'max:25', 'unique:users,username'],
+            'email' => ['required', 'string', 'email', 'max:100', 'unique:'.User::class],
             'password' => ['required', 'confirmed', Rules\Password::defaults()],
             'nip' => ['required', 'numeric', 'digits:18'],
-            'fullname' => ['required', 'string', 'max:255'],
+            'fullname' => ['required', 'string', 'max:50'],
         ]);
 
         $user = User::create([
@@ -57,11 +57,11 @@ class AdminManagementController extends Controller
     public function update(Request $request, User $admin)
     {
         $request->validate([
-            'username' => ['required', 'string', 'max:255', 'unique:users,username,'.$admin->id],
-            'email' => ['required', 'string', 'email', 'max:255', 'unique:users,email,'.$admin->id],
+            'username' => ['required', 'string', 'max:25', 'unique:users,username,'.$admin->id],
+            'email' => ['required', 'string', 'email', 'max:100', 'unique:users,email,'.$admin->id],
             'password' => ['nullable', 'confirmed', Rules\Password::defaults()],
             'nip' => ['required', 'numeric', 'digits:18'],
-            'fullname' => ['required', 'string', 'max:255'],
+            'fullname' => ['required', 'string', 'max:50'],
         ]);
 
         $admin->update([

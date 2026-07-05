@@ -67,15 +67,15 @@ class MuridsImport implements ToCollection, WithHeadingRow, WithValidation
     public function rules(): array
     {
         return [
-            'email' => ['required', 'string', 'email', 'max:255', 'unique:users,email'],
-            'nisn' => ['required', 'string', 'max:50'],
+            'email' => ['required', 'string', 'email', 'max:100', 'unique:users,email'],
+            'nisn' => ['required', 'numeric', 'digits:10'],
             'no_telepon_orang_tua' => ['required', 'string', 'max:20'],
-            'username' => ['required', 'string', 'max:255', 'unique:users,username'],
-            'nama_lengkap' => ['required', 'string', 'max:255'],
+            'username' => ['required', 'string', 'max:25', 'unique:users,username'],
+            'nama_lengkap' => ['required', 'string', 'max:50'],
             'tanggal_lahir' => ['required', 'date'],
             'alamat' => ['required', 'string'],
             'no_telpon' => ['required', 'string', 'max:20'],
-            'nama_orang_tua' => ['required', 'string', 'max:255'],
+            'nama_orang_tua' => ['required', 'string', 'max:50'],
             'class_room' => [
                 'required',
                 'string',

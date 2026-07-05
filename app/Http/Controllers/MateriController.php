@@ -63,7 +63,7 @@ class MateriController extends Controller
 
         $request->validate([
             'semester_id' => ['nullable', 'exists:semesters,id'],
-            'title' => ['required', 'string', 'max:255'],
+            'title' => ['required', 'string', 'max:50'],
             'content' => ['required', 'string'],
             'file' => ['nullable', 'file', 'max:10240'],
         ]);
@@ -107,7 +107,7 @@ class MateriController extends Controller
 
         $request->validate([
             'semester_id' => ['nullable', 'exists:semesters,id'],
-            'title' => ['required', 'string', 'max:255'],
+            'title' => ['required', 'string', 'max:50'],
             'content' => ['required', 'string'],
             'file' => ['nullable', 'file', 'max:10240'],
         ]);

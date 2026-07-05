@@ -1,4 +1,4 @@
-<aside x-data="{ 
+<aside x-data="{
             init() {
                 // Keep User Management submenu open if any child route is active
                 if ({{ request()->routeIs('admin.manage.admins.*') || request()->routeIs('admin.manage.gurus.*') || request()->routeIs('admin.manage.murids.*') ? 'true' : 'false' }}) {
@@ -28,19 +28,19 @@
        :class="isMobile ? 'fixed inset-y-0 left-0 z-30 w-72 h-screen m-0 rounded-r-[24px] rounded-l-none' : 'my-4 ml-4 mr-4 h-[calc(100vh-2rem)] rounded-[24px] ' + (sidebarOpen ? 'w-64' : 'w-20')"
        class="bg-[#1b61d1] text-white flex-shrink-0 flex flex-col shadow-2xl select-none transition-all duration-300 ease-in-out font-sans overflow-hidden"
        style="display: none;">
-    
+
     <!-- Top Scrollable Section -->
-    <div class="flex flex-col flex-1 overflow-y-auto overflow-x-hidden">
+    <div class="flex flex-col flex-1 overflow-y-auto overflow-x-hidden custom-scrollbar">
         <!-- Sidebar Collapse / Expand Button -->
         <div class="h-16 flex items-center border-b border-white/10 cursor-pointer hover:bg-white/5 transition-all duration-300"
              @click="isMobile ? (sidebarOpen = false) : (sidebarOpen = !sidebarOpen)"
              :class="isMobile || sidebarOpen ? 'px-6 gap-3 justify-start' : 'justify-center px-0 gap-0'">
-            <svg class="w-4 h-4 text-blue-100 flex-shrink-0 transition-transform duration-300" 
+            <svg class="w-4 h-4 text-blue-100 flex-shrink-0 transition-transform duration-300"
                  :class="!isMobile && !sidebarOpen ? 'rotate-180' : ''"
                  fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7"></path>
             </svg>
-            <span x-show="isMobile || sidebarOpen" 
+            <span x-show="isMobile || sidebarOpen"
                   x-transition:enter="transition ease-out duration-200"
                   x-transition:enter-start="opacity-0"
                   x-transition:enter-end="opacity-100"
@@ -49,8 +49,8 @@
 
         <!-- Brand Logo / Avatar Section -->
         <!-- Expanded State -->
-        <div class="flex flex-col items-center justify-center py-8 border-b border-white/10" 
-             x-show="isMobile || sidebarOpen" 
+        <div class="flex flex-col items-center justify-center py-8 border-b border-white/10"
+             x-show="isMobile || sidebarOpen"
              x-transition:enter="transition ease-out duration-300"
              x-transition:enter-start="opacity-0 scale-95"
              x-transition:enter-end="opacity-100 scale-100">
@@ -62,8 +62,8 @@
         </div>
 
         <!-- Collapsed State -->
-        <div class="flex flex-col items-center justify-center py-6 border-b border-white/10" 
-             x-show="!isMobile && !sidebarOpen" 
+        <div class="flex flex-col items-center justify-center py-6 border-b border-white/10"
+             x-show="!isMobile && !sidebarOpen"
              x-transition:enter="transition ease-out duration-300"
              x-transition:enter-start="opacity-0 scale-95"
              x-transition:enter-end="opacity-100 scale-100">
@@ -73,7 +73,7 @@
         <!-- Navigation Menus -->
         <nav class="mt-6 px-4 space-y-1.5 flex-1">
             <!-- Dashboard Link -->
-            <a href="{{ route('dashboard') }}" 
+            <a href="{{ route('dashboard') }}"
                @click.prevent="navigateTo('{{ route('dashboard') }}')"
                class="flex items-center rounded-xl text-sm font-semibold transition-all duration-300 {{ request()->routeIs('dashboard') ? 'bg-[#0c2b4d] text-white shadow-inner font-bold' : 'text-white/80 hover:bg-white/10 hover:text-white' }}"
                :class="isMobile || sidebarOpen ? 'px-4 py-3 justify-start gap-3' : 'px-0 py-3 justify-center gap-0 w-12 mx-auto'">
@@ -87,7 +87,7 @@
             @if (Auth::user()->role === 'admin')
                 <!-- 1. Kelola Pengguna (User Management) Dropdown Group -->
                 <div class="flex flex-col">
-                    <button @click="if (!isMobile && !sidebarOpen) { sidebarOpen = true; kelolaOpen = true; } else { kelolaOpen = !kelolaOpen; }" 
+                    <button @click="if (!isMobile && !sidebarOpen) { sidebarOpen = true; kelolaOpen = true; } else { kelolaOpen = !kelolaOpen; }"
                             class="rounded-xl text-sm font-semibold hover:bg-white/10 hover:text-white transition-all duration-300 focus:outline-none"
                             :class="[
                                 isMobile || sidebarOpen ? 'w-full flex items-center justify-between px-4 py-3 gap-3' : 'w-12 mx-auto flex items-center justify-center py-3',
@@ -99,31 +99,31 @@
                             </svg>
                             <span x-show="isMobile || sidebarOpen" class="whitespace-nowrap">Kelola Pengguna</span>
                         </div>
-                        <svg x-show="isMobile || sidebarOpen" 
-                             class="w-4 h-4 transition-transform duration-200" 
-                             :class="kelolaOpen ? 'rotate-180' : ''" 
+                        <svg x-show="isMobile || sidebarOpen"
+                             class="w-4 h-4 transition-transform duration-200"
+                             :class="kelolaOpen ? 'rotate-180' : ''"
                              fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"></path>
                         </svg>
                     </button>
-                    
+
                     <!-- Submenu Items -->
-                    <div x-show="kelolaOpen && (isMobile || sidebarOpen)" 
+                    <div x-show="kelolaOpen && (isMobile || sidebarOpen)"
                          x-transition:enter="transition ease-out duration-150"
                          x-transition:enter-start="opacity-0 transform -translate-y-2"
                          x-transition:enter-end="opacity-100 transform translate-y-0"
                          class="pl-4 mt-1 mb-1 space-y-1.5 overflow-hidden flex flex-col text-left border-l border-white/10 ml-6">
-                        <a href="{{ route('admin.manage.admins.index') }}" 
+                        <a href="{{ route('admin.manage.admins.index') }}"
                            @click.prevent="navigateTo('{{ route('admin.manage.admins.index') }}')"
                            class="block py-2 px-3 text-xs rounded-lg transition-colors {{ request()->routeIs('admin.manage.admins.*') ? 'bg-[#0c2b4d] text-white font-bold' : 'text-blue-100/70 hover:text-white hover:bg-white/5' }}">
                             Kelola Admin
                         </a>
-                        <a href="{{ route('admin.manage.gurus.index') }}" 
+                        <a href="{{ route('admin.manage.gurus.index') }}"
                            @click.prevent="navigateTo('{{ route('admin.manage.gurus.index') }}')"
                            class="block py-2 px-3 text-xs rounded-lg transition-colors {{ request()->routeIs('admin.manage.gurus.*') ? 'bg-[#0c2b4d] text-white font-bold' : 'text-blue-100/70 hover:text-white hover:bg-white/5' }}">
                             Kelola Guru
                         </a>
-                        <a href="{{ route('admin.manage.murids.index') }}" 
+                        <a href="{{ route('admin.manage.murids.index') }}"
                            @click.prevent="navigateTo('{{ route('admin.manage.murids.index') }}')"
                            class="block py-2 px-3 text-xs rounded-lg transition-colors {{ request()->routeIs('admin.manage.murids.*') ? 'bg-[#0c2b4d] text-white font-bold' : 'text-blue-100/70 hover:text-white hover:bg-white/5' }}">
                             Kelola Murid
@@ -133,7 +133,7 @@
 
                 <!-- 2. Tahun & Semester Dropdown Group -->
                 <div class="flex flex-col">
-                    <button @click="if (!isMobile && !sidebarOpen) { sidebarOpen = true; akademikOpen = true; } else { akademikOpen = !akademikOpen; }" 
+                    <button @click="if (!isMobile && !sidebarOpen) { sidebarOpen = true; akademikOpen = true; } else { akademikOpen = !akademikOpen; }"
                             class="rounded-xl text-sm font-semibold hover:bg-white/10 hover:text-white transition-all duration-300 focus:outline-none"
                             :class="[
                                 isMobile || sidebarOpen ? 'w-full flex items-center justify-between px-4 py-3 gap-3' : 'w-12 mx-auto flex items-center justify-center py-3',
@@ -145,26 +145,26 @@
                             </svg>
                             <span x-show="isMobile || sidebarOpen" class="whitespace-nowrap">Tahun & Semester</span>
                         </div>
-                        <svg x-show="isMobile || sidebarOpen" 
-                             class="w-4 h-4 transition-transform duration-200" 
-                             :class="akademikOpen ? 'rotate-180' : ''" 
+                        <svg x-show="isMobile || sidebarOpen"
+                             class="w-4 h-4 transition-transform duration-200"
+                             :class="akademikOpen ? 'rotate-180' : ''"
                              fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"></path>
                         </svg>
                     </button>
-                    
+
                     <!-- Submenu Items -->
-                    <div x-show="akademikOpen && (isMobile || sidebarOpen)" 
+                    <div x-show="akademikOpen && (isMobile || sidebarOpen)"
                          x-transition:enter="transition ease-out duration-150"
                          x-transition:enter-start="opacity-0 transform -translate-y-2"
                          x-transition:enter-end="opacity-100 transform translate-y-0"
                          class="pl-4 mt-1 mb-1 space-y-1.5 overflow-hidden flex flex-col text-left border-l border-white/10 ml-6">
-                        <a href="{{ route('admin.manage.tahun_akademiks.index') }}" 
+                        <a href="{{ route('admin.manage.tahun_akademiks.index') }}"
                            @click.prevent="navigateTo('{{ route('admin.manage.tahun_akademiks.index') }}')"
                            class="block py-2 px-3 text-xs rounded-lg transition-colors {{ request()->routeIs('admin.manage.tahun_akademiks.*') ? 'bg-[#0c2b4d] text-white font-bold' : 'text-blue-100/70 hover:text-white hover:bg-white/5' }}">
                             Tahun Akademik
                         </a>
-                        <a href="{{ route('admin.manage.semesters.index') }}" 
+                        <a href="{{ route('admin.manage.semesters.index') }}"
                            @click.prevent="navigateTo('{{ route('admin.manage.semesters.index') }}')"
                            class="block py-2 px-3 text-xs rounded-lg transition-colors {{ request()->routeIs('admin.manage.semesters.*') ? 'bg-[#0c2b4d] text-white font-bold' : 'text-blue-100/70 hover:text-white hover:bg-white/5' }}">
                             Semester
@@ -173,7 +173,7 @@
                 </div>
 
                 <!-- 3. Jurusan -->
-                <a href="{{ route('admin.manage.jurusans.index') }}" 
+                <a href="{{ route('admin.manage.jurusans.index') }}"
                    @click.prevent="navigateTo('{{ route('admin.manage.jurusans.index') }}')"
                    class="flex items-center rounded-xl text-sm font-semibold transition-all duration-300 {{ request()->routeIs('admin.manage.jurusans.*') ? 'bg-[#0c2b4d] text-white shadow-inner font-bold' : 'text-white/80 hover:bg-white/10 hover:text-white' }}"
                    :class="isMobile || sidebarOpen ? 'px-4 py-3 justify-start gap-3' : 'px-0 py-3 justify-center gap-0 w-12 mx-auto'">
@@ -184,7 +184,7 @@
                 </a>
 
                 <!-- 4. Kelas -->
-                <a href="{{ route('admin.manage.classrooms.index') }}" 
+                <a href="{{ route('admin.manage.classrooms.index') }}"
                    @click.prevent="navigateTo('{{ route('admin.manage.classrooms.index') }}')"
                    class="flex items-center rounded-xl text-sm font-semibold transition-all duration-300 {{ request()->routeIs('admin.manage.classrooms.*') ? 'bg-[#0c2b4d] text-white shadow-inner font-bold' : 'text-white/80 hover:bg-white/10 hover:text-white' }}"
                    :class="isMobile || sidebarOpen ? 'px-4 py-3 justify-start gap-3' : 'px-0 py-3 justify-center gap-0 w-12 mx-auto'">
@@ -195,7 +195,7 @@
                 </a>
 
                 <!-- 5. Mata Pelajaran -->
-                <a href="{{ route('admin.manage.mata_pelajarans.index') }}" 
+                <a href="{{ route('admin.manage.mata_pelajarans.index') }}"
                    @click.prevent="navigateTo('{{ route('admin.manage.mata_pelajarans.index') }}')"
                    class="flex items-center rounded-xl text-sm font-semibold transition-all duration-300 {{ request()->routeIs('admin.manage.mata_pelajarans.*') && !request()->routeIs('admin.manage.penugasan-guru.*') ? 'bg-[#0c2b4d] text-white shadow-inner font-bold' : 'text-white/80 hover:bg-white/10 hover:text-white' }}"
                    :class="isMobile || sidebarOpen ? 'px-4 py-3 justify-start gap-3' : 'px-0 py-3 justify-center gap-0 w-12 mx-auto'">
@@ -206,7 +206,7 @@
                 </a>
 
                 <!-- 6. Penugasan Guru -->
-                <a href="{{ route('admin.manage.penugasan-guru.index') }}" 
+                <a href="{{ route('admin.manage.penugasan-guru.index') }}"
                    @click.prevent="navigateTo('{{ route('admin.manage.penugasan-guru.index') }}')"
                    class="flex items-center rounded-xl text-sm font-semibold transition-all duration-300 {{ request()->routeIs('admin.manage.penugasan-guru.*') ? 'bg-[#0c2b4d] text-white shadow-inner font-bold' : 'text-white/80 hover:bg-white/10 hover:text-white' }}"
                    :class="isMobile || sidebarOpen ? 'px-4 py-3 justify-start gap-3' : 'px-0 py-3 justify-center gap-0 w-12 mx-auto'">
@@ -219,7 +219,7 @@
 
             @if (Auth::user()->role === 'guru')
                 <!-- Learning Module -->
-                <a href="{{ route('guru.learning-modules.index') }}" 
+                <a href="{{ route('guru.learning-modules.index') }}"
                    @click.prevent="navigateTo('{{ route('guru.learning-modules.index') }}')"
                    class="flex items-center rounded-xl text-sm font-semibold transition-all duration-300 {{ request()->routeIs('guru.learning-modules.*') ? 'bg-[#0c2b4d] text-white shadow-inner font-bold' : 'text-white/80 hover:bg-white/10 hover:text-white' }}"
                    :class="isMobile || sidebarOpen ? 'px-4 py-3 justify-start gap-3' : 'px-0 py-3 justify-center gap-0 w-12 mx-auto'">
@@ -230,7 +230,7 @@
                 </a>
 
                 <!-- Bank Soal -->
-                <a href="{{ route('guru.bank-soal.index') }}" 
+                <a href="{{ route('guru.bank-soal.index') }}"
                    @click.prevent="navigateTo('{{ route('guru.bank-soal.index') }}')"
                    class="flex items-center rounded-xl text-sm font-semibold transition-all duration-300 {{ request()->routeIs('guru.bank-soal.*') ? 'bg-[#0c2b4d] text-white shadow-inner font-bold' : 'text-white/80 hover:bg-white/10 hover:text-white' }}"
                    :class="isMobile || sidebarOpen ? 'px-4 py-3 justify-start gap-3' : 'px-0 py-3 justify-center gap-0 w-12 mx-auto'">
@@ -243,7 +243,7 @@
 
             @if (Auth::user()->role === 'murid')
                 <!-- Learning Module -->
-                <a href="{{ route('murid.learning-modules.index') }}" 
+                <a href="{{ route('murid.learning-modules.index') }}"
                    @click.prevent="navigateTo('{{ route('murid.learning-modules.index') }}')"
                    class="flex items-center rounded-xl text-sm font-semibold transition-all duration-300 {{ request()->routeIs('murid.learning-modules.*') ? 'bg-[#0c2b4d] text-white shadow-inner font-bold' : 'text-white/80 hover:bg-white/10 hover:text-white' }}"
                    :class="isMobile || sidebarOpen ? 'px-4 py-3 justify-start gap-3' : 'px-0 py-3 justify-center gap-0 w-12 mx-auto'">

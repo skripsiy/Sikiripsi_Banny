@@ -87,11 +87,11 @@ class GuruManagementController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'username' => ['required', 'string', 'max:255', 'unique:users,username'],
-            'email' => ['required', 'string', 'email', 'max:255', 'unique:'.User::class],
+            'username' => ['required', 'string', 'max:25', 'unique:users,username'],
+            'email' => ['required', 'string', 'email', 'max:100', 'unique:'.User::class],
             'password' => ['required', 'confirmed', Rules\Password::defaults()],
-            'nip' => ['required', 'string', 'max:50', 'unique:gurus,nip'],
-            'fullname' => ['required', 'string', 'max:255'],
+            'nip' => ['required', 'numeric', 'digits:18', 'unique:gurus,nip'],
+            'fullname' => ['required', 'string', 'max:50'],
             'tanggalLahir' => ['required', 'date'],
             'alamat' => ['required', 'string'],
             'noWhatsapp' => ['required', 'string', 'max:20'],
@@ -130,11 +130,11 @@ class GuruManagementController extends Controller
     public function update(Request $request, User $guru)
     {
         $request->validate([
-            'username' => ['required', 'string', 'max:255', 'unique:users,username,'.$guru->id],
-            'email' => ['required', 'string', 'email', 'max:255', 'unique:users,email,'.$guru->id],
+            'username' => ['required', 'string', 'max:25', 'unique:users,username,'.$guru->id],
+            'email' => ['required', 'string', 'email', 'max:100', 'unique:users,email,'.$guru->id],
             'password' => ['nullable', 'confirmed', Rules\Password::defaults()],
-            'nip' => ['required', 'string', 'max:50', 'unique:gurus,nip,'.($guru->guru?->id ?? '')],
-            'fullname' => ['required', 'string', 'max:255'],
+            'nip' => ['required', 'numeric', 'digits:18', 'unique:gurus,nip,'.($guru->guru?->id ?? '')],
+            'fullname' => ['required', 'string', 'max:50'],
             'tanggalLahir' => ['required', 'date'],
             'alamat' => ['required', 'string'],
             'noWhatsapp' => ['required', 'string', 'max:20'],

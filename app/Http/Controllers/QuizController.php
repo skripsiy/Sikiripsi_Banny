@@ -65,7 +65,7 @@ class QuizController extends Controller
 
         $request->validate([
             'semester_id' => ['nullable', 'exists:semesters,id'],
-            'title' => ['required', 'string', 'max:255'],
+            'title' => ['required', 'string', 'max:50'],
             'instructions' => ['required', 'string'],
             'duration_minutes' => ['required', 'integer', 'min:1'],
             'due_date' => ['required', 'date'],
@@ -106,7 +106,7 @@ class QuizController extends Controller
 
         $request->validate([
             'semester_id' => ['nullable', 'exists:semesters,id'],
-            'title' => ['required', 'string', 'max:255'],
+            'title' => ['required', 'string', 'max:50'],
             'instructions' => ['required', 'string'],
             'duration_minutes' => ['required', 'integer', 'min:1'],
             'due_date' => ['required', 'date'],

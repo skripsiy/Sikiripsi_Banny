@@ -86,7 +86,7 @@ class LearningModuleController extends Controller
         $request->validate([
             'mata_pelajaran_id' => ['required', 'exists:mata_pelajarans,id'],
             'tahun_akademik_id' => ['required', 'exists:tahun_akademiks,id'],
-            'title' => ['required', 'string', 'max:255'],
+            'title' => ['required', 'string', 'max:50'],
             'description' => ['required', 'string'],
         ], [
             'mata_pelajaran_id.required' => 'Mata pelajaran wajib dipilih.',
@@ -94,7 +94,7 @@ class LearningModuleController extends Controller
             'tahun_akademik_id.required' => 'Tahun ajaran wajib dipilih.',
             'tahun_akademik_id.exists' => 'Tahun ajaran tidak valid.',
             'title.required' => 'Judul modul wajib diisi.',
-            'title.max' => 'Judul modul maksimal 255 karakter.',
+            'title.max' => 'Judul modul maksimal 50 karakter.',
             'description.required' => 'Deskripsi modul wajib diisi.',
         ]);
 
@@ -127,7 +127,7 @@ class LearningModuleController extends Controller
         $request->validate([
             'mata_pelajaran_id' => ['required', 'exists:mata_pelajarans,id'],
             'tahun_akademik_id' => ['required', 'exists:tahun_akademiks,id'],
-            'title' => ['required', 'string', 'max:255'],
+            'title' => ['required', 'string', 'max:50'],
             'description' => ['required', 'string'],
         ], [
             'mata_pelajaran_id.required' => 'Mata pelajaran wajib dipilih.',
@@ -135,7 +135,7 @@ class LearningModuleController extends Controller
             'tahun_akademik_id.required' => 'Tahun ajaran wajib dipilih.',
             'tahun_akademik_id.exists' => 'Tahun ajaran tidak valid.',
             'title.required' => 'Judul modul wajib diisi.',
-            'title.max' => 'Judul modul maksimal 255 karakter.',
+            'title.max' => 'Judul modul maksimal 50 karakter.',
             'description.required' => 'Deskripsi modul wajib diisi.',
         ]);
 

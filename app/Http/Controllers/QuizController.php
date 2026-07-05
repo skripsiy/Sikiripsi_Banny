@@ -229,6 +229,13 @@ class QuizController extends Controller
             'soals.*.bobot' => ['required', 'integer', 'min:1'],
         ]);
 
+        $totalBobot = collect($request->soals)->sum('bobot');
+        if ($totalBobot !== 100) {
+            return redirect()->back()
+                ->withErrors(['total_bobot' => 'Total bobot semua soal harus berjumlah tepat 100. (Total saat ini: ' . $totalBobot . ')'])
+                ->withInput();
+        }
+
         foreach ($request->soals as $soalId => $data) {
             $quiz->soals()->updateExistingPivot($soalId, [
                 'urutan' => $data['urutan'],

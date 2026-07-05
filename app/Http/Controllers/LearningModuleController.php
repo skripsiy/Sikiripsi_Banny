@@ -13,6 +13,7 @@ use App\Models\Murid;
 use App\Models\Classroom;
 use App\Models\Semester;
 use App\Models\TahunAkademik;
+use App\Models\IzinRequest;
 use App\Services\FonnteService;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -363,13 +364,27 @@ class LearningModuleController extends Controller
             ->get()
             ->keyBy('murid_id');
 
+        // Load pending leave requests for the selected date
+        $pendingIzinForDate = IzinRequest::where('learning_module_id', $learningModule->id)
+            ->whereDate('date', $date)
+            ->where('status', 'pending')
+            ->get()
+            ->keyBy('murid_id');
+
+        // Get total pending leave requests count for this module
+        $totalPendingIzinCount = IzinRequest::where('learning_module_id', $learningModule->id)
+            ->where('status', 'pending')
+            ->count();
+
         return view('guru.learning_modules.absensi.index', compact(
             'learningModule',
             'murids',
             'absensis',
             'date',
             'semesters',
-            'selectedSemester'
+            'selectedSemester',
+            'pendingIzinForDate',
+            'totalPendingIzinCount'
         ));
     }
 

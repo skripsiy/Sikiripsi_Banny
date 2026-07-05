@@ -68,7 +68,17 @@
             <p class="text-xs text-gray-400 mb-6">Sesuaikan urutan tampil dan bobot nilai untuk masing-masing soal di bawah ini.</p>
 
             @if($attachedSoals->isNotEmpty())
-                <form action="{{ route('guru.learning-modules.quizzes.soals.order', [$learningModule->id, $quiz->id]) }}" method="POST">
+                <form action="{{ route('guru.learning-modules.quizzes.soals.order', [$learningModule->id, $quiz->id]) }}" method="POST"
+                      x-data="{
+                          weights: {
+                              @foreach($attachedSoals as $soal)
+                                  '{{ $soal->id }}': {{ old('soals.' . $soal->id . '.bobot', $soal->pivot->bobot) }},
+                              @endforeach
+                          },
+                          calculateTotal() {
+                              return Object.values(this.weights).reduce((sum, w) => sum + (parseInt(w) || 0), 0);
+                          }
+                      }">
                     @csrf
                     <div class="space-y-4 mb-6">
                         @foreach($attachedSoals as $index => $soal)
@@ -106,7 +116,7 @@
                                     <!-- Bobot Input -->
                                     <div class="flex items-center gap-1.5">
                                         <span class="text-[11px] font-semibold text-gray-400 uppercase">Bobot:</span>
-                                        <input type="number" name="soals[{{ $soal->id }}][bobot]" value="{{ $soal->pivot->bobot }}" required min="1"
+                                        <input type="number" name="soals[{{ $soal->id }}][bobot]" x-model.number="weights['{{ $soal->id }}']" required min="1"
                                                class="w-14 px-2.5 py-1.5 bg-gray-50 border border-gray-200 rounded-lg text-xs font-bold text-gray-700 text-center focus:outline-none focus:bg-white focus:border-[#0c2b4d]">
                                     </div>
 
@@ -123,9 +133,20 @@
                         @endforeach
                     </div>
 
-                    <div class="flex justify-end gap-3 border-t border-gray-100 pt-4">
-                        <button type="submit"
-                                class="bg-[#0c2b4d] hover:bg-[#07192d] text-white px-4 py-2.5 rounded-xl text-xs font-bold transition-all shadow-sm cursor-pointer select-none">
+                    <div class="flex flex-col sm:flex-row justify-between items-center gap-4 border-t border-gray-100 pt-4">
+                        <div class="flex items-center gap-2 text-xs font-bold">
+                            <span class="text-gray-500">Total Bobot Soal:</span>
+                            <span class="px-2.5 py-1 rounded-lg text-xs font-extrabold"
+                                  :class="calculateTotal() === 100 ? 'bg-green-50 text-green-700 border border-green-200' : 'bg-red-50 text-red-700 border border-red-200'">
+                                <span x-text="calculateTotal()"></span> / 100
+                            </span>
+                            <span class="text-red-500 font-semibold" x-show="calculateTotal() !== 100">
+                                (Total bobot harus bernilai tepat 100)
+                            </span>
+                        </div>
+                        <button type="submit" :disabled="calculateTotal() !== 100"
+                                :class="calculateTotal() === 100 ? 'bg-[#0c2b4d] hover:bg-[#07192d] cursor-pointer' : 'bg-gray-300 text-gray-500 cursor-not-allowed'"
+                                class="text-white px-4 py-2.5 rounded-xl text-xs font-bold transition-all shadow-sm select-none">
                             Simpan Perubahan Urutan & Bobot
                         </button>
                     </div>

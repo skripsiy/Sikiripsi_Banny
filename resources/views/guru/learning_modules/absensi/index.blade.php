@@ -38,6 +38,21 @@
                 {{ session('status') }}
             </div>
         @endif
+
+        <!-- Pending Leave Requests Notification -->
+        @if($totalPendingIzinCount > 0)
+            <div class="mb-6 p-4 bg-amber-50 border border-amber-250 text-amber-850 rounded-2xl text-xs font-semibold shadow-sm flex items-center gap-2">
+                <span class="text-base flex-shrink-0">⚠️</span>
+                <span>
+                    @if($pendingIzinForDate->isNotEmpty())
+                        <strong>Pemberitahuan:</strong> Terdapat murid yang mengajukan perizinan tidak masuk sekolah pada <strong>hari ini</strong> ({{ \Carbon\Carbon::parse($date)->translatedFormat('d M Y') }}). Silakan tinjau permohonan izin sebelum melakukan absensi.
+                    @else
+                        <strong>Pemberitahuan:</strong> Terdapat permohonan izin dari murid di modul ini yang belum ditinjau.
+                    @endif
+                </span>
+            </div>
+        @endif
+
         @if ($errors->any())
             <div class="mb-6 p-4 bg-red-50 border border-red-200 text-red-700 rounded-lg text-sm font-medium shadow-sm">
                 <ul class="list-disc pl-5">
@@ -59,6 +74,11 @@
                             <path stroke-linecap="round" stroke-linejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
                         </svg>
                         Review Izin Digital
+                        @if($totalPendingIzinCount > 0)
+                            <span class="bg-amber-500 text-white text-[9px] px-1.5 py-0.5 rounded-full font-extrabold animate-pulse">
+                                {{ $totalPendingIzinCount }}
+                            </span>
+                        @endif
                     </a>
                     <a href="{{ route('guru.learning-modules.rekap-absensi', $learningModule->id) }}"
                        class="inline-flex items-center gap-1.5 bg-emerald-600 hover:bg-emerald-700 text-white px-3 py-1.5 rounded-xl text-[10px] font-bold transition-all shadow-sm cursor-pointer select-none">
@@ -97,10 +117,20 @@
                                     @php
                                         $currentStatus = $absensis->get($murid->id)->status ?? 'hadir';
                                     @endphp
-                                    <tr class="hover:bg-gray-50/50">
+                                    <tr class="hover:bg-gray-50/50 {{ $pendingIzinForDate->has($murid->id) ? 'bg-amber-50/40' : '' }}">
                                         <td class="px-4 py-3 text-gray-500">{{ $index + 1 }}</td>
                                         <td class="px-4 py-3 font-semibold text-gray-900">
-                                            {{ $murid->user->name ?? 'N/A' }}
+                                            <div class="flex flex-wrap items-center gap-2">
+                                                <span>{{ $murid->user->name ?? 'N/A' }}</span>
+                                                @if($pendingIzinForDate->has($murid->id))
+                                                    @php
+                                                        $izinReq = $pendingIzinForDate->get($murid->id);
+                                                    @endphp
+                                                    <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded text-[9px] font-extrabold border bg-amber-50 text-amber-700 border-amber-200 animate-pulse">
+                                                        ⚠️ Mengajukan Izin ({{ ucfirst($izinReq->jenis_izin) }})
+                                                    </span>
+                                                @endif
+                                            </div>
                                             @if($murid->no_telepon_orang_tua)
                                                 <span class="block text-[10px] text-gray-400 font-normal">WA Ortu: {{ $murid->no_telepon_orang_tua }}</span>
                                             @else

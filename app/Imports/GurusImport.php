@@ -53,10 +53,10 @@ class GurusImport implements ToCollection, WithHeadingRow, WithValidation
     public function rules(): array
     {
         return [
-            'email' => ['required', 'string', 'email', 'max:255', 'unique:users,email'],
-            'nip' => ['required', 'string', 'max:50', 'unique:gurus,nip'],
-            'username' => ['required', 'string', 'max:255', 'unique:users,username'],
-            'fullname' => ['required', 'string', 'max:255'],
+            'email' => ['required', 'string', 'email', 'max:100', 'unique:users,email'],
+            'nip' => ['required', 'numeric', 'digits:18', 'unique:gurus,nip'],
+            'username' => ['required', 'string', 'max:25', 'unique:users,username'],
+            'fullname' => ['required', 'string', 'max:50'],
             'tanggal_lahir' => ['required', 'date'],
             'alamat' => ['required', 'string'],
             'no_whatsapp' => ['required', 'string', 'max:20'],

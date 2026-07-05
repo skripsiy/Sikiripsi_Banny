@@ -66,7 +66,7 @@ class TugasController extends Controller
 
         $request->validate([
             'semester_id' => ['nullable', 'exists:semesters,id'],
-            'title' => ['required', 'string', 'max:50'],
+            'title' => ['required', 'string', 'max:255'],
             'instructions' => ['required', 'string'],
             'due_date' => ['required', 'date'],
             'file' => ['nullable', 'file', 'max:10240'],
@@ -112,7 +112,7 @@ class TugasController extends Controller
 
         $request->validate([
             'semester_id' => ['nullable', 'exists:semesters,id'],
-            'title' => ['required', 'string', 'max:50'],
+            'title' => ['required', 'string', 'max:255'],
             'instructions' => ['required', 'string'],
             'due_date' => ['required', 'date'],
             'file' => ['nullable', 'file', 'max:10240'],

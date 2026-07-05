@@ -28,7 +28,7 @@ class JurusanManagementController extends Controller
                 'max:20',
                 Rule::unique('jurusans')->whereNull('deleted_at'),
             ],
-            'nama_jurusan' => ['required', 'string', 'max:30'],
+            'nama_jurusan' => ['required', 'string', 'max:255'],
             'deskripsi' => ['nullable', 'string', 'max:1000'],
         ], [
             'kode_jurusan.unique' => 'Kode jurusan ini sudah terdaftar.',
@@ -63,7 +63,7 @@ class JurusanManagementController extends Controller
                 'max:20',
                 Rule::unique('jurusans')->whereNull('deleted_at')->ignore($jurusan->id),
             ],
-            'nama_jurusan' => ['required', 'string', 'max:30'],
+            'nama_jurusan' => ['required', 'string', 'max:255'],
             'deskripsi' => ['nullable', 'string', 'max:1000'],
             'is_active' => ['required', 'boolean'],
         ], [

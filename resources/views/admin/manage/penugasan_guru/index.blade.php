@@ -56,10 +56,17 @@
                                 @foreach ($assignments as $index => $assignment)
                                     <tr class="hover:bg-gray-50/50 transition-all duration-150">
                                         <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ $index + 1 }}</td>
-                                        <td class="px-6 py-4 whitespace-nowrap text-sm font-semibold text-gray-900">{{ $assignment->mataPelajaran->kode_pelajaran }}</td>
-                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700 font-medium">{{ $assignment->mataPelajaran->nama_pelajaran }}</td>
+                                         <td class="px-6 py-4 whitespace-nowrap text-sm font-semibold text-gray-900">
+                                            {{ $assignment->mataPelajaran?->kode_pelajaran ?? '-' }}
+                                            @if($assignment->mataPelajaran?->trashed())
+                                                <span class="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-medium bg-red-50 text-red-700 border border-red-100 ml-1">
+                                                    Terhapus
+                                                </span>
+                                            @endif
+                                        </td>
+                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700 font-medium">{{ $assignment->mataPelajaran?->nama_pelajaran ?? '-' }}</td>
                                         <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                                            @if($assignment->mataPelajaran->jurusan)
+                                            @if($assignment->mataPelajaran?->jurusan)
                                                 <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-50 text-blue-800 border border-blue-100">
                                                     {{ $assignment->mataPelajaran->jurusan->nama_jurusan }} ({{ $assignment->mataPelajaran->jurusan->kode_jurusan }})
                                                 </span>
@@ -75,18 +82,26 @@
                                         </td>
                                         <td class="px-6 py-4 whitespace-nowrap text-sm text-center font-medium">
                                             <div class="flex items-center justify-center gap-2">
-                                                <button @click="
-                                                    showEditModal = true;
-                                                    editData = {
-                                                        id: '{{ $assignment->id }}',
-                                                        mata_pelajaran_id: '{{ $assignment->mata_pelajaran_id }}',
-                                                        guru_id: '{{ $assignment->guru_id }}'
-                                                    };
-                                                    editUrl = '{{ route('admin.manage.penugasan-guru.update', $assignment->id) }}';
-                                                 " 
-                                                 class="text-blue-600 hover:text-blue-900 bg-blue-50 hover:bg-blue-100 px-3.5 py-2 rounded-lg text-xs font-bold transition-all duration-150 cursor-pointer select-none">
-                                                    Edit
-                                                </button>
+                                                 @if($assignment->mataPelajaran?->trashed())
+                                                    <button disabled 
+                                                            title="Mata pelajaran telah dihapus, tidak dapat diubah" 
+                                                            class="text-gray-400 bg-gray-100 px-3.5 py-2 rounded-lg text-xs font-bold cursor-not-allowed select-none opacity-60">
+                                                        Edit
+                                                    </button>
+                                                @else
+                                                    <button @click="
+                                                        showEditModal = true;
+                                                        editData = {
+                                                            id: '{{ $assignment->id }}',
+                                                            mata_pelajaran_id: '{{ $assignment->mata_pelajaran_id }}',
+                                                            guru_id: '{{ $assignment->guru_id }}'
+                                                        };
+                                                        editUrl = '{{ route('admin.manage.penugasan-guru.update', $assignment->id) }}';
+                                                     " 
+                                                     class="text-blue-600 hover:text-blue-900 bg-blue-50 hover:bg-blue-100 px-3.5 py-2 rounded-lg text-xs font-bold transition-all duration-150 cursor-pointer select-none">
+                                                        Edit
+                                                    </button>
+                                                @endif
 
                                                 <form action="{{ route('admin.manage.penugasan-guru.destroy', $assignment->id) }}" method="POST" onsubmit="return confirm('Hapus penugasan guru ini?');" class="inline">
                                                     @csrf

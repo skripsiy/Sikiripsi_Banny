@@ -30,19 +30,9 @@ class MuridLearningModuleController extends Controller
             abort(403, 'Kelas Anda tidak aktif atau tidak ditemukan.');
         }
 
-        // Check if learning module has the same academic year
-        if ($learningModule->tahun_akademik_id != $classroom->tahun_akademik_id) {
-            abort(403, 'Aksi tidak diizinkan. Modul tidak sesuai dengan tahun akademik kelas Anda.');
-        }
-
-        // Check if subject is suitable for the student's jurusan
-        $subject = $learningModule->mataPelajaran;
-        if (!$subject || !$subject->is_active) {
-            abort(403, 'Mata pelajaran untuk modul ini tidak aktif atau tidak ditemukan.');
-        }
-
-        if ($subject->jurusan_id !== null && $subject->jurusan_id !== $classroom->jurusan_id) {
-            abort(403, 'Aksi tidak diizinkan. Modul tidak sesuai dengan jurusan kelas Anda.');
+        // Check if learning module has the same classroom
+        if ($learningModule->classroom_id !== $classroom->id) {
+            abort(403, 'Aksi tidak diizinkan. Modul tidak ditujukan untuk kelas Anda.');
         }
     }
 
@@ -57,14 +47,7 @@ class MuridLearningModuleController extends Controller
         if (!$classroom) {
             $learningModules = collect();
         } else {
-            $learningModules = LearningModule::where('tahun_akademik_id', $classroom->tahun_akademik_id)
-                ->whereHas('mataPelajaran', function ($query) use ($classroom) {
-                    $query->where('is_active', true)
-                          ->where(function ($q) use ($classroom) {
-                              $q->whereNull('jurusan_id')
-                                ->orWhere('jurusan_id', $classroom->jurusan_id);
-                          });
-                })
+            $learningModules = LearningModule::where('classroom_id', $classroom->id)
                 ->with(['guru.user', 'mataPelajaran', 'tahunAkademik'])
                 ->withCount(['materis', 'tugas', 'quizzes', 'ujians'])
                 ->latest()

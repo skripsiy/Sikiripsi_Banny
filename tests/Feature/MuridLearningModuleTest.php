@@ -80,6 +80,13 @@ describe('Murid Learning Module Access', function () {
             'is_active' => true,
         ]);
 
+        $this->classroomTkj = Classroom::create([
+            'nama_kelas' => 'XII TKJ 1',
+            'jurusan_id' => $this->jurusanTkj->id,
+            'tahun_akademik_id' => $this->academicYear->id,
+            'is_active' => true,
+        ]);
+
         // Student in RPL
         $this->muridUserRpl = User::factory()->create(['role' => 'murid']);
         $this->muridRpl = Murid::create([
@@ -94,6 +101,7 @@ describe('Murid Learning Module Access', function () {
             'guru_id' => $this->guru->id,
             'mata_pelajaran_id' => $this->mataPelajaranGeneral->id,
             'tahun_akademik_id' => $this->academicYear->id,
+            'classroom_id' => $this->classroomRpl->id,
             'title' => 'Bahasa Indonesia Modul',
             'description' => 'Materi umum.',
         ]);
@@ -102,6 +110,7 @@ describe('Murid Learning Module Access', function () {
             'guru_id' => $this->guru->id,
             'mata_pelajaran_id' => $this->mataPelajaranRpl->id,
             'tahun_akademik_id' => $this->academicYear->id,
+            'classroom_id' => $this->classroomRpl->id,
             'title' => 'Web Dev Modul',
             'description' => 'Materi RPL.',
         ]);
@@ -110,6 +119,7 @@ describe('Murid Learning Module Access', function () {
             'guru_id' => $this->guru->id,
             'mata_pelajaran_id' => $this->mataPelajaranTkj->id,
             'tahun_akademik_id' => $this->academicYear->id,
+            'classroom_id' => $this->classroomTkj->id,
             'title' => 'Cisco Jaringan Modul',
             'description' => 'Materi TKJ.',
         ]);

@@ -82,6 +82,7 @@ describe('Learning Module Details and Sub-content', function () {
             'guru_id' => $this->guru1->id,
             'mata_pelajaran_id' => $this->mataPelajaran->id,
             'tahun_akademik_id' => $this->academicYear->id,
+            'classroom_id' => $this->classroom->id,
             'title' => 'Aljabar Modul',
             'description' => 'Materi Aljabar.',
         ]);

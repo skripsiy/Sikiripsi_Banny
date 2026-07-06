@@ -16,6 +16,7 @@ return new class extends Migration
             $table->foreignId('guru_id')->constrained()->cascadeOnDelete();
             $table->foreignId('mata_pelajaran_id')->constrained('mata_pelajarans')->cascadeOnDelete();
             $table->foreignId('tahun_akademik_id')->constrained('tahun_akademiks')->cascadeOnDelete();
+            $table->foreignId('classroom_id')->constrained('classrooms')->cascadeOnDelete();
             $table->string('title');
             $table->text('description');
             $table->string('file_path')->nullable();

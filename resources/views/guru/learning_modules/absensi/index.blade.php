@@ -23,7 +23,12 @@
                     <span class="bg-blue-500/20 text-blue-200 border border-blue-500/30 text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wider">
                         {{ $learningModule->mataPelajaran->nama_pelajaran }} ({{ $learningModule->mataPelajaran->kode_pelajaran }})
                     </span>
-                    <span class="bg-emerald-500/20 text-emerald-200 border border-emerald-500/30 text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wider">
+                    @if($learningModule->classroom)
+                        <span class="bg-emerald-500/25 text-emerald-200 border border-emerald-500/30 text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wider">
+                            Kelas: {{ $learningModule->classroom->nama_kelas }}
+                        </span>
+                    @endif
+                    <span class="bg-indigo-500/20 text-indigo-200 border border-indigo-500/30 text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wider">
                         Absensi Murid
                     </span>
                 </div>
@@ -50,7 +55,7 @@
 
         <!-- Main Content Area -->
         <div class="bg-white shadow-lg rounded-2xl border border-gray-100 p-3 sm:p-6">
-            <div class="flex flex-col sm:flex-row justify-between sm:items-center gap-4 mb-6">
+            <div class="flex flex-col lg:flex-row justify-between lg:items-center gap-4 mb-6">
                 <div class="flex items-center gap-3">
                     <h3 class="text-base font-bold text-gray-800">Absensi Kehadiran Siswa</h3>
                     <a href="{{ route('guru.learning-modules.rekap-absensi', $learningModule->id) }}"
@@ -66,7 +71,7 @@
                 <form method="GET" action="{{ route('guru.learning-modules.absensi.index', $learningModule->id) }}" class="flex items-center gap-2">
                     <label for="absensi_date" class="text-xs font-bold text-gray-500 uppercase tracking-wider select-none">Tanggal:</label>
                     <input type="date" name="date" id="absensi_date" value="{{ $date }}" onchange="this.form.submit()"
-                           class="px-3 py-1.5 bg-gray-50 border border-gray-200 rounded-xl text-xs text-gray-800 focus:outline-none focus:border-[#0c2b4d]">
+                           class="px-3 py-1.5 bg-gray-50 border border-gray-250 rounded-xl text-xs text-gray-800 focus:outline-none focus:border-[#0c2b4d] font-semibold">
                 </form>
             </div>
 

@@ -93,7 +93,7 @@ class UjianController extends Controller
             'due_date' => $request->due_date,
         ]);
 
-        return redirect()->route('guru.learning-modules.show', [$learningModule->id, 'semester_id' => $semesterId])
+        return redirect()->route('guru.learning-modules.ujians.index', [$learningModule->id, 'semester_id' => $semesterId])
             ->with('status', 'Ujian berhasil ditambahkan.');
     }
 
@@ -122,7 +122,7 @@ class UjianController extends Controller
             'due_date' => $request->due_date,
         ]);
 
-        return redirect()->route('guru.learning-modules.show', [$learningModule->id, 'semester_id' => $semesterId])
+        return redirect()->route('guru.learning-modules.ujians.index', [$learningModule->id, 'semester_id' => $semesterId])
             ->with('status', 'Ujian berhasil diperbarui.');
     }
 
@@ -149,7 +149,7 @@ class UjianController extends Controller
         $semesterId = $ujian->semester_id;
         $ujian->delete();
 
-        return redirect()->route('guru.learning-modules.show', [$learningModule->id, 'semester_id' => $semesterId])
+        return redirect()->route('guru.learning-modules.ujians.index', [$learningModule->id, 'semester_id' => $semesterId])
             ->with('status', 'Ujian berhasil dihapus.');
     }
 

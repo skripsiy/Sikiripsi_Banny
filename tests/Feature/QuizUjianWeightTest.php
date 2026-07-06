@@ -41,10 +41,24 @@ describe('Quiz and Ujian Weight Validation', function () {
         ]);
         $this->mataPelajaran->gurus()->sync([$this->guru->id]);
 
+        $this->jurusan = \App\Models\Jurusan::create([
+            'kode_jurusan' => 'RPL',
+            'nama_jurusan' => 'Rekayasa Perangkat Lunak',
+            'is_active' => true,
+        ]);
+
+        $this->classroom = \App\Models\Classroom::create([
+            'nama_kelas' => 'XII RPL 1',
+            'jurusan_id' => $this->jurusan->id,
+            'tahun_akademik_id' => $this->academicYear->id,
+            'is_active' => true,
+        ]);
+
         $this->learningModule = LearningModule::create([
             'guru_id' => $this->guru->id,
             'mata_pelajaran_id' => $this->mataPelajaran->id,
             'tahun_akademik_id' => $this->academicYear->id,
+            'classroom_id' => $this->classroom->id,
             'title' => 'Aljabar Modul',
             'description' => 'Materi Aljabar.',
         ]);

@@ -24,8 +24,16 @@
 
     <div>
         <label for="create_quiz_instructions" class="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-1.5">Instruksi Kuis</label>
-        <textarea name="instructions" id="create_quiz_instructions" rows="4" required
-                  class="w-full px-4 py-2.5 bg-white border border-gray-200 rounded-xl focus:outline-none focus:border-[#0c2b4d] focus:ring-1 focus:ring-[#0c2b4d] text-sm text-gray-800 transition-all shadow-sm">{{ !old('_method') ? old('instructions') : '' }}</textarea>
+        <div class="prose max-w-none">
+            <textarea name="instructions" id="create_quiz_instructions" required
+                      x-init="ClassicEditor.create($el).then(editor => {
+                          editor.model.document.on('change:data', () => {
+                              $el.value = editor.getData();
+                              $el.dispatchEvent(new Event('input'));
+                          });
+                      })"
+                      class="w-full px-4 py-2.5 bg-white border border-gray-200 rounded-xl focus:outline-none focus:border-[#0c2b4d] focus:ring-1 focus:ring-[#0c2b4d] text-sm text-gray-800 transition-all shadow-sm">{{ !old('_method') ? old('instructions') : '' }}</textarea>
+        </div>
         @if(!old('_method'))
             @error('instructions') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
         @endif

@@ -18,7 +18,7 @@
     <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
         <div>
             <label for="edit_fullname" class="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-1.5">Nama Lengkap <span class="text-red-500">*</span></label>
-            <input type="text" name="fullname" id="edit_fullname" x-model="editData.fullname" required
+            <input type="text" name="fullname" id="edit_fullname" x-model="editData.fullname" required maxlength="50"
                    class="w-full px-4 py-2.5 bg-white border border-gray-200 rounded-xl focus:outline-none focus:border-[#0c2b4d] focus:ring-1 focus:ring-[#0c2b4d] text-sm text-gray-800 transition-all shadow-sm">
             @if(old('_method') === 'PUT')
                 @error('fullname') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
@@ -27,7 +27,7 @@
 
         <div>
             <label for="edit_username" class="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-1.5">Username <span class="text-red-500">*</span></label>
-            <input type="text" name="username" id="edit_username" x-model="editData.username" required
+            <input type="text" name="username" id="edit_username" x-model="editData.username" required maxlength="25"
                    class="w-full px-4 py-2.5 bg-white border border-gray-200 rounded-xl focus:outline-none focus:border-[#0c2b4d] focus:ring-1 focus:ring-[#0c2b4d] text-sm text-gray-800 transition-all shadow-sm">
             @if(old('_method') === 'PUT')
                 @error('username') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
@@ -38,7 +38,7 @@
     <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
         <div>
             <label for="edit_email" class="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-1.5">Email <span class="text-red-500">*</span></label>
-            <input type="email" name="email" id="edit_email" x-model="editData.email" required
+            <input type="email" name="email" id="edit_email" x-model="editData.email" required maxlength="100"
                    class="w-full px-4 py-2.5 bg-white border border-gray-200 rounded-xl focus:outline-none focus:border-[#0c2b4d] focus:ring-1 focus:ring-[#0c2b4d] text-sm text-gray-800 transition-all shadow-sm">
             @if(old('_method') === 'PUT')
                 @error('email') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
@@ -47,7 +47,8 @@
 
         <div>
             <label for="edit_nip" class="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-1.5">NIP (18 Digit) <span class="text-red-500">*</span></label>
-            <input type="text" name="nip" id="edit_nip" x-model="editData.nip" required
+            <input type="text" name="nip" id="edit_nip" x-model="editData.nip" required maxlength="18"
+                   oninput="this.value = this.value.replace(/[^0-9]/g, '')"
                    class="w-full px-4 py-2.5 bg-white border border-gray-200 rounded-xl focus:outline-none focus:border-[#0c2b4d] focus:ring-1 focus:ring-[#0c2b4d] text-sm text-gray-800 transition-all shadow-sm">
             @if(old('_method') === 'PUT')
                 @error('nip') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror

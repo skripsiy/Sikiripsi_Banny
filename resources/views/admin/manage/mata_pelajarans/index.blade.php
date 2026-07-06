@@ -26,7 +26,10 @@
         openCreateModal() {
             this.generateRandomCode();
             this.showCreateModal = true;
-        }
+        },
+        searchQuery: '',
+        filterJurusan: 'all',
+        filterStatus: 'all'
     }">
         <!-- Header Actions -->
         <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 sm:gap-0 mb-6">
@@ -39,15 +42,69 @@
 
         <!-- Status Notification -->
         @if (session('status'))
-            <div class="mb-6 p-4 bg-green-50 border border-green-200 text-green-700 rounded-lg text-sm font-medium shadow-sm">
-                {{ session('status') }}
+            <div x-data="{ show: true }" x-show="show" class="mb-6 p-4 bg-green-50 border border-green-200 text-green-700 rounded-xl text-sm font-medium shadow-sm flex items-center justify-between">
+                <span>{{ session('status') }}</span>
+                <button @click="show = false" class="text-green-600 hover:text-green-800 transition-colors p-1">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"></path>
+                    </svg>
+                </button>
             </div>
         @endif
         @if (session('error'))
-            <div class="mb-6 p-4 bg-red-50 border border-red-200 text-red-700 rounded-lg text-sm font-medium shadow-sm">
-                {{ session('error') }}
+            <div x-data="{ show: true }" x-show="show" class="mb-6 p-4 bg-red-50 border border-red-200 text-red-700 rounded-xl text-sm font-medium shadow-sm flex items-center justify-between">
+                <span>{{ session('error') }}</span>
+                <button @click="show = false" class="text-red-600 hover:text-red-800 transition-colors p-1">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"></path>
+                    </svg>
+                </button>
             </div>
         @endif
+
+        <!-- Search & Filter Panel -->
+        <div class="bg-white rounded-2xl border border-gray-100 p-4 mb-6 shadow-sm flex flex-col md:flex-row items-center justify-between gap-4">
+            <!-- Search Bar -->
+            <div class="relative w-full md:w-96">
+                <span class="absolute inset-y-0 left-0 flex items-center pl-3.5 pointer-events-none">
+                    <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                    </svg>
+                </span>
+                <input type="text" x-model="searchQuery" placeholder="Cari..." 
+                       class="w-full pl-10 pr-10 py-2.5 bg-gray-50 border border-gray-100 rounded-xl text-xs text-gray-800 focus:outline-none focus:bg-white focus:border-[#0c2b4d] focus:ring-1 focus:ring-[#0c2b4d] transition-all placeholder-gray-400">
+                <button x-show="searchQuery !== ''" @click="searchQuery = ''" style="display: none;"
+                        class="absolute inset-y-0 right-0 flex items-center pr-3 text-gray-400 hover:text-gray-600 transition-colors">
+                    <svg class="w-4.5 h-4.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"></path>
+                    </svg>
+                </button>
+            </div>
+
+            <!-- Filters -->
+            <div class="flex flex-wrap items-center gap-3 w-full md:w-auto">
+                <div class="flex items-center gap-2">
+                    <span class="text-xs font-bold text-gray-400 uppercase tracking-wider">Jurusan:</span>
+                    <select x-model="filterJurusan"
+                            class="px-4 py-2.5 bg-gray-50 border border-gray-150 rounded-xl text-xs text-gray-700 font-semibold focus:outline-none focus:bg-white focus:border-[#0c2b4d] transition-all shadow-sm cursor-pointer">
+                        <option value="all">Semua Jurusan</option>
+                        <option value="umum">Umum (Semua Jurusan)</option>
+                        @foreach ($jurusans as $jur)
+                            <option value="{{ $jur->id }}">{{ $jur->nama_jurusan }}</option>
+                        @endforeach
+                    </select>
+                </div>
+                <div class="flex items-center gap-2">
+                    <span class="text-xs font-bold text-gray-400 uppercase tracking-wider">Status:</span>
+                    <select x-model="filterStatus"
+                            class="px-4 py-2.5 bg-gray-50 border border-gray-150 rounded-xl text-xs text-gray-700 font-semibold focus:outline-none focus:bg-white focus:border-[#0c2b4d] transition-all shadow-sm cursor-pointer">
+                        <option value="all">Semua Status</option>
+                        <option value="active">Aktif</option>
+                        <option value="inactive">Tidak Aktif</option>
+                    </select>
+                </div>
+            </div>
+        </div>
 
         <div class="bg-white shadow-lg rounded-2xl border border-gray-100 overflow-hidden">
             <!-- Decorative Top Gradient Line -->
@@ -68,7 +125,18 @@
                             </thead>
                             <tbody class="bg-white divide-y divide-gray-100">
                                 @foreach ($mata_pelajarans as $subject)
-                                    <tr class="hover:bg-gray-50/50 transition-all duration-150">
+                                    <tr class="hover:bg-gray-50/50 transition-all duration-150"
+                                        x-show="(searchQuery === '' || 
+                                                 {{ json_encode(strtolower($subject->kode_pelajaran)) }}.includes(searchQuery.toLowerCase()) || 
+                                                 {{ json_encode(strtolower($subject->nama_pelajaran)) }}.includes(searchQuery.toLowerCase()) || 
+                                                 {{ json_encode(strtolower($subject->jurusan->nama_jurusan ?? '')) }}.includes(searchQuery.toLowerCase()) || 
+                                                 {{ json_encode(strtolower($subject->jurusan->kode_jurusan ?? '')) }}.includes(searchQuery.toLowerCase())) &&
+                                                (filterJurusan === 'all' || 
+                                                 (filterJurusan === 'umum' && {{ $subject->jurusan_id === null ? 'true' : 'false' }}) || 
+                                                 (filterJurusan === '{{ $subject->jurusan_id ?? '' }}')) &&
+                                                (filterStatus === 'all' || 
+                                                 (filterStatus === 'active' && {{ $subject->is_active ? 'true' : 'false' }}) ||
+                                                 (filterStatus === 'inactive' && {{ !$subject->is_active ? 'true' : 'false' }}))">
                                         <td class="px-6 py-4 whitespace-nowrap text-sm font-semibold text-gray-900">{{ $subject->kode_pelajaran }}</td>
                                         <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700 font-medium">{{ $subject->nama_pelajaran }}</td>
                                         <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">

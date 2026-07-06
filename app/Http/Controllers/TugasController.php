@@ -176,15 +176,7 @@ class TugasController extends Controller
 
         $learningModule->load('mataPelajaran');
         
-        $jurusanId = $learningModule->mataPelajaran->jurusan_id;
-        $query = Classroom::where('tahun_akademik_id', $learningModule->tahun_akademik_id)
-            ->where('is_active', true);
-        if ($jurusanId) {
-            $query->where('jurusan_id', $jurusanId);
-        }
-        $classroomIds = $query->pluck('id');
-
-        $murids = Murid::whereIn('classroom_id', $classroomIds)
+        $murids = Murid::where('classroom_id', $learningModule->classroom_id)
             ->with('user', 'classroom')
             ->get()
             ->sortBy(fn($m) => $m->user?->name ?? '')

@@ -110,6 +110,8 @@ class MataPelajaranManagementController extends Controller
 
     public function destroy(MataPelajaran $mataPelajaran)
     {
+        \App\Models\GuruMataPelajaran::where('mata_pelajaran_id', $mataPelajaran->id)->delete();
+
         $mataPelajaran->delete();
 
         return redirect()->route('admin.manage.mata_pelajarans.index')

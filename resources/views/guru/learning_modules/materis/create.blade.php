@@ -24,8 +24,16 @@
 
     <div>
         <label for="create_materi_content" class="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-1.5">Isi / Konten Materi</label>
-        <textarea name="content" id="create_materi_content" rows="6" required
-                  class="w-full px-4 py-2.5 bg-white border border-gray-200 rounded-xl focus:outline-none focus:border-[#0c2b4d] focus:ring-1 focus:ring-[#0c2b4d] text-sm text-gray-800 transition-all shadow-sm">{{ !old('_method') ? old('content') : '' }}</textarea>
+        <div class="prose max-w-none">
+            <textarea name="content" id="create_materi_content" required
+                      x-init="ClassicEditor.create($el).then(editor => {
+                          editor.model.document.on('change:data', () => {
+                              $el.value = editor.getData();
+                              $el.dispatchEvent(new Event('input'));
+                          });
+                      })"
+                      class="w-full px-4 py-2.5 bg-white border border-gray-200 rounded-xl focus:outline-none focus:border-[#0c2b4d] focus:ring-1 focus:ring-[#0c2b4d] text-sm text-gray-800 transition-all shadow-sm">{{ !old('_method') ? old('content') : '' }}</textarea>
+        </div>
         @if(!old('_method'))
             @error('content') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
         @endif

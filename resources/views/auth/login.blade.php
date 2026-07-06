@@ -77,6 +77,7 @@
                                    value="{{ old('email') }}"
                                    placeholder="Email"
                                    required
+                                   maxlength="100"
                                    autofocus
                                    autocomplete="username"
                                    class="w-full px-4 py-3 bg-white border border-gray-200 rounded-lg focus:outline-none focus:border-[#0c2b4d] focus:ring-1 focus:ring-[#0c2b4d] placeholder-gray-400 text-gray-800 transition-all shadow-sm @error('email') border-red-500 focus:border-red-500 focus:ring-red-500 @enderror">
@@ -92,11 +93,20 @@
                                    name="password"
                                    placeholder="Password"
                                    required
+                                   maxlength="50"
                                    autocomplete="current-password"
                                    class="w-full px-4 py-3 bg-white border border-gray-200 rounded-lg focus:outline-none focus:border-[#0c2b4d] focus:ring-1 focus:ring-[#0c2b4d] placeholder-gray-400 text-gray-800 transition-all shadow-sm @error('password') border-red-500 focus:border-red-500 focus:ring-red-500 @enderror">
                             @error('password')
                                 <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
                             @enderror
+                        </div>
+
+                        <!-- First Time Login Alert -->
+                        <div class="p-3 bg-blue-50 border border-blue-100 rounded-xl text-xs text-blue-700 leading-normal flex items-start gap-2 select-none shadow-sm">
+                            <svg class="w-4 h-4 text-blue-600 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M11.25 11.25l.041-.02a.75.75 0 111.063.852l-.708 2.836a.75.75 0 001.063.852l.041-.028M12 8.25h.007v.008H12V8.25z"></path>
+                            </svg>
+                            <span>Jika akun Anda baru pertama kali masuk/login, gunakan password default: <strong class="font-bold bg-blue-100 px-1 py-0.5 rounded text-blue-800">ChangeMe@123</strong>.</span>
                         </div>
 
                         <!-- Sign In Button -->

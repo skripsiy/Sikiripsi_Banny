@@ -112,11 +112,14 @@
                             </div>
 
                             <div class="pt-4 border-t border-gray-100 flex items-center justify-between text-[11px] text-gray-500 font-medium">
-                                <span class="text-xs text-gray-700 font-extrabold truncate max-w-[140px] flex items-center gap-1" title="{{ $module->guru->user->name ?? 'Guru' }}">
+                                <span class="text-xs text-gray-700 font-extrabold truncate max-w-[145px] flex items-center gap-1.5" title="{{ $module->guru->user->name ?? 'Guru' }} ({{ $module->guru->user->email ?? '-' }})">
                                     <svg class="w-3.5 h-3.5 text-gray-400 flex-shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 6a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0ZM4.501 20.118a7.5 7.5 0 0 1 14.998 0A17.933 17.933 0 0 1 12 21.75c-2.676 0-5.216-.584-7.499-1.632Z" />
                                     </svg>
-                                    <span class="truncate">{{ $module->guru->user->name ?? 'Guru' }}</span>
+                                    <div class="flex flex-col truncate min-w-0">
+                                        <span class="truncate leading-tight">{{ $module->guru->user->name ?? 'Guru' }}</span>
+                                        <span class="text-[9px] text-gray-400 font-medium truncate leading-tight mt-0.5">{{ $module->guru->user->email ?? '-' }}</span>
+                                    </div>
                                 </span>
                                 <span class="text-gray-450 whitespace-nowrap bg-gray-50 px-2 py-1 rounded-lg border border-gray-100 text-[10px]">
                                     {{ $module->materis_count }} Mat • {{ $module->tugas_count }} Tug • {{ $module->quizzes_count }} Kuis

@@ -42,30 +42,28 @@ Route::get('/dashboard', function () {
         if ($murid) {
             $classroom = $murid->classroom;
             if ($classroom) {
-                $modules = \App\Models\LearningModule::where('tahun_akademik_id', $classroom->tahun_akademik_id)
-                    ->whereHas('mataPelajaran', function ($query) use ($classroom) {
-                        $query->where('is_active', true)
-                              ->where(function ($q) use ($classroom) {
-                                  $q->whereNull('jurusan_id')
-                                    ->orWhere('jurusan_id', $classroom->jurusan_id);
-                              });
-                    })->get();
+                $modules = \App\Models\LearningModule::where('classroom_id', $classroom->id)->get();
 
                 $data['total_modul'] = $modules->count();
 
                 $moduleIds = $modules->pluck('id');
-                $tugasList = \App\Models\LearningModuleTugas::whereIn('learning_module_id', $moduleIds)->get();
+                $tugasList = \App\Models\LearningModuleTugas::whereIn('learning_module_id', $moduleIds)
+                    ->with(['learningModule.mataPelajaran'])
+                    ->get();
                 $submittedTugasIds = \App\Models\TugasSubmission::where('murid_id', $murid->id)->pluck('learning_module_tugas_id')->toArray();
 
+                $unsubmittedTasksList = [];
                 $unsubmittedCount = 0;
                 foreach ($tugasList as $t) {
                     if (!in_array($t->id, $submittedTugasIds)) {
                         if (!$t->due_date || $t->due_date->isFuture()) {
                             $unsubmittedCount++;
+                            $unsubmittedTasksList[] = $t;
                         }
                     }
                 }
                 $data['unsubmitted_tasks'] = $unsubmittedCount;
+                $data['unsubmitted_tasks_list'] = $unsubmittedTasksList;
 
                 $absensis = \App\Models\LearningModuleAbsensi::where('murid_id', $murid->id)->get();
                 $totalHadir = $absensis->where('status', 'hadir')->count();
@@ -74,11 +72,13 @@ Route::get('/dashboard', function () {
             } else {
                 $data['total_modul'] = 0;
                 $data['unsubmitted_tasks'] = 0;
+                $data['unsubmitted_tasks_list'] = [];
                 $data['attendance_percentage'] = 100;
             }
         } else {
             $data['total_modul'] = 0;
             $data['unsubmitted_tasks'] = 0;
+            $data['unsubmitted_tasks_list'] = [];
             $data['attendance_percentage'] = 100;
         }
     }

@@ -189,6 +189,59 @@
                     </div>
                 </div>
             </div>
+
+            <!-- Unsubmitted Tasks List for Student -->
+            <div class="mt-8 bg-white rounded-2xl border border-gray-150 shadow-lg overflow-hidden">
+                <div class="h-1.5 bg-gradient-to-r from-rose-500 to-pink-600"></div>
+                <div class="p-6">
+                    <h3 class="text-base font-bold text-gray-800 mb-4 flex items-center gap-2">
+                        <svg class="w-5 h-5 text-rose-500 animate-pulse" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path>
+                        </svg>
+                        Tugas yang Harus Dikerjakan
+                    </h3>
+                    @if (count($data['unsubmitted_tasks_list']) > 0)
+                        <div class="space-y-4">
+                            @foreach ($data['unsubmitted_tasks_list'] as $task)
+                                <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center p-4 bg-gray-50 border border-gray-100 rounded-xl hover:shadow-md transition-all gap-4">
+                                    <div>
+                                        <div class="flex flex-wrap items-center gap-2 mb-1.5">
+                                            <span class="bg-blue-100 text-blue-800 text-[10px] font-bold px-2 py-0.5 rounded uppercase">
+                                                {{ $task->learningModule->mataPelajaran->nama_pelajaran ?? 'Pelajaran' }}
+                                            </span>
+                                            <span class="text-[10px] text-gray-400 font-medium">
+                                                {{ $task->learningModule->title }}
+                                            </span>
+                                        </div>
+                                        <h4 class="text-sm font-bold text-gray-800">{{ $task->title }}</h4>
+                                        <p class="text-xs text-gray-500 mt-1 line-clamp-1">{!! strip_tags($task->instructions) !!}</p>
+                                    </div>
+                                    <div class="flex items-center gap-4 w-full sm:w-auto justify-between sm:justify-end">
+                                        <div class="text-left sm:text-right select-none">
+                                            <span class="text-[10px] text-gray-400 uppercase tracking-wider block font-bold">Batas Waktu</span>
+                                            <span class="text-xs font-bold text-rose-600">
+                                                {{ $task->due_date ? $task->due_date->translatedFormat('d F Y, H:i') : 'Tanpa Batas Waktu' }}
+                                            </span>
+                                        </div>
+                                        <a href="{{ route('murid.learning-modules.tugas.index', $task->learning_module_id) }}" 
+                                           class="bg-[#0c2b4d] hover:bg-[#07192d] text-white font-bold px-4 py-2 rounded-lg text-xs transition-colors cursor-pointer select-none whitespace-nowrap">
+                                            Kerjakan
+                                        </a>
+                                    </div>
+                                </div>
+                            @endforeach
+                        </div>
+                    @else
+                        <div class="flex flex-col items-center justify-center py-8 text-center bg-gray-50 border border-gray-100 border-dashed rounded-xl">
+                            <svg class="w-12 h-12 text-emerald-500 mb-3" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                            </svg>
+                            <h4 class="text-sm font-bold text-gray-800 mb-0.5">Semua Tugas Selesai!</h4>
+                            <p class="text-xs text-gray-400 max-w-xs">Hebat! Tidak ada tugas aktif yang belum dikumpulkan saat ini.</p>
+                        </div>
+                    @endif
+                </div>
+            </div>
         @endif
 
     </div>

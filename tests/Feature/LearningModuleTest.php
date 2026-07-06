@@ -115,7 +115,6 @@ describe('Learning Module Management', function () {
             'mata_pelajaran_id' => $this->mataPelajaran1->id,
             'tahun_akademik_id' => $this->academicYear->id,
             'classroom_id' => $this->classroom->id,
-            'title' => 'Materi Pertemuan 1',
             'description' => 'Materi pengenalan aljabar dasar.',
         ]);
 
@@ -129,7 +128,7 @@ describe('Learning Module Management', function () {
             'mata_pelajaran_id' => $this->mataPelajaran1->id,
             'tahun_akademik_id' => $this->academicYear->id,
             'classroom_id' => $this->classroom->id,
-            'title' => 'Materi Pertemuan 1',
+            'title' => $this->mataPelajaran1->nama_pelajaran,
             'description' => 'Materi pengenalan aljabar dasar.',
         ]);
     });
@@ -139,7 +138,6 @@ describe('Learning Module Management', function () {
             'mata_pelajaran_id' => $this->mataPelajaran2->id, // Subject assigned to guru2
             'tahun_akademik_id' => $this->academicYear->id,
             'classroom_id' => $this->classroom->id,
-            'title' => 'Materi Pertemuan 1',
             'description' => 'Materi pengenalan aljabar dasar.',
         ]);
 
@@ -162,7 +160,6 @@ describe('Learning Module Management', function () {
             'mata_pelajaran_id' => $this->mataPelajaran1->id,
             'tahun_akademik_id' => $this->academicYear->id,
             'classroom_id' => $this->classroom->id,
-            'title' => 'Judul Baru',
             'description' => 'Deskripsi baru.',
         ]);
 
@@ -172,7 +169,7 @@ describe('Learning Module Management', function () {
         $this->assertDatabaseHas('learning_modules', [
             'id' => $module->id,
             'classroom_id' => $this->classroom->id,
-            'title' => 'Judul Baru',
+            'title' => $this->mataPelajaran1->nama_pelajaran,
             'description' => 'Deskripsi baru.',
         ]);
     });

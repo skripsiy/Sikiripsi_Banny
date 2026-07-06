@@ -5,7 +5,6 @@ namespace App\Imports;
 use App\Models\User;
 use App\Models\Murid;
 use App\Models\Classroom;
-use App\Models\Semester;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\DB;
@@ -17,14 +16,20 @@ class MuridsImport implements ToCollection, WithHeadingRow, WithValidation
 {
     public function collection(Collection $rows)
     {
-        $activeSemester = Semester::where('is_active', true)->first() ?? Semester::first();
-        $activeTahunAkademikId = $activeSemester?->tahun_akademik_id;
-
-        DB::transaction(function () use ($rows, $activeTahunAkademikId) {
+        DB::transaction(function () use ($rows) {
             foreach ($rows as $row) {
                 $classroom = Classroom::where('nama_kelas', $row['class_room'])
-                    ->where('tahun_akademik_id', $activeTahunAkademikId)
+                    ->where('is_active', true)
+                    ->whereHas('tahunAkademik', function ($query) {
+                        $query->where('is_active', true);
+                    })
+                    ->orderByDesc('tahun_akademik_id')
                     ->first();
+
+                // Fallback in case the validation passed but some edge case occurred
+                if (!$classroom) {
+                    $classroom = Classroom::where('nama_kelas', $row['class_room'])->first();
+                }
 
                 $user = User::create([
                     'username'             => $row['username'] ?? null,
@@ -61,6 +66,38 @@ class MuridsImport implements ToCollection, WithHeadingRow, WithValidation
         if (isset($data['no_telpon'])) {
             $data['no_telpon'] = (string)$data['no_telpon'];
         }
+
+        if (isset($data['tanggal_lahir'])) {
+            $val = $data['tanggal_lahir'];
+            if ($val instanceof \DateTimeInterface) {
+                $data['tanggal_lahir'] = $val->format('Y-m-d');
+            } elseif (is_numeric($val)) {
+                try {
+                    $date = \PhpOffice\PhpSpreadsheet\Shared\Date::excelToDateTimeObject($val);
+                    $data['tanggal_lahir'] = $date->format('Y-m-d');
+                } catch (\Exception $e) {
+                }
+            } elseif (is_string($val) && trim($val) !== '') {
+                $val = trim($val);
+                $parsed = false;
+                $formats = ['Y-m-d', 'd-m-Y', 'd/m/Y', 'm/d/Y', 'm-d-Y'];
+                foreach ($formats as $format) {
+                    $d = \DateTime::createFromFormat($format, $val);
+                    if ($d && $d->format($format) === $val) {
+                        $data['tanggal_lahir'] = $d->format('Y-m-d');
+                        $parsed = true;
+                        break;
+                    }
+                }
+                if (!$parsed) {
+                    $timestamp = strtotime(str_replace('/', '-', $val));
+                    if ($timestamp !== false) {
+                        $data['tanggal_lahir'] = date('Y-m-d', $timestamp);
+                    }
+                }
+            }
+        }
+
         return $data;
     }
 
@@ -80,14 +117,11 @@ class MuridsImport implements ToCollection, WithHeadingRow, WithValidation
                 'required',
                 'string',
                 function ($attribute, $value, $fail) {
-                    $activeSemester = Semester::where('is_active', true)->first() ?? Semester::first();
-                    if (!$activeSemester) {
-                        $fail('Tidak ada Semester yang tersedia.');
-                        return;
-                    }
-                    $activeTahunAkademikId = $activeSemester->tahun_akademik_id;
                     $exists = Classroom::where('nama_kelas', $value)
-                        ->where('tahun_akademik_id', $activeTahunAkademikId)
+                        ->where('is_active', true)
+                        ->whereHas('tahunAkademik', function ($query) {
+                            $query->where('is_active', true);
+                        })
                         ->whereNull('deleted_at')
                         ->exists();
                     if (!$exists) {

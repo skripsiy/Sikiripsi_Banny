@@ -39,6 +39,19 @@ describe('Learning Module Management', function () {
             'is_active' => true,
         ]);
 
+        $this->jurusan = \App\Models\Jurusan::create([
+            'kode_jurusan' => 'RPL',
+            'nama_jurusan' => 'Rekayasa Perangkat Lunak',
+            'is_active' => true,
+        ]);
+
+        $this->classroom = \App\Models\Classroom::create([
+            'nama_kelas' => 'XII RPL 1',
+            'jurusan_id' => $this->jurusan->id,
+            'tahun_akademik_id' => $this->academicYear->id,
+            'is_active' => true,
+        ]);
+
         // Create mata_pelajarans
         $this->mataPelajaran1 = MataPelajaran::create([
             'kode_pelajaran' => 'MTK01',
@@ -87,6 +100,7 @@ describe('Learning Module Management', function () {
             'guru_id' => $this->guru1->id,
             'mata_pelajaran_id' => $this->mataPelajaran1->id,
             'tahun_akademik_id' => $this->academicYear->id,
+            'classroom_id' => $this->classroom->id,
             'title' => 'Modul Edit',
             'description' => 'Materi edit.',
         ]);
@@ -100,6 +114,7 @@ describe('Learning Module Management', function () {
         $response = $this->actingAs($this->guruUser1)->post(route('guru.learning-modules.store'), [
             'mata_pelajaran_id' => $this->mataPelajaran1->id,
             'tahun_akademik_id' => $this->academicYear->id,
+            'classroom_id' => $this->classroom->id,
             'title' => 'Materi Pertemuan 1',
             'description' => 'Materi pengenalan aljabar dasar.',
         ]);
@@ -113,6 +128,7 @@ describe('Learning Module Management', function () {
             'guru_id' => $this->guru1->id,
             'mata_pelajaran_id' => $this->mataPelajaran1->id,
             'tahun_akademik_id' => $this->academicYear->id,
+            'classroom_id' => $this->classroom->id,
             'title' => 'Materi Pertemuan 1',
             'description' => 'Materi pengenalan aljabar dasar.',
         ]);
@@ -122,6 +138,7 @@ describe('Learning Module Management', function () {
         $response = $this->actingAs($this->guruUser1)->post(route('guru.learning-modules.store'), [
             'mata_pelajaran_id' => $this->mataPelajaran2->id, // Subject assigned to guru2
             'tahun_akademik_id' => $this->academicYear->id,
+            'classroom_id' => $this->classroom->id,
             'title' => 'Materi Pertemuan 1',
             'description' => 'Materi pengenalan aljabar dasar.',
         ]);
@@ -136,6 +153,7 @@ describe('Learning Module Management', function () {
             'guru_id' => $this->guru1->id,
             'mata_pelajaran_id' => $this->mataPelajaran1->id,
             'tahun_akademik_id' => $this->academicYear->id,
+            'classroom_id' => $this->classroom->id,
             'title' => 'Judul Lama',
             'description' => 'Deskripsi lama.',
         ]);
@@ -143,6 +161,7 @@ describe('Learning Module Management', function () {
         $response = $this->actingAs($this->guruUser1)->put(route('guru.learning-modules.update', $module->id), [
             'mata_pelajaran_id' => $this->mataPelajaran1->id,
             'tahun_akademik_id' => $this->academicYear->id,
+            'classroom_id' => $this->classroom->id,
             'title' => 'Judul Baru',
             'description' => 'Deskripsi baru.',
         ]);
@@ -152,6 +171,7 @@ describe('Learning Module Management', function () {
 
         $this->assertDatabaseHas('learning_modules', [
             'id' => $module->id,
+            'classroom_id' => $this->classroom->id,
             'title' => 'Judul Baru',
             'description' => 'Deskripsi baru.',
         ]);
@@ -162,6 +182,7 @@ describe('Learning Module Management', function () {
             'guru_id' => $this->guru2->id, // Owned by guru2
             'mata_pelajaran_id' => $this->mataPelajaran2->id,
             'tahun_akademik_id' => $this->academicYear->id,
+            'classroom_id' => $this->classroom->id,
             'title' => 'Modul Guru 2',
             'description' => 'Materi guru 2.',
         ]);
@@ -169,6 +190,7 @@ describe('Learning Module Management', function () {
         $response = $this->actingAs($this->guruUser1)->put(route('guru.learning-modules.update', $module->id), [
             'mata_pelajaran_id' => $this->mataPelajaran1->id,
             'tahun_akademik_id' => $this->academicYear->id,
+            'classroom_id' => $this->classroom->id,
             'title' => 'Diubah Guru 1',
             'description' => 'Mencoba meretas.',
         ]);
@@ -185,6 +207,7 @@ describe('Learning Module Management', function () {
             'guru_id' => $this->guru1->id,
             'mata_pelajaran_id' => $this->mataPelajaran1->id,
             'tahun_akademik_id' => $this->academicYear->id,
+            'classroom_id' => $this->classroom->id,
             'title' => 'Modul Hapus',
             'description' => 'Materi hapus.',
         ]);
@@ -202,6 +225,7 @@ describe('Learning Module Management', function () {
             'guru_id' => $this->guru2->id, // Owned by guru2
             'mata_pelajaran_id' => $this->mataPelajaran2->id,
             'tahun_akademik_id' => $this->academicYear->id,
+            'classroom_id' => $this->classroom->id,
             'title' => 'Modul Guru 2',
             'description' => 'Materi guru 2.',
         ]);

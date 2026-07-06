@@ -11,6 +11,7 @@
             id: '{{ old('id') ?? '' }}',
             mata_pelajaran_id: '{{ old('mata_pelajaran_id') ?? '' }}',
             tahun_akademik_id: '{{ old('tahun_akademik_id') ?? '' }}',
+            classroom_id: '{{ old('classroom_id') ?? '' }}',
             title: {{ json_encode(old('title') ?? '') }},
             description: {{ json_encode(old('description') ?? '') }}
         },
@@ -130,6 +131,7 @@
                                             id: '{{ $module->id }}',
                                             mata_pelajaran_id: '{{ $module->mata_pelajaran_id }}',
                                             tahun_akademik_id: '{{ $module->tahun_akademik_id }}',
+                                            classroom_id: '{{ $module->classroom_id }}',
                                             title: {{ json_encode($module->title) }},
                                             description: {{ json_encode($module->description) }}
                                         };
@@ -157,10 +159,15 @@
                                 </div>
                             </div>
 
-                            <div class="mt-auto">
+                            <div class="mt-auto flex gap-1.5 flex-wrap">
                                 <span class="text-[10px] font-bold text-white/90 bg-white/20 px-2 py-0.5 rounded-md backdrop-blur-sm tracking-wide">
                                     {{ $module->tahunAkademik->tahun_ajaran ?? '-' }}
                                 </span>
+                                @if($module->classroom)
+                                    <span class="text-[10px] font-bold text-white bg-emerald-500/80 px-2 py-0.5 rounded-md tracking-wide">
+                                        {{ $module->classroom->nama_kelas }}
+                                    </span>
+                                @endif
                             </div>
                         </div>
 

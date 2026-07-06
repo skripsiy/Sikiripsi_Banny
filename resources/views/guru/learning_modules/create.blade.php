@@ -46,6 +46,22 @@
     </div>
 
     <div>
+        <label for="create_classroom_id" class="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-1.5">Kelas</label>
+        <select name="classroom_id" id="create_classroom_id" required
+                class="w-full px-4 py-2.5 bg-white border border-gray-200 rounded-xl focus:outline-none focus:border-[#0c2b4d] focus:ring-1 focus:ring-[#0c2b4d] text-sm text-gray-800 transition-all shadow-sm">
+            <option value="">-- Pilih Kelas --</option>
+            @foreach ($classrooms as $cls)
+                <option value="{{ $cls->id }}" {{ (!old('_method') && old('classroom_id') == $cls->id) ? 'selected' : '' }}>
+                    {{ $cls->nama_kelas }}
+                </option>
+            @endforeach
+        </select>
+        @if(!old('_method'))
+            @error('classroom_id') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
+        @endif
+    </div>
+
+    <div>
         <label for="create_title" class="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-1.5">Judul Modul</label>
         <input type="text" name="title" id="create_title" value="{{ !old('_method') ? old('title') : '' }}" required
                class="w-full px-4 py-2.5 bg-white border border-gray-200 rounded-xl focus:outline-none focus:border-[#0c2b4d] focus:ring-1 focus:ring-[#0c2b4d] text-sm text-gray-800 transition-all shadow-sm">

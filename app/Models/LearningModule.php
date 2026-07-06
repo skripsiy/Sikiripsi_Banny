@@ -7,10 +7,15 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
-#[Fillable(['guru_id', 'mata_pelajaran_id', 'tahun_akademik_id', 'title', 'description'])]
+#[Fillable(['guru_id', 'mata_pelajaran_id', 'tahun_akademik_id', 'classroom_id', 'title', 'description'])]
 class LearningModule extends Model
 {
     use HasFactory, SoftDeletes;
+
+    public function classroom()
+    {
+        return $this->belongsTo(Classroom::class);
+    }
 
     public function guru()
     {
@@ -19,7 +24,7 @@ class LearningModule extends Model
 
     public function mataPelajaran()
     {
-        return $this->belongsTo(MataPelajaran::class, 'mata_pelajaran_id');
+        return $this->belongsTo(MataPelajaran::class, 'mata_pelajaran_id')->withTrashed();
     }
 
     public function tahunAkademik()

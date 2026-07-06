@@ -20,7 +20,7 @@ class GuruMataPelajaran extends Model
 
     public function mataPelajaran()
     {
-        return $this->belongsTo(MataPelajaran::class, 'mata_pelajaran_id');
+        return $this->belongsTo(MataPelajaran::class, 'mata_pelajaran_id')->withTrashed();
     }
 
     public function guru()

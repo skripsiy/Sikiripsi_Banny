@@ -18,7 +18,7 @@
         <div class="w-full max-w-md bg-white rounded-2xl shadow-xl border border-gray-100 overflow-hidden relative">
             <!-- Decorative concentric ring accent -->
             <div class="absolute -top-24 -right-24 w-48 h-48 rounded-full border-[12px] border-blue-500/5 pointer-events-none"></div>
-            
+
             <div class="p-4 sm:p-6 lg:p-8">
                 <!-- Icon and Title -->
                 <div class="flex flex-col items-center mb-6 text-center">
@@ -47,11 +47,11 @@
                     <!-- New Password -->
                     <div>
                         <label for="password" class="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-2">Password Baru <span class="text-red-500">*</span></label>
-                        <input id="password" 
-                               type="password" 
-                               name="password" 
+                        <input id="password"
+                               type="password"
+                               name="password"
                                placeholder="Min. 8 karakter, kombinasi huruf & angka"
-                               required 
+                               required
                                class="w-full px-4 py-3 bg-white border border-gray-200 rounded-xl focus:outline-none focus:border-[#0c2b4d] focus:ring-1 focus:ring-[#0c2b4d] placeholder-gray-400 text-gray-800 transition-all shadow-sm @error('password') border-red-500 focus:border-red-500 focus:ring-red-500 @enderror">
                         @error('password')
                             <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
@@ -61,11 +61,11 @@
                     <!-- Confirm Password -->
                     <div>
                         <label for="password_confirmation" class="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-2">Konfirmasi Password Baru <span class="text-red-500">*</span></label>
-                        <input id="password_confirmation" 
-                               type="password" 
-                               name="password_confirmation" 
+                        <input id="password_confirmation"
+                               type="password"
+                               name="password_confirmation"
                                placeholder="Ulangi password baru"
-                               required 
+                               required
                                class="w-full px-4 py-3 bg-white border border-gray-200 rounded-xl focus:outline-none focus:border-[#0c2b4d] focus:ring-1 focus:ring-[#0c2b4d] placeholder-gray-400 text-gray-800 transition-all shadow-sm">
                     </div>
 

@@ -52,8 +52,9 @@ class LearningModuleController extends Controller
 
         $semesters = $academicYears;
         $selectedTahunAkademikId = $activeAcademicYear?->id;
+        $classrooms = Classroom::where('is_active', true)->orderBy('nama_kelas')->get();
 
-        return view('guru.learning_modules.index', compact('learningModules', 'mata_pelajarans', 'semesters', 'academicYears', 'selectedAcademicYearId', 'selectedSemester', 'selectedTahunAkademikId'));
+        return view('guru.learning_modules.index', compact('learningModules', 'mata_pelajarans', 'semesters', 'academicYears', 'selectedAcademicYearId', 'selectedSemester', 'selectedTahunAkademikId', 'classrooms'));
     }
 
     public function create()
@@ -73,8 +74,9 @@ class LearningModuleController extends Controller
 
         $semesters = $academicYears;
         $selectedTahunAkademikId = $activeAcademicYear?->id;
+        $classrooms = Classroom::where('is_active', true)->orderBy('nama_kelas')->get();
 
-        return view('guru.learning_modules.create', compact('mata_pelajarans', 'semesters', 'selectedTahunAkademikId'));
+        return view('guru.learning_modules.create', compact('mata_pelajarans', 'semesters', 'selectedTahunAkademikId', 'classrooms'));
     }
 
     public function store(Request $request)
@@ -87,6 +89,7 @@ class LearningModuleController extends Controller
         $request->validate([
             'mata_pelajaran_id' => ['required', 'exists:mata_pelajarans,id'],
             'tahun_akademik_id' => ['required', 'exists:tahun_akademiks,id'],
+            'classroom_id' => ['required', 'exists:classrooms,id'],
             'title' => ['required', 'string', 'max:50'],
             'description' => ['required', 'string'],
         ], [
@@ -94,6 +97,8 @@ class LearningModuleController extends Controller
             'mata_pelajaran_id.exists' => 'Mata pelajaran tidak valid.',
             'tahun_akademik_id.required' => 'Tahun ajaran wajib dipilih.',
             'tahun_akademik_id.exists' => 'Tahun ajaran tidak valid.',
+            'classroom_id.required' => 'Kelas wajib dipilih.',
+            'classroom_id.exists' => 'Kelas tidak valid.',
             'title.required' => 'Judul modul wajib diisi.',
             'title.max' => 'Judul modul maksimal 50 karakter.',
             'description.required' => 'Deskripsi modul wajib diisi.',
@@ -106,10 +111,19 @@ class LearningModuleController extends Controller
                 ->withInput();
         }
 
+        // Validate that classroom belongs to the selected academic year
+        $classroom = Classroom::find($request->classroom_id);
+        if ($classroom && $classroom->tahun_akademik_id != $request->tahun_akademik_id) {
+            return redirect()->back()
+                ->withErrors(['classroom_id' => 'Kelas yang dipilih tidak sesuai dengan Tahun Ajaran yang dipilih.'])
+                ->withInput();
+        }
+
         LearningModule::create([
             'guru_id' => $guru->id,
             'mata_pelajaran_id' => $request->mata_pelajaran_id,
             'tahun_akademik_id' => $request->tahun_akademik_id,
+            'classroom_id' => $request->classroom_id,
             'title' => $request->title,
             'description' => $request->description,
         ]);
@@ -128,6 +142,7 @@ class LearningModuleController extends Controller
         $request->validate([
             'mata_pelajaran_id' => ['required', 'exists:mata_pelajarans,id'],
             'tahun_akademik_id' => ['required', 'exists:tahun_akademiks,id'],
+            'classroom_id' => ['required', 'exists:classrooms,id'],
             'title' => ['required', 'string', 'max:50'],
             'description' => ['required', 'string'],
         ], [
@@ -135,6 +150,8 @@ class LearningModuleController extends Controller
             'mata_pelajaran_id.exists' => 'Mata pelajaran tidak valid.',
             'tahun_akademik_id.required' => 'Tahun ajaran wajib dipilih.',
             'tahun_akademik_id.exists' => 'Tahun ajaran tidak valid.',
+            'classroom_id.required' => 'Kelas wajib dipilih.',
+            'classroom_id.exists' => 'Kelas tidak valid.',
             'title.required' => 'Judul modul wajib diisi.',
             'title.max' => 'Judul modul maksimal 50 karakter.',
             'description.required' => 'Deskripsi modul wajib diisi.',
@@ -147,9 +164,18 @@ class LearningModuleController extends Controller
                 ->withInput();
         }
 
+        // Validate that classroom belongs to the selected academic year
+        $classroom = Classroom::find($request->classroom_id);
+        if ($classroom && $classroom->tahun_akademik_id != $request->tahun_akademik_id) {
+            return redirect()->back()
+                ->withErrors(['classroom_id' => 'Kelas yang dipilih tidak sesuai dengan Tahun Ajaran yang dipilih.'])
+                ->withInput();
+        }
+
         $data = [
             'mata_pelajaran_id' => $request->mata_pelajaran_id,
             'tahun_akademik_id' => $request->tahun_akademik_id,
+            'classroom_id' => $request->classroom_id,
             'title' => $request->title,
             'description' => $request->description,
         ];
@@ -175,8 +201,9 @@ class LearningModuleController extends Controller
             ->get();
 
         $semesters = $academicYears;
+        $classrooms = Classroom::where('is_active', true)->orderBy('nama_kelas')->get();
 
-        return view('guru.learning_modules.edit', compact('learningModule', 'mata_pelajarans', 'semesters'));
+        return view('guru.learning_modules.edit', compact('learningModule', 'mata_pelajarans', 'semesters', 'classrooms'));
     }
 
     public function destroy(LearningModule $learningModule)
@@ -233,16 +260,7 @@ class LearningModuleController extends Controller
         $recentUjians = LearningModuleUjian::where('learning_module_id', $learningModule->id)
             ->where('semester_id', $selectedSemesterId)->latest()->limit(10)->get();
 
-        // Get student list based on subject's jurusan and module's academic year
-        $jurusanId = $learningModule->mataPelajaran->jurusan_id;
-        $query = Classroom::where('tahun_akademik_id', $learningModule->tahun_akademik_id)
-            ->where('is_active', true);
-        if ($jurusanId) {
-            $query->where('jurusan_id', $jurusanId);
-        }
-        $classroomIds = $query->pluck('id');
-
-        $muridsCount = Murid::whereIn('classroom_id', $classroomIds)->count();
+        $muridsCount = Murid::where('classroom_id', $learningModule->classroom_id)->count();
 
         // Map them to a unified activity feed
         $materisMapped = $recentMateris->map(fn($item) => [
@@ -342,16 +360,9 @@ class LearningModuleController extends Controller
             $selectedSemester = $semesters->where('is_active', true)->first() ?? $semesters->first();
         }
 
-        // Get student list based on subject's jurusan and module's academic year
-        $jurusanId = $learningModule->mataPelajaran->jurusan_id;
-        $query = Classroom::where('tahun_akademik_id', $learningModule->tahun_akademik_id)
-            ->where('is_active', true);
-        if ($jurusanId) {
-            $query->where('jurusan_id', $jurusanId);
-        }
-        $classroomIds = $query->pluck('id');
+        $classroom = $learningModule->classroom;
 
-        $murids = Murid::whereIn('classroom_id', $classroomIds)
+        $murids = Murid::where('classroom_id', $classroom->id)
             ->with('user', 'classroom')
             ->get()
             ->sortBy(fn($m) => $m->user?->name ?? '')
@@ -481,16 +492,9 @@ class LearningModuleController extends Controller
         $semesters = Semester::where('tahun_akademik_id', $learningModule->tahun_akademik_id)->get();
         $selectedSemester = $semesters->where('id', request('semester_id'))->first() ?? $semesters->where('is_active', true)->first() ?? $semesters->first();
 
-        // Get student list based on subject's jurusan and module's academic year
-        $jurusanId = $learningModule->mataPelajaran->jurusan_id;
-        $query = Classroom::where('tahun_akademik_id', $learningModule->tahun_akademik_id)
-            ->where('is_active', true);
-        if ($jurusanId) {
-            $query->where('jurusan_id', $jurusanId);
-        }
-        $classroomIds = $query->pluck('id');
+        $classroom = $learningModule->classroom;
 
-        $murids = Murid::whereIn('classroom_id', $classroomIds)
+        $murids = Murid::where('classroom_id', $classroom->id)
             ->with('user', 'classroom')
             ->get()
             ->sortBy(fn($m) => $m->user?->name ?? '')
@@ -538,15 +542,9 @@ class LearningModuleController extends Controller
         $semesters = Semester::where('tahun_akademik_id', $learningModule->tahun_akademik_id)->get();
         $selectedSemester = $semesters->where('id', request('semester_id'))->first() ?? $semesters->where('is_active', true)->first() ?? $semesters->first();
 
-        $jurusanId = $learningModule->mataPelajaran->jurusan_id;
-        $query = Classroom::where('tahun_akademik_id', $learningModule->tahun_akademik_id)
-            ->where('is_active', true);
-        if ($jurusanId) {
-            $query->where('jurusan_id', $jurusanId);
-        }
-        $classroomIds = $query->pluck('id');
+        $classroom = $learningModule->classroom;
 
-        $murids = Murid::whereIn('classroom_id', $classroomIds)
+        $murids = Murid::where('classroom_id', $classroom->id)
             ->with('user', 'classroom')
             ->get()
             ->sortBy(fn($m) => $m->user?->name ?? '')
@@ -564,22 +562,23 @@ class LearningModuleController extends Controller
         $sheet->setCellValue('A1', 'REKAPITULASI ABSENSI SISWA');
         $sheet->setCellValue('A2', 'Modul: ' . $learningModule->title);
         $sheet->setCellValue('A3', 'Mata Pelajaran: ' . $learningModule->mataPelajaran->nama_pelajaran);
-        $sheet->setCellValue('A4', 'Tahun Ajaran: ' . ($learningModule->tahunAkademik->tahun_ajaran ?? '-'));
-        $sheet->setCellValue('A5', 'Semester: ' . ($selectedSemester ? $selectedSemester->semester : '-'));
-        $sheet->setCellValue('A6', 'Dicetak pada: ' . date('d F Y H:i'));
+        $sheet->setCellValue('A4', 'Kelas: ' . ($classroom ? $classroom->nama_kelas : '-'));
+        $sheet->setCellValue('A5', 'Tahun Ajaran: ' . ($learningModule->tahunAkademik->tahun_ajaran ?? '-'));
+        $sheet->setCellValue('A6', 'Semester: ' . ($selectedSemester ? $selectedSemester->semester : '-'));
+        $sheet->setCellValue('A7', 'Dicetak pada: ' . date('d F Y H:i'));
 
-        $sheet->setCellValue('A8', 'No');
-        $sheet->setCellValue('B8', 'Nama Siswa');
-        $sheet->setCellValue('C8', 'NISN');
-        $sheet->setCellValue('D8', 'Kelas');
-        $sheet->setCellValue('E8', 'Hadir');
-        $sheet->setCellValue('F8', 'Sakit');
-        $sheet->setCellValue('G8', 'Izin');
-        $sheet->setCellValue('H8', 'Alpa');
-        $sheet->setCellValue('I8', 'Total Pertemuan');
-        $sheet->setCellValue('J8', 'Persentase Kehadiran (%)');
+        $sheet->setCellValue('A9', 'No');
+        $sheet->setCellValue('B9', 'Nama Siswa');
+        $sheet->setCellValue('C9', 'NISN');
+        $sheet->setCellValue('D9', 'Kelas');
+        $sheet->setCellValue('E9', 'Hadir');
+        $sheet->setCellValue('F9', 'Sakit');
+        $sheet->setCellValue('G9', 'Izin');
+        $sheet->setCellValue('H9', 'Alpa');
+        $sheet->setCellValue('I9', 'Total Pertemuan');
+        $sheet->setCellValue('J9', 'Persentase Kehadiran (%)');
 
-        $rowNum = 9;
+        $rowNum = 10;
         foreach ($murids as $index => $murid) {
             $studentAbsensis = $absensis->where('murid_id', $murid->id);
             $totalHadir = $studentAbsensis->where('status', 'hadir')->count();

@@ -28,12 +28,13 @@ class JurusanManagementController extends Controller
                 'max:20',
                 Rule::unique('jurusans')->whereNull('deleted_at'),
             ],
-            'nama_jurusan' => ['required', 'string', 'max:30'],
+            'nama_jurusan' => ['required', 'string', 'max:50'],
             'deskripsi' => ['nullable', 'string', 'max:1000'],
         ], [
             'kode_jurusan.unique' => 'Kode jurusan ini sudah terdaftar.',
             'kode_jurusan.max' => 'Kode jurusan maksimal 20 karakter.',
             'nama_jurusan.required' => 'Nama jurusan wajib diisi.',
+            'nama_jurusan.max' => 'Nama jurusan maksimal 50 karakter.',
             'deskripsi.max' => 'Deskripsi maksimal 1000 karakter.',
         ]);
 
@@ -63,13 +64,14 @@ class JurusanManagementController extends Controller
                 'max:20',
                 Rule::unique('jurusans')->whereNull('deleted_at')->ignore($jurusan->id),
             ],
-            'nama_jurusan' => ['required', 'string', 'max:30'],
+            'nama_jurusan' => ['required', 'string', 'max:50'],
             'deskripsi' => ['nullable', 'string', 'max:1000'],
             'is_active' => ['required', 'boolean'],
         ], [
             'kode_jurusan.unique' => 'Kode jurusan ini sudah terdaftar.',
             'kode_jurusan.max' => 'Kode jurusan maksimal 20 karakter.',
             'nama_jurusan.required' => 'Nama jurusan wajib diisi.',
+            'nama_jurusan.max' => 'Nama jurusan maksimal 50 karakter.',
             'deskripsi.max' => 'Deskripsi maksimal 1000 karakter.',
         ]);
 

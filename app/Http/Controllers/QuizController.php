@@ -93,7 +93,7 @@ class QuizController extends Controller
             'due_date' => $request->due_date,
         ]);
 
-        return redirect()->route('guru.learning-modules.show', [$learningModule->id, 'semester_id' => $semesterId])
+        return redirect()->route('guru.learning-modules.quizzes.index', [$learningModule->id, 'semester_id' => $semesterId])
             ->with('status', 'Kuis berhasil ditambahkan.');
     }
 
@@ -122,7 +122,7 @@ class QuizController extends Controller
             'due_date' => $request->due_date,
         ]);
 
-        return redirect()->route('guru.learning-modules.show', [$learningModule->id, 'semester_id' => $semesterId])
+        return redirect()->route('guru.learning-modules.quizzes.index', [$learningModule->id, 'semester_id' => $semesterId])
             ->with('status', 'Kuis berhasil diperbarui.');
     }
 
@@ -149,7 +149,7 @@ class QuizController extends Controller
         $semesterId = $quiz->semester_id;
         $quiz->delete();
 
-        return redirect()->route('guru.learning-modules.show', [$learningModule->id, 'semester_id' => $semesterId])
+        return redirect()->route('guru.learning-modules.quizzes.index', [$learningModule->id, 'semester_id' => $semesterId])
             ->with('status', 'Kuis berhasil dihapus.');
     }
 

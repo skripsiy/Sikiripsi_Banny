@@ -25,7 +25,12 @@
                     <span class="bg-blue-500/20 text-blue-200 border border-blue-500/30 text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wider">
                         {{ $learningModule->mataPelajaran->nama_pelajaran }}
                     </span>
-                    <span class="bg-emerald-500/20 text-emerald-200 border border-emerald-500/30 text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wider">
+                    @if($learningModule->classroom)
+                        <span class="bg-emerald-500/25 text-emerald-200 border border-emerald-500/30 text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wider">
+                            Kelas: {{ $learningModule->classroom->nama_kelas }}
+                        </span>
+                    @endif
+                    <span class="bg-indigo-500/20 text-indigo-200 border border-indigo-500/30 text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wider">
                         Rekap Kehadiran
                     </span>
                 </div>
@@ -33,7 +38,7 @@
                 <p class="text-xs text-blue-100/70 mt-1 max-w-xl">Laporan statistik kehadiran seluruh siswa yang mengikuti modul pembelajaran ini.</p>
             </div>
             <div>
-                <a href="{{ route('guru.learning-modules.export-absensi', $learningModule->id) }}"
+                <a href="{{ route('guru.learning-modules.export-absensi', [$learningModule->id, 'semester_id' => request('semester_id')]) }}"
                    class="bg-emerald-600 hover:bg-emerald-700 text-white font-bold px-4 py-2.5 rounded-xl text-xs transition-all shadow-md select-none cursor-pointer flex items-center gap-1.5">
                     <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>

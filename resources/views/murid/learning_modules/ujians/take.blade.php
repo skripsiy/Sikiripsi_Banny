@@ -4,7 +4,7 @@
     </x-slot>
 
     <!-- Full Test Interface -->
-    <div class="max-w-7xl mx-auto font-sans" x-data="{
+    <div class="max-w-7xl mx-auto font-sans select-none" x-data="{
         currentQuestionIndex: Math.max(0, Math.min(
             parseInt(localStorage.getItem('active_q_ujian_{{ $ujian->id }}_att_{{ $attempt->id }}') || 0),
             {{ $soals->count() - 1 }}
@@ -17,6 +17,22 @@
         },
         showSubmitConfirmModal: false,
         init() {
+            // Disable copy, cut, context menu, and typical shortcut keys
+            document.addEventListener('contextmenu', e => e.preventDefault());
+            document.addEventListener('copy', e => e.preventDefault());
+            document.addEventListener('cut', e => e.preventDefault());
+            document.addEventListener('keydown', e => {
+                if (e.ctrlKey && (e.key === 'c' || e.key === 'C' || e.key === 'u' || e.key === 'U' || e.key === 'x' || e.key === 'X')) {
+                    e.preventDefault();
+                }
+                if (e.ctrlKey && e.shiftKey && (e.key === 'I' || e.key === 'i' || e.key === 'C' || e.key === 'c' || e.key === 'J' || e.key === 'j')) {
+                    e.preventDefault();
+                }
+                if (e.key === 'F12') {
+                    e.preventDefault();
+                }
+            });
+
             // Count down timer
             const startedAt = new Date('{{ $attempt->started_at->toIso8601String() }}').getTime();
             const durationMs = {{ $ujian->duration_minutes }} * 60 * 1000;

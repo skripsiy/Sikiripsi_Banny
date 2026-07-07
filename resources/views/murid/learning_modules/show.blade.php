@@ -36,7 +36,22 @@
                         <svg class="w-3.5 h-3.5 text-blue-200 flex-shrink-0" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M17.982 18.725A7.488 7.488 0 0012 15.75a7.488 7.488 0 00-5.982 2.975m11.963 0a9 9 0 10-11.963 0m11.963 0A8.966 8.966 0 0112 21a8.966 8.966 0 01-5.982-2.275M15 9.75a3 3 0 11-6 0 3 3 0 016 0z" />
                         </svg>
-                        <span>Pengajar: <strong class="text-white">{{ $learningModule->guru->user->name ?? 'Guru Pengampu' }}</strong> (<a href="mailto:{{ $learningModule->guru->user->email }}" class="text-blue-300 hover:text-blue-200 underline">{{ $learningModule->guru->user->email ?? '-' }}</a>)</span>
+                        <span class="flex items-center gap-1">
+                            Pengajar: <strong class="text-white mr-1">{{ $learningModule->guru->user->name ?? 'Guru Pengampu' }}</strong> 
+                            <span x-data="{ copied: false }" 
+                                  @click="navigator.clipboard.writeText('{{ $learningModule->guru->user->email }}'); copied = true; setTimeout(() => copied = false, 2000)" 
+                                  class="inline-flex items-center gap-1 bg-white/5 hover:bg-white/10 text-blue-200 hover:text-white px-2 py-0.5 rounded border border-white/15 transition-all duration-150 cursor-pointer select-all relative"
+                                  title="Klik untuk menyalin email">
+                                <span class="text-[11px] font-medium font-mono">{{ $learningModule->guru->user->email ?? '-' }}</span>
+                                <svg x-show="!copied" class="w-3 h-3 opacity-60" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3"></path>
+                                </svg>
+                                <svg x-show="copied" style="display: none;" class="w-3 h-3 text-emerald-400" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"></path>
+                                </svg>
+                                <span x-show="copied" x-transition style="display: none;" class="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-1.5 px-2 py-0.5 bg-gray-900 text-white text-[9px] rounded shadow-lg whitespace-nowrap font-bold">Tersalin!</span>
+                            </span>
+                        </span>
                     </span>
                 </div>
             </div>
@@ -66,115 +81,127 @@
         <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 gap-3 sm:gap-4 mb-6">
             <!-- Absensi Saya Card -->
             <a href="{{ route('murid.learning-modules.absensi.index', [$learningModule->id, 'semester_id' => $selectedSemester?->id]) }}"
-               class="group/card bg-white border border-gray-100 hover:border-blue-200 hover:shadow-md rounded-2xl p-3 sm:p-4 transition-all duration-200 cursor-pointer select-none">
-                <div class="flex items-center gap-3">
-                    <div class="w-10 h-10 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center flex-shrink-0">
-                        <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"></path>
+               class="group/card bg-white border border-gray-100 hover:border-blue-200 hover:shadow-md rounded-2xl p-3.5 transition-all duration-200 cursor-pointer select-none">
+                <div class="flex flex-col gap-3">
+                    <div class="flex justify-between items-center">
+                        <div class="w-10 h-10 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center flex-shrink-0">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"></path>
+                            </svg>
+                        </div>
+                        <svg class="w-4 h-4 text-gray-350 group-hover/card:text-blue-500 transition-colors flex-shrink-0" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"></path>
                         </svg>
                     </div>
-                    <div class="flex-grow min-w-0">
-                        <p class="text-[10px] font-bold text-gray-400 uppercase tracking-wider truncate">Absensi Saya</p>
-                        <p class="text-xs font-bold text-gray-600 mt-1">Kehadiran Saya</p>
+                    <div class="min-w-0">
+                        <p class="text-[9px] font-bold text-gray-400 uppercase tracking-wider">Absensi Saya</p>
+                        <p class="text-xs font-bold text-gray-750 mt-0.5">Kehadiran Saya</p>
                     </div>
-                    <svg class="w-4 h-4 text-gray-350 group-hover/card:text-blue-500 transition-colors flex-shrink-0" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"></path>
-                    </svg>
                 </div>
             </a>
 
             <!-- Rekap Nilai Card -->
             <a href="{{ route('murid.learning-modules.rekap-nilai', [$learningModule->id, 'semester_id' => $selectedSemester?->id]) }}"
-               class="group/card bg-white border border-gray-100 hover:border-emerald-200 hover:shadow-md rounded-2xl p-3 sm:p-4 transition-all duration-200 cursor-pointer select-none">
-                <div class="flex items-center gap-3">
-                    <div class="w-10 h-10 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center flex-shrink-0">
-                        <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2"></path>
+               class="group/card bg-white border border-gray-100 hover:border-emerald-200 hover:shadow-md rounded-2xl p-3.5 transition-all duration-200 cursor-pointer select-none">
+                <div class="flex flex-col gap-3">
+                    <div class="flex justify-between items-center">
+                        <div class="w-10 h-10 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center flex-shrink-0">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2"></path>
+                            </svg>
+                        </div>
+                        <svg class="w-4 h-4 text-gray-350 group-hover/card:text-emerald-500 transition-colors flex-shrink-0" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"></path>
                         </svg>
                     </div>
-                    <div class="flex-grow min-w-0">
-                        <p class="text-[10px] font-bold text-gray-400 uppercase tracking-wider truncate">Rekap Nilai</p>
-                        <p class="text-xs font-bold text-gray-600 mt-1">Nilai Tugas Saya</p>
+                    <div class="min-w-0">
+                        <p class="text-[9px] font-bold text-gray-400 uppercase tracking-wider">Rekap Nilai</p>
+                        <p class="text-xs font-bold text-gray-750 mt-0.5">Nilai Tugas Saya</p>
                     </div>
-                    <svg class="w-4 h-4 text-gray-350 group-hover/card:text-emerald-500 transition-colors flex-shrink-0" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"></path>
-                    </svg>
                 </div>
             </a>
 
             <!-- Materi Card -->
             <a href="{{ route('murid.learning-modules.materis.index', [$learningModule->id, 'semester_id' => $selectedSemester?->id]) }}"
-               class="group/card bg-white border border-gray-100 hover:border-indigo-200 hover:shadow-md rounded-2xl p-3 sm:p-4 transition-all duration-200 cursor-pointer select-none">
-                <div class="flex items-center gap-3">
-                    <div class="w-10 h-10 rounded-xl bg-indigo-50 text-indigo-600 flex items-center justify-center flex-shrink-0">
-                        <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path>
+               class="group/card bg-white border border-gray-100 hover:border-indigo-200 hover:shadow-md rounded-2xl p-3.5 transition-all duration-200 cursor-pointer select-none">
+                <div class="flex flex-col gap-3">
+                    <div class="flex justify-between items-center">
+                        <div class="w-10 h-10 rounded-xl bg-indigo-50 text-indigo-600 flex items-center justify-center flex-shrink-0">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path>
+                            </svg>
+                        </div>
+                        <svg class="w-4 h-4 text-gray-350 group-hover/card:text-indigo-500 transition-colors flex-shrink-0" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"></path>
                         </svg>
                     </div>
-                    <div class="flex-grow">
-                        <p class="text-[10px] font-bold text-gray-400 uppercase tracking-wider">Materi</p>
-                        <p class="text-lg font-extrabold text-gray-800">{{ $learningModule->materis_count }}</p>
+                    <div class="min-w-0">
+                        <p class="text-[9px] font-bold text-gray-400 uppercase tracking-wider">Materi</p>
+                        <p class="text-lg font-extrabold text-gray-800 mt-0.5">{{ $learningModule->materis_count }}</p>
                     </div>
-                    <svg class="w-4 h-4 text-gray-350 group-hover/card:text-indigo-500 transition-colors flex-shrink-0" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"></path>
-                    </svg>
                 </div>
             </a>
 
             <!-- Tugas Card -->
             <a href="{{ route('murid.learning-modules.tugas.index', [$learningModule->id, 'semester_id' => $selectedSemester?->id]) }}"
-               class="group/card bg-white border border-gray-100 hover:border-rose-200 hover:shadow-md rounded-2xl p-3 sm:p-4 transition-all duration-200 cursor-pointer select-none">
-                <div class="flex items-center gap-3">
-                    <div class="w-10 h-10 rounded-xl bg-rose-50 text-rose-600 flex items-center justify-center flex-shrink-0">
-                        <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"></path>
+               class="group/card bg-white border border-gray-100 hover:border-rose-200 hover:shadow-md rounded-2xl p-3.5 transition-all duration-200 cursor-pointer select-none">
+                <div class="flex flex-col gap-3">
+                    <div class="flex justify-between items-center">
+                        <div class="w-10 h-10 rounded-xl bg-rose-50 text-rose-600 flex items-center justify-center flex-shrink-0">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"></path>
+                            </svg>
+                        </div>
+                        <svg class="w-4 h-4 text-gray-350 group-hover/card:text-rose-500 transition-colors flex-shrink-0" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"></path>
                         </svg>
                     </div>
-                    <div class="flex-grow">
-                        <p class="text-[10px] font-bold text-gray-400 uppercase tracking-wider">Tugas</p>
-                        <p class="text-lg font-extrabold text-gray-800">{{ $learningModule->tugas_count }}</p>
+                    <div class="min-w-0">
+                        <p class="text-[9px] font-bold text-gray-400 uppercase tracking-wider">Tugas</p>
+                        <p class="text-lg font-extrabold text-gray-800 mt-0.5">{{ $learningModule->tugas_count }}</p>
                     </div>
-                    <svg class="w-4 h-4 text-gray-350 group-hover/card:text-rose-500 transition-colors flex-shrink-0" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"></path>
-                    </svg>
                 </div>
             </a>
 
             <!-- Kuis Card -->
             <a href="{{ route('murid.learning-modules.quizzes.index', [$learningModule->id, 'semester_id' => $selectedSemester?->id]) }}"
-               class="group/card bg-white border border-gray-100 hover:border-amber-200 hover:shadow-md rounded-2xl p-3 sm:p-4 transition-all duration-200 cursor-pointer select-none">
-                <div class="flex items-center gap-3">
-                    <div class="w-10 h-10 rounded-xl bg-amber-50 text-amber-600 flex items-center justify-center flex-shrink-0">
-                        <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+               class="group/card bg-white border border-gray-100 hover:border-amber-200 hover:shadow-md rounded-2xl p-3.5 transition-all duration-200 cursor-pointer select-none">
+                <div class="flex flex-col gap-3">
+                    <div class="flex justify-between items-center">
+                        <div class="w-10 h-10 rounded-xl bg-amber-50 text-amber-600 flex items-center justify-center flex-shrink-0">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                            </svg>
+                        </div>
+                        <svg class="w-4 h-4 text-gray-350 group-hover/card:text-amber-500 transition-colors flex-shrink-0" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"></path>
                         </svg>
                     </div>
-                    <div class="flex-grow">
-                        <p class="text-[10px] font-bold text-gray-400 uppercase tracking-wider">Kuis</p>
-                        <p class="text-lg font-extrabold text-gray-800">{{ $learningModule->quizzes_count }}</p>
+                    <div class="min-w-0">
+                        <p class="text-[9px] font-bold text-gray-400 uppercase tracking-wider">Kuis</p>
+                        <p class="text-lg font-extrabold text-gray-800 mt-0.5">{{ $learningModule->quizzes_count }}</p>
                     </div>
-                    <svg class="w-4 h-4 text-gray-350 group-hover/card:text-amber-500 transition-colors flex-shrink-0" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"></path>
-                    </svg>
                 </div>
             </a>
 
             <!-- Ujian Card -->
             <a href="{{ route('murid.learning-modules.ujians.index', [$learningModule->id, 'semester_id' => $selectedSemester?->id]) }}"
-               class="group/card bg-white border border-gray-100 hover:border-purple-200 hover:shadow-md rounded-2xl p-3 sm:p-4 transition-all duration-200 cursor-pointer select-none">
-                <div class="flex items-center gap-3">
-                    <div class="w-10 h-10 rounded-xl bg-purple-50 text-purple-600 flex items-center justify-center flex-shrink-0">
-                        <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path>
+               class="group/card bg-white border border-gray-100 hover:border-purple-200 hover:shadow-md rounded-2xl p-3.5 transition-all duration-200 cursor-pointer select-none">
+                <div class="flex flex-col gap-3">
+                    <div class="flex justify-between items-center">
+                        <div class="w-10 h-10 rounded-xl bg-purple-50 text-purple-600 flex items-center justify-center flex-shrink-0">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path>
+                            </svg>
+                        </div>
+                        <svg class="w-4 h-4 text-gray-350 group-hover/card:text-purple-500 transition-colors flex-shrink-0" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"></path>
                         </svg>
                     </div>
-                    <div class="flex-grow">
-                        <p class="text-[10px] font-bold text-gray-400 uppercase tracking-wider">Ujian</p>
-                        <p class="text-lg font-extrabold text-gray-800">{{ $learningModule->ujians_count }}</p>
+                    <div class="min-w-0">
+                        <p class="text-[9px] font-bold text-gray-400 uppercase tracking-wider">Ujian</p>
+                        <p class="text-lg font-extrabold text-gray-800 mt-0.5">{{ $learningModule->ujians_count }}</p>
                     </div>
-                    <svg class="w-4 h-4 text-gray-350 group-hover/card:text-purple-500 transition-colors flex-shrink-0" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"></path>
-                    </svg>
                 </div>
             </a>
         </div>
@@ -209,7 +236,7 @@
                 <!-- Filters -->
                 <div class="flex flex-wrap items-center gap-2 w-full sm:w-auto">
                     <!-- Filter Tipe -->
-                    <select x-model="filterType" class="bg-gray-50 border border-gray-200 text-gray-750 text-xs rounded-xl px-3 py-1.5 focus:outline-none focus:border-[#0c2b4d] cursor-pointer">
+                    <select x-model="filterType" class="bg-gray-50 border border-gray-200 text-gray-750 text-xs rounded-xl pl-3 pr-8 py-1.5 focus:outline-none focus:border-[#0c2b4d] cursor-pointer">
                         <option value="all">Semua Tipe</option>
                         <option value="materi">Materi</option>
                         <option value="tugas">Tugas</option>
@@ -218,7 +245,7 @@
                     </select>
 
                     <!-- Filter Waktu / Status -->
-                    <select x-model="filterTime" class="bg-gray-50 border border-gray-200 text-gray-750 text-xs rounded-xl px-3 py-1.5 focus:outline-none focus:border-[#0c2b4d] cursor-pointer">
+                    <select x-model="filterTime" class="bg-gray-50 border border-gray-200 text-gray-750 text-xs rounded-xl pl-3 pr-8 py-1.5 focus:outline-none focus:border-[#0c2b4d] cursor-pointer">
                         <option value="all">Semua Waktu</option>
                         <option value="week">Baru Rilis (Minggu Ini)</option>
                         <option value="upcoming">Mendatang (Deadline)</option>

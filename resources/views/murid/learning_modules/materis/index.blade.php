@@ -73,7 +73,7 @@
                                 </div>
                                 <div class="min-w-0 flex-grow">
                                     <h4 class="font-extrabold text-gray-800 text-sm">{{ $materi->title }}</h4>
-                                    <p class="text-xs text-gray-600 mt-2 leading-relaxed whitespace-pre-wrap font-medium">{{ $materi->content }}</p>
+                                    <div class="wysiwyg-content text-xs text-gray-650 mt-2 font-medium">{!! $materi->content !!}</div>
                                     
                                     @if ($materi->file_path)
                                         <div class="mt-4">

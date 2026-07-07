@@ -172,6 +172,7 @@ Route::middleware(['auth', 'role:murid'])->prefix('murid')->name('murid.')->grou
     Route::get('learning-modules/{learning_module}', [\App\Http\Controllers\MuridLearningModuleController::class, 'show'])->name('learning-modules.show');
     Route::get('learning-modules/{learning_module}/materis', [\App\Http\Controllers\MuridLearningModuleController::class, 'materis'])->name('learning-modules.materis.index');
     Route::get('learning-modules/{learning_module}/tugas', [\App\Http\Controllers\MuridLearningModuleController::class, 'tugas'])->name('learning-modules.tugas.index');
+    Route::get('learning-modules/{learning_module}/tugas/{tuga}', [\App\Http\Controllers\MuridLearningModuleController::class, 'tugasShow'])->name('learning-modules.tugas.show');
     Route::post('learning-modules/{learning_module}/tugas/{tuga}/submit', [\App\Http\Controllers\TugasSubmissionController::class, 'store'])->name('learning-modules.tugas.submit');
     Route::get('learning-modules/{learning_module}/rekap-nilai', [\App\Http\Controllers\MuridLearningModuleController::class, 'rekapNilai'])->name('learning-modules.rekap-nilai');
 

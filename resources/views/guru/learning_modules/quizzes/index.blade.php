@@ -104,7 +104,7 @@
                                             Durasi: {{ $q->duration_minutes }} Menit
                                         </span>
                                     </div>
-                                    <p class="text-xs text-gray-500 mt-1 leading-relaxed whitespace-pre-wrap">{{ $q->instructions }}</p>
+                                    <div class="wysiwyg-content text-xs text-gray-550 mt-1">{!! $q->instructions !!}</div>
                                 </div>
                             </div>
 

@@ -90,7 +90,7 @@
                                 </div>
                                 <div class="min-w-0 flex-grow">
                                     <h4 class="font-bold text-gray-800 text-sm truncate">{{ $materi->title }}</h4>
-                                    <p class="text-xs text-gray-550 mt-1 leading-relaxed whitespace-pre-wrap">{{ $materi->content }}</p>
+                                    <div class="wysiwyg-content text-xs text-gray-550 mt-1">{!! $materi->content !!}</div>
                                     @if ($materi->file_path)
                                         <div class="mt-2.5">
                                             <a href="{{ asset('storage/' . $materi->file_path) }}" target="_blank"

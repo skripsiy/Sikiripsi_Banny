@@ -75,7 +75,7 @@
                                 </div>
                                 <div class="min-w-0 flex-grow">
                                     <h4 class="font-extrabold text-gray-800 text-sm">{{ $ujian->title }}</h4>
-                                    <p class="text-xs text-gray-650 mt-2 leading-relaxed whitespace-pre-wrap font-medium">{{ $ujian->instructions }}</p>
+                                    <div class="wysiwyg-content text-xs text-gray-650 mt-2 font-medium">{!! $ujian->instructions !!}</div>
                                     
                                      <div class="mt-3 flex items-center gap-2">
                                          <span class="inline-flex items-center gap-1 text-[10px] font-bold bg-blue-50 text-blue-700 border border-blue-100 px-2 py-0.5 rounded-md select-none">

@@ -100,7 +100,7 @@
                                             Batas: {{ $t->due_date->translatedFormat('d M Y H:i') }}
                                         </span>
                                     </div>
-                                    <p class="text-xs text-gray-500 mt-1 leading-relaxed whitespace-pre-wrap">{{ $t->instructions }}</p>
+                                    <div class="wysiwyg-content text-xs text-gray-550 mt-1">{!! $t->instructions !!}</div>
                                     @if ($t->file_path)
                                         <div class="mt-2.5">
                                             <a href="{{ asset('storage/' . $t->file_path) }}" target="_blank"

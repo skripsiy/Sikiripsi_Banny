@@ -34,7 +34,7 @@
                     </span>
                 </div>
                 <h2 class="text-xl font-bold mt-2.5">Kelola Pertanyaan - {{ $quiz->title }}</h2>
-                <p class="text-xs text-blue-100/70 mt-1 max-w-xl">{{ $quiz->instructions }}</p>
+                <div class="wysiwyg-content wysiwyg-on-dark text-xs text-blue-100/90 mt-1 max-w-xl">{!! $quiz->instructions !!}</div>
             </div>
             
             <button @click="showAddSoalModal = true"

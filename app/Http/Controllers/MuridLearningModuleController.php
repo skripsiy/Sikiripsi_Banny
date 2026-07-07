@@ -96,7 +96,7 @@ class MuridLearningModuleController extends Controller
             'id' => $item->id,
             'title' => $item->title,
             'type' => 'materi',
-            'description' => \Illuminate\Support\Str::limit($item->content, 80),
+            'description' => \Illuminate\Support\Str::limit(strip_tags($item->content), 80),
             'created_at' => $item->created_at,
             'created_at_formatted' => $item->created_at->translatedFormat('d F Y H:i'),
             'due_date_formatted' => null,
@@ -109,7 +109,7 @@ class MuridLearningModuleController extends Controller
             'id' => $item->id,
             'title' => $item->title,
             'type' => 'tugas',
-            'description' => \Illuminate\Support\Str::limit($item->instructions, 80),
+            'description' => \Illuminate\Support\Str::limit(strip_tags($item->instructions), 80),
             'created_at' => $item->created_at,
             'created_at_formatted' => $item->created_at->translatedFormat('d F Y H:i'),
             'due_date_formatted' => $item->due_date ? $item->due_date->translatedFormat('d F Y H:i') : null,
@@ -122,7 +122,7 @@ class MuridLearningModuleController extends Controller
             'id' => $item->id,
             'title' => $item->title,
             'type' => 'kuis',
-            'description' => \Illuminate\Support\Str::limit($item->instructions, 80),
+            'description' => \Illuminate\Support\Str::limit(strip_tags($item->instructions), 80),
             'created_at' => $item->created_at,
             'created_at_formatted' => $item->created_at->translatedFormat('d F Y H:i'),
             'due_date_formatted' => $item->due_date ? $item->due_date->translatedFormat('d F Y H:i') : null,
@@ -135,7 +135,7 @@ class MuridLearningModuleController extends Controller
             'id' => $item->id,
             'title' => $item->title,
             'type' => 'ujian',
-            'description' => \Illuminate\Support\Str::limit($item->instructions, 80),
+            'description' => \Illuminate\Support\Str::limit(strip_tags($item->instructions), 80),
             'created_at' => $item->created_at,
             'created_at_formatted' => $item->created_at->translatedFormat('d F Y H:i'),
             'due_date_formatted' => $item->due_date ? $item->due_date->translatedFormat('d F Y H:i') : null,
@@ -215,6 +215,26 @@ class MuridLearningModuleController extends Controller
             ->get();
 
         return view('murid.learning_modules.tugas.index', compact('learningModule', 'tugas', 'semesters', 'selectedSemester'));
+    }
+
+    public function tugasShow(LearningModule $learningModule, LearningModuleTugas $tuga)
+    {
+        $this->authorizeModule($learningModule);
+
+        if ($tuga->learning_module_id !== $learningModule->id) {
+            abort(404);
+        }
+
+        $learningModule->load('mataPelajaran');
+        $murid = auth()->user()->murid;
+
+        $tuga->load(['submissions' => function ($query) use ($murid) {
+            $query->where('murid_id', $murid->id);
+        }]);
+
+        $submission = $tuga->submissions->first();
+
+        return view('murid.learning_modules.tugas.show', compact('learningModule', 'tuga', 'submission'));
     }
 
     public function quizzes(LearningModule $learningModule)

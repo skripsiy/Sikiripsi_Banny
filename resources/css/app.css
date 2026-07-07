@@ -54,3 +54,103 @@
     }
 }
 
+/* WYSIWYG content styling to undo Tailwind Preflight resets */
+.wysiwyg-content {
+    font-size: 0.875rem; /* text-sm equivalent */
+    line-height: 1.625;  /* leading-relaxed equivalent */
+}
+.wysiwyg-content h1 {
+    font-size: 1.875rem; /* text-3xl */
+    font-weight: 800;
+    margin-top: 1.25rem;
+    margin-bottom: 0.75rem;
+    color: #1f2937;
+}
+.wysiwyg-content h2 {
+    font-size: 1.5rem; /* text-2xl */
+    font-weight: 700;
+    margin-top: 1.125rem;
+    margin-bottom: 0.625rem;
+    color: #1f2937;
+}
+.wysiwyg-content h3 {
+    font-size: 1.25rem; /* text-xl */
+    font-weight: 700;
+    margin-top: 1rem;
+    margin-bottom: 0.5rem;
+    color: #1f2937;
+}
+.wysiwyg-content p {
+    margin-top: 0.5rem;
+    margin-bottom: 0.5rem;
+    color: #4b5563;
+}
+.wysiwyg-content ul {
+    list-style-type: disc !important;
+    margin-left: 1.5rem !important;
+    margin-top: 0.5rem;
+    margin-bottom: 0.5rem;
+}
+.wysiwyg-content ol {
+    list-style-type: decimal !important;
+    margin-left: 1.5rem !important;
+    margin-top: 0.5rem;
+    margin-bottom: 0.5rem;
+}
+.wysiwyg-content li {
+    margin-top: 0.25rem;
+    margin-bottom: 0.25rem;
+    list-style: inherit !important;
+}
+.wysiwyg-content strong {
+    font-weight: 700 !important;
+    color: #111827;
+}
+.wysiwyg-content em {
+    font-style: italic;
+}
+.wysiwyg-content u {
+    text-decoration: underline;
+}
+.wysiwyg-content blockquote {
+    border-left: 4px solid #cbd5e1;
+    padding-left: 1rem;
+    font-style: italic;
+    color: #4b5563;
+    margin-top: 0.75rem;
+    margin-bottom: 0.75rem;
+}
+.wysiwyg-content a {
+    color: #2563eb;
+    text-decoration: underline;
+}
+.wysiwyg-content a:hover {
+    color: #1d4ed8;
+}
+
+/* WYSIWYG content styling on dark backgrounds */
+.wysiwyg-on-dark p {
+    color: rgba(219, 234, 254, 0.85) !important; /* light blue-100/90 equivalent */
+}
+.wysiwyg-on-dark h1,
+.wysiwyg-on-dark h2,
+.wysiwyg-on-dark h3,
+.wysiwyg-on-dark strong {
+    color: #ffffff !important;
+}
+.wysiwyg-on-dark ul,
+.wysiwyg-on-dark ol,
+.wysiwyg-on-dark li {
+    color: rgba(219, 234, 254, 0.85) !important;
+}
+.wysiwyg-on-dark blockquote {
+    border-left-color: rgba(255, 255, 255, 0.3);
+    color: rgba(219, 234, 254, 0.8) !important;
+}
+.wysiwyg-on-dark a {
+    color: #93c5fd !important; /* light blue */
+}
+.wysiwyg-on-dark a:hover {
+    color: #bfdbfe !important;
+}
+

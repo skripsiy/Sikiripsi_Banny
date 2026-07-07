@@ -123,8 +123,8 @@
                                 <tr class="hover:bg-gray-50/50 transition-colors">
                                     <td class="px-6 py-4">
                                         <div class="font-extrabold text-[#0c2b4d]">{{ $tgs->title }}</div>
-                                        <div class="text-[10px] text-gray-405 mt-0.5 max-w-[250px] truncate" title="{{ $tgs->instructions }}">
-                                            {{ $tgs->instructions }}
+                                        <div class="text-[10px] text-gray-405 mt-0.5 max-w-[250px] truncate" title="{{ strip_tags($tgs->instructions) }}">
+                                            {{ strip_tags($tgs->instructions) }}
                                         </div>
                                     </td>
                                     <td class="px-6 py-4">

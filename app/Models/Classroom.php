@@ -23,12 +23,12 @@ class Classroom extends Model
 
     public function jurusan()
     {
-        return $this->belongsTo(Jurusan::class);
+        return $this->belongsTo(Jurusan::class)->withTrashed();
     }
 
     public function tahunAkademik()
     {
-        return $this->belongsTo(TahunAkademik::class, 'tahun_akademik_id');
+        return $this->belongsTo(TahunAkademik::class, 'tahun_akademik_id')->withTrashed();
     }
 
     public function murids()

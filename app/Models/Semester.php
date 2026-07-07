@@ -27,7 +27,7 @@ class Semester extends Model
 
     public function tahunAkademik()
     {
-        return $this->belongsTo(TahunAkademik::class, 'tahun_akademik_id');
+        return $this->belongsTo(TahunAkademik::class, 'tahun_akademik_id')->withTrashed();
     }
 
     protected static function booted()

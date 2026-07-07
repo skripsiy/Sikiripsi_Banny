@@ -18,12 +18,12 @@ class QuizAttempt extends Model
 
     public function quiz()
     {
-        return $this->belongsTo(LearningModuleQuiz::class, 'learning_module_quiz_id');
+        return $this->belongsTo(LearningModuleQuiz::class, 'learning_module_quiz_id')->withTrashed();
     }
 
     public function murid()
     {
-        return $this->belongsTo(Murid::class);
+        return $this->belongsTo(Murid::class)->withTrashed();
     }
 
     public function answers()

@@ -96,9 +96,9 @@
         @endif
 
         <!-- Search & Filter Panel -->
-        <div class="bg-white rounded-2xl border border-gray-100 p-4 mb-6 shadow-sm flex flex-col md:flex-row items-center justify-between gap-4">
+        <div class="bg-white rounded-2xl border border-gray-100 p-4 mb-6 shadow-sm flex flex-col sm:flex-row items-center justify-between gap-4">
             <!-- Search Bar -->
-            <div class="relative w-full md:w-96">
+            <div class="relative w-full sm:w-80">
                 <span class="absolute inset-y-0 left-0 flex items-center pl-3.5 pointer-events-none">
                     <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
@@ -115,10 +115,10 @@
             </div>
 
             <!-- Classroom Filter -->
-            <div class="flex items-center gap-2 w-full md:w-auto">
+            <div class="flex items-center gap-2.5 w-full sm:w-auto justify-end">
                 <span class="text-xs font-bold text-gray-400 uppercase tracking-wider whitespace-nowrap">Kelas:</span>
                 <select x-model="filterClassroom"
-                        class="px-4 py-2.5 bg-gray-50 border border-gray-150 rounded-xl text-xs text-gray-700 font-semibold focus:outline-none focus:bg-white focus:border-[#0c2b4d] transition-all shadow-sm cursor-pointer w-full md:w-auto">
+                        class="w-full sm:w-auto pl-4 pr-10 py-2.5 bg-gray-50 border border-gray-150 rounded-xl text-xs text-gray-700 font-semibold focus:outline-none focus:bg-white focus:border-[#0c2b4d] transition-all shadow-sm cursor-pointer">
                     <option value="all">Semua Kelas</option>
                     @foreach ($classrooms as $cls)
                         <option value="{{ $cls->id }}">{{ $cls->nama_kelas }}</option>
@@ -137,13 +137,13 @@
                         <table class="min-w-full divide-y divide-gray-100">
                             <thead class="bg-gray-50/75">
                                 <tr>
-                                    <th class="px-6 py-4 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">Nama Lengkap</th>
-                                    <th class="px-6 py-4 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">Username</th>
-                                    <th class="px-6 py-4 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">Email</th>
-                                    <th class="px-6 py-4 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">NISN</th>
-                                    <th class="px-6 py-4 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">Kelas</th>
-                                    <th class="px-6 py-4 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">No. Telp Murid / Wali</th>
-                                    <th class="px-6 py-4 text-center text-xs font-bold text-gray-500 uppercase tracking-wider w-36">Aksi</th>
+                                    <th class="px-6 py-3 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">Nama Lengkap</th>
+                                    <th class="px-6 py-3 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">Username</th>
+                                    <th class="px-6 py-3 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">Email</th>
+                                    <th class="px-6 py-3 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">NISN</th>
+                                    <th class="px-6 py-3 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">Kelas</th>
+                                    <th class="px-6 py-3 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">No. Telp Murid / Wali</th>
+                                    <th class="px-6 py-3 text-center text-xs font-bold text-gray-500 uppercase tracking-wider w-36">Aksi</th>
                                 </tr>
                             </thead>
                             <tbody class="bg-white divide-y divide-gray-100">
@@ -157,16 +157,16 @@
                                                  {{ json_encode(strtolower($userObj->murid->noTelpon ?? '')) }}.includes(searchQuery.toLowerCase()) || 
                                                  {{ json_encode(strtolower($userObj->murid->no_telepon_orang_tua ?? '')) }}.includes(searchQuery.toLowerCase())) &&
                                                 (filterClassroom === 'all' || filterClassroom === '{{ $userObj->murid->classroom_id ?? '' }}')">
-                                        <td class="px-6 py-4 whitespace-nowrap text-sm font-semibold text-gray-900">{{ $userObj->murid->namaLengkap ?? $userObj->name }}</td>
-                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ $userObj->username ?? '-' }}</td>
-                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ $userObj->email }}</td>
-                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ $userObj->murid->nisn ?? '-' }}</td>
-                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ $userObj->murid->classroom->nama_kelas ?? '-' }}</td>
-                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                                        <td class="px-6 py-2.5 whitespace-nowrap text-sm font-semibold text-gray-900">{{ $userObj->murid->namaLengkap ?? $userObj->name }}</td>
+                                        <td class="px-6 py-2.5 whitespace-nowrap text-sm text-gray-500">{{ $userObj->username ?? '-' }}</td>
+                                        <td class="px-6 py-2.5 whitespace-nowrap text-sm text-gray-500">{{ $userObj->email }}</td>
+                                        <td class="px-6 py-2.5 whitespace-nowrap text-sm text-gray-500">{{ $userObj->murid->nisn ?? '-' }}</td>
+                                        <td class="px-6 py-2.5 whitespace-nowrap text-sm text-gray-500">{{ $userObj->murid->classroom->nama_kelas ?? '-' }}</td>
+                                        <td class="px-6 py-2.5 whitespace-nowrap text-sm text-gray-500">
                                             <span class="block">Murid: {{ $userObj->murid->noTelpon ?? '-' }}</span>
                                             <span class="block text-[11px] text-gray-400 mt-0.5">Wali: {{ $userObj->murid->no_telepon_orang_tua ?? '-' }}</span>
                                         </td>
-                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-center font-medium">
+                                        <td class="px-6 py-2.5 whitespace-nowrap text-sm text-center font-medium">
                                             <div class="flex items-center justify-center gap-3">
                                                 <button @click="
                                                     showEditModal = true;

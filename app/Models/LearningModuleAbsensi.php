@@ -19,16 +19,16 @@ class LearningModuleAbsensi extends Model
 
     public function learningModule()
     {
-        return $this->belongsTo(LearningModule::class);
+        return $this->belongsTo(LearningModule::class)->withTrashed();
     }
 
     public function semester()
     {
-        return $this->belongsTo(Semester::class);
+        return $this->belongsTo(Semester::class)->withTrashed();
     }
 
     public function murid()
     {
-        return $this->belongsTo(Murid::class);
+        return $this->belongsTo(Murid::class)->withTrashed();
     }
 }

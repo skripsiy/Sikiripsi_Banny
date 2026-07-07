@@ -14,12 +14,12 @@ class LearningModule extends Model
 
     public function classroom()
     {
-        return $this->belongsTo(Classroom::class);
+        return $this->belongsTo(Classroom::class)->withTrashed();
     }
 
     public function guru()
     {
-        return $this->belongsTo(Guru::class);
+        return $this->belongsTo(Guru::class)->withTrashed();
     }
 
     public function mataPelajaran()
@@ -29,7 +29,7 @@ class LearningModule extends Model
 
     public function tahunAkademik()
     {
-        return $this->belongsTo(TahunAkademik::class, 'tahun_akademik_id');
+        return $this->belongsTo(TahunAkademik::class, 'tahun_akademik_id')->withTrashed();
     }
 
     public function materis()

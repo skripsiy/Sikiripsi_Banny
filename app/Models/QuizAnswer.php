@@ -22,6 +22,6 @@ class QuizAnswer extends Model
 
     public function bankSoal()
     {
-        return $this->belongsTo(BankSoal::class);
+        return $this->belongsTo(BankSoal::class)->withTrashed();
     }
 }

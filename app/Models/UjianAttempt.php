@@ -18,12 +18,12 @@ class UjianAttempt extends Model
 
     public function ujian()
     {
-        return $this->belongsTo(LearningModuleUjian::class, 'learning_module_ujian_id');
+        return $this->belongsTo(LearningModuleUjian::class, 'learning_module_ujian_id')->withTrashed();
     }
 
     public function murid()
     {
-        return $this->belongsTo(Murid::class);
+        return $this->belongsTo(Murid::class)->withTrashed();
     }
 
     public function answers()

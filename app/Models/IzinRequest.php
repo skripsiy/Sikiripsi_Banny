@@ -26,11 +26,11 @@ class IzinRequest extends Model
 
     public function learningModule()
     {
-        return $this->belongsTo(LearningModule::class);
+        return $this->belongsTo(LearningModule::class)->withTrashed();
     }
 
     public function murid()
     {
-        return $this->belongsTo(Murid::class);
+        return $this->belongsTo(Murid::class)->withTrashed();
     }
 }

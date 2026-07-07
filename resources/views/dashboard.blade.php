@@ -32,9 +32,17 @@
                 <h2 class="text-xl font-bold mt-2.5">Halo, {{ auth()->user()->name }}!</h2>
                 <p class="text-xs text-blue-100/70 mt-1 max-w-xl">Anda masuk sebagai <strong class="text-white uppercase">{{ auth()->user()->role }}</strong>. Silakan kelola modul pembelajaran, pantau absensi, dan lihat aktivitas terbaru di sistem E-Learning & Absensi SMKN 1 Jakarta.</p>
             </div>
-            <div class="bg-white/10 px-4 py-3 rounded-2xl border border-white/10 text-center select-none w-full md:w-auto">
-                <span class="text-[10px] uppercase font-bold text-blue-200 tracking-wider block">Hari Ini</span>
-                <span class="text-sm font-extrabold">{{ \Carbon\Carbon::now()->translatedFormat('l, d F Y') }}</span>
+            <div class="flex flex-col sm:flex-row gap-3 w-full md:w-auto">
+                @if(auth()->user()->role === 'murid')
+                    <div class="bg-emerald-500/20 px-4 py-3 rounded-2xl border border-emerald-500/30 text-center select-none flex-1 sm:flex-none">
+                        <span class="text-[10px] uppercase font-bold text-emerald-300 tracking-wider block">Kehadiran</span>
+                        <span class="text-sm font-extrabold text-emerald-400">{{ $data['attendance_percentage'] }}%</span>
+                    </div>
+                @endif
+                <div class="bg-white/10 px-4 py-3 rounded-2xl border border-white/10 text-center select-none flex-1 sm:flex-none w-full sm:w-auto">
+                    <span class="text-[10px] uppercase font-bold text-blue-200 tracking-wider block">Hari Ini</span>
+                    <span class="text-sm font-extrabold whitespace-nowrap">{{ \Carbon\Carbon::now()->translatedFormat('l, d F Y') }}</span>
+                </div>
             </div>
         </div>
 
@@ -98,6 +106,108 @@
                 </div>
             </div>
 
+            <!-- Admin Dashboard Sections -->
+            <div class="grid grid-cols-1 lg:grid-cols-4 gap-4 sm:gap-6 mt-6">
+                <!-- Classroom List (spans 3 cols, aligned under first 3 stat cards) -->
+                <div class="col-span-1 lg:col-span-3 bg-white rounded-2xl border border-gray-150 shadow-lg overflow-hidden">
+                    <div class="h-1.5 bg-[#0c2b4d]"></div>
+                    <div class="p-6">
+                        <div class="flex items-center justify-between mb-4">
+                            <h3 class="text-base font-bold text-gray-800 flex items-center gap-2">
+                                <svg class="w-5 h-5 text-[#0c2b4d]" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path>
+                                </svg>
+                                Kelas Terdaftar Terbaru
+                            </h3>
+                            <a href="{{ route('admin.manage.classrooms.index') }}" class="text-xs text-blue-600 font-bold hover:underline">
+                                Lihat Semua &rarr;
+                            </a>
+                        </div>
+
+                        @if(count($data['classrooms']) > 0)
+                            <div class="overflow-x-auto">
+                                <table class="w-full text-left border-collapse text-xs">
+                                    <thead>
+                                        <tr class="border-b border-gray-100 text-gray-400 font-bold uppercase tracking-wider">
+                                            <th class="py-3 px-2">Nama Kelas</th>
+                                            <th class="py-3 px-2">Jurusan</th>
+                                            <th class="py-3 px-2 text-center">Jumlah Murid</th>
+                                            <th class="py-3 px-2 text-right">Status</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody class="divide-y divide-gray-50 text-gray-600 font-medium">
+                                        @foreach($data['classrooms'] as $class)
+                                            <tr class="hover:bg-gray-50/50 transition-colors">
+                                                <td class="py-3 px-2 font-bold text-gray-850">{{ $class->nama_kelas }}</td>
+                                                <td class="py-3 px-2">{{ $class->jurusan->nama_jurusan ?? '-' }}</td>
+                                                <td class="py-3 px-2 text-center">
+                                                    <span class="bg-blue-50 text-blue-800 px-2 py-0.5 rounded-full font-bold">
+                                                        {{ $class->murids_count }} Murid
+                                                    </span>
+                                                </td>
+                                                <td class="py-3 px-2 text-right">
+                                                    @if($class->is_active)
+                                                        <span class="inline-flex items-center gap-1 text-[10px] font-bold text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded-full">
+                                                            <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span> Aktif
+                                                        </span>
+                                                    @else
+                                                        <span class="inline-flex items-center gap-1 text-[10px] font-bold text-gray-500 bg-gray-50 px-2 py-0.5 rounded-full">
+                                                            <span class="w-1.5 h-1.5 rounded-full bg-gray-400"></span> Nonaktif
+                                                        </span>
+                                                    @endif
+                                                </td>
+                                            </tr>
+                                        @endforeach
+                                    </tbody>
+                                </table>
+                            </div>
+                        @else
+                            <div class="flex flex-col items-center justify-center py-6 text-center bg-gray-50 border border-gray-100 border-dashed rounded-xl">
+                                <p class="text-xs text-gray-450">Belum ada data kelas terdaftar.</p>
+                            </div>
+                        @endif
+                    </div>
+                </div>
+
+                <!-- Recent Teachers Card -->
+                <div class="bg-white rounded-2xl border border-gray-150 shadow-lg overflow-hidden lg:self-start">
+                    <div class="h-1.5 bg-indigo-600"></div>
+                    <div class="p-6">
+                        <div class="flex items-center justify-between mb-4">
+                            <h3 class="text-base font-bold text-gray-800 flex items-center gap-2">
+                                <svg class="w-5 h-5 text-indigo-600" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path>
+                                </svg>
+                                Guru Baru Terdaftar
+                            </h3>
+                            <a href="{{ route('admin.manage.gurus.index') }}" class="text-xs text-blue-600 font-bold hover:underline">
+                                Semua &rarr;
+                            </a>
+                        </div>
+                        
+                        @if(count($data['recent_gurus']) > 0)
+                            <div class="space-y-3">
+                                @foreach($data['recent_gurus'] as $guru)
+                                    <div class="flex items-center gap-3 p-2 hover:bg-gray-50 rounded-xl transition-colors">
+                                        <div class="w-8 h-8 rounded-full bg-[#0c2b4d] text-white flex items-center justify-center font-bold text-xs select-none">
+                                            {{ strtoupper(substr($guru->fullname, 0, 2)) }}
+                                        </div>
+                                        <div class="flex-1 min-w-0">
+                                            <h4 class="text-xs font-bold text-gray-800 truncate">{{ $guru->fullname }}{{ $guru->gelar ? ', '.$guru->gelar : '' }}</h4>
+                                            <span class="text-[10px] text-gray-400 font-semibold block">NIP. {{ $guru->nip }}</span>
+                                        </div>
+                                    </div>
+                                @endforeach
+                            </div>
+                        @else
+                            <div class="flex flex-col items-center justify-center py-4 text-center bg-gray-50 border border-gray-100 border-dashed rounded-xl">
+                                <p class="text-[11px] text-gray-400 font-bold">Belum ada data guru terdaftar.</p>
+                            </div>
+                        @endif
+                    </div>
+                </div>
+            </div>
+
         @elseif(auth()->user()->role === 'guru')
             <!-- Guru Dashboard Widgets -->
             <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3 sm:gap-6">
@@ -145,53 +255,8 @@
             </div>
 
         @elseif(auth()->user()->role === 'murid')
-            <!-- Murid Dashboard Widgets -->
-            <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3 sm:gap-6">
-                <!-- Modul Pembelajaran Tersedia -->
-                <div class="bg-white p-4 sm:p-6 rounded-2xl shadow-lg border border-gray-100 flex items-center justify-between">
-                    <div>
-                        <span class="text-xs font-bold text-gray-400 uppercase tracking-wider">Modul Tersedia</span>
-                        <h3 class="text-3xl font-extrabold text-[#0c2b4d] mt-1">{{ $data['total_modul'] }}</h3>
-                        <a href="{{ route('murid.learning-modules.index') }}" class="text-[11px] text-[#0c2b4d] hover:underline font-bold mt-2.5 block">Buka Halaman Modul &rarr;</a>
-                    </div>
-                    <div class="p-3 bg-blue-50 text-[#0c2b4d] rounded-xl">
-                        <svg class="w-8 h-8" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path>
-                        </svg>
-                    </div>
-                </div>
-
-                <!-- Tugas Belum Dikumpulkan -->
-                <div class="bg-white p-4 sm:p-6 rounded-2xl shadow-lg border border-gray-100 flex items-center justify-between">
-                    <div>
-                        <span class="text-[10px] sm:text-xs font-bold text-gray-400 uppercase tracking-wider">Tugas Aktif (Belum Kumpul)</span>
-                        <h3 class="text-3xl font-extrabold text-rose-600 mt-1">{{ $data['unsubmitted_tasks'] }}</h3>
-                        <span class="text-[11px] text-gray-400 font-bold mt-2.5 block">Selesaikan tugas sebelum deadline</span>
-                    </div>
-                    <div class="p-3 bg-rose-50 text-rose-600 rounded-xl">
-                        <svg class="w-8 h-8" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 112 2h2a2 2 0 012-2"></path>
-                        </svg>
-                    </div>
-                </div>
-
-                <!-- Persentase Kehadiran -->
-                <div class="bg-white p-4 sm:p-6 rounded-2xl shadow-lg border border-gray-100 flex items-center justify-between">
-                    <div>
-                        <span class="text-[10px] sm:text-xs font-bold text-gray-400 uppercase tracking-wider">Persentase Kehadiran</span>
-                        <h3 class="text-3xl font-extrabold text-emerald-600 mt-1">{{ $data['attendance_percentage'] }}%</h3>
-                        <span class="text-[11px] text-gray-400 font-bold mt-2.5 block">Kehadiran semester ini</span>
-                    </div>
-                    <div class="p-3 bg-emerald-50 text-emerald-600 rounded-xl">
-                        <svg class="w-8 h-8" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"></path>
-                        </svg>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Unsubmitted Tasks List for Student -->
-            <div class="mt-8 bg-white rounded-2xl border border-gray-150 shadow-lg overflow-hidden">
+            <!-- Tasks List (Full Width) -->
+            <div class="bg-white rounded-2xl border border-gray-150 shadow-lg overflow-hidden">
                 <div class="h-1.5 bg-gradient-to-r from-rose-500 to-pink-600"></div>
                 <div class="p-6">
                     <h3 class="text-base font-bold text-gray-800 mb-4 flex items-center gap-2">

@@ -29,11 +29,11 @@ class TugasSubmission extends Model
 
     public function tugas()
     {
-        return $this->belongsTo(LearningModuleTugas::class, 'learning_module_tugas_id');
+        return $this->belongsTo(LearningModuleTugas::class, 'learning_module_tugas_id')->withTrashed();
     }
 
     public function murid()
     {
-        return $this->belongsTo(Murid::class);
+        return $this->belongsTo(Murid::class)->withTrashed();
     }
 }

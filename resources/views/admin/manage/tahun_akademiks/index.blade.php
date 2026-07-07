@@ -12,13 +12,12 @@
             is_active: '{{ old('is_active') !== null ? (old('is_active') ? '1' : '0') : '' }}'
         },
         editUrl: '{{ old('id') ? route('admin.manage.tahun_akademiks.update', old('id')) : '' }}',
-        searchQuery: '',
-        filterStatus: 'all'
+        searchQuery: ''
     }">
         <!-- Header Actions -->
         <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 sm:gap-0 mb-6">
             <h3 class="text-base font-bold text-gray-800">Daftar Tahun Akademik</h3>
-            <button @click="showCreateModal = true" 
+            <button @click="showCreateModal = true"
                     class="bg-[#0c2b4d] hover:bg-[#07192d] text-white px-4 py-2.5 rounded-lg text-sm font-semibold transition-colors shadow-sm cursor-pointer select-none">
                 + Tambah Tahun Akademik
             </button>
@@ -45,16 +44,16 @@
             </div>
         @endif
 
-        <!-- Search & Filter Panel -->
-        <div class="bg-white rounded-2xl border border-gray-100 p-4 mb-6 shadow-sm flex flex-col md:flex-row items-center justify-between gap-4">
+        <!-- Search Panel -->
+        <div class="bg-white rounded-2xl border border-gray-100 p-4 mb-6 shadow-sm flex flex-col sm:flex-row items-center justify-between gap-4">
             <!-- Search Bar -->
-            <div class="relative w-full md:w-96">
+            <div class="relative w-full">
                 <span class="absolute inset-y-0 left-0 flex items-center pl-3.5 pointer-events-none">
                     <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
                     </svg>
                 </span>
-                <input type="text" x-model="searchQuery" placeholder="Cari..." 
+                <input type="text" x-model="searchQuery" placeholder="Cari..."
                        class="w-full pl-10 pr-10 py-2.5 bg-gray-50 border border-gray-100 rounded-xl text-xs text-gray-800 focus:outline-none focus:bg-white focus:border-[#0c2b4d] focus:ring-1 focus:ring-[#0c2b4d] transition-all placeholder-gray-400">
                 <button x-show="searchQuery !== ''" @click="searchQuery = ''" style="display: none;"
                         class="absolute inset-y-0 right-0 flex items-center pr-3 text-gray-400 hover:text-gray-600 transition-colors">
@@ -62,17 +61,6 @@
                         <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"></path>
                     </svg>
                 </button>
-            </div>
-
-            <!-- Filter Status -->
-            <div class="flex items-center gap-2 w-full md:w-auto">
-                <span class="text-xs font-bold text-gray-400 uppercase tracking-wider whitespace-nowrap">Status:</span>
-                <select x-model="filterStatus"
-                        class="px-4 py-2.5 bg-gray-50 border border-gray-150 rounded-xl text-xs text-gray-700 font-semibold focus:outline-none focus:bg-white focus:border-[#0c2b4d] transition-all shadow-sm cursor-pointer w-full md:w-auto">
-                    <option value="all">Semua Status</option>
-                    <option value="active">Aktif</option>
-                    <option value="inactive">Tidak Aktif</option>
-                </select>
             </div>
         </div>
 
@@ -86,21 +74,18 @@
                         <table class="min-w-full divide-y divide-gray-100">
                             <thead class="bg-gray-50/75">
                                 <tr>
-                                    <th class="px-6 py-4 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">Tahun Ajaran</th>
-                                    <th class="px-6 py-4 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">Status</th>
-                                    <th class="px-6 py-4 text-center text-xs font-bold text-gray-500 uppercase tracking-wider w-36">Aksi</th>
+                                    <th class="px-6 py-3 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">Tahun Ajaran</th>
+                                    <th class="px-6 py-3 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">Status</th>
+                                    <th class="px-6 py-3 text-center text-xs font-bold text-gray-500 uppercase tracking-wider w-36">Aksi</th>
                                 </tr>
                             </thead>
                             <tbody class="bg-white divide-y divide-gray-100">
                                 @foreach ($academicYears as $year)
                                     <tr class="hover:bg-gray-50/50 transition-all duration-150"
-                                        x-show="(searchQuery === '' || 
-                                                 {{ json_encode(strtolower($year->tahun_ajaran)) }}.includes(searchQuery.toLowerCase())) &&
-                                                (filterStatus === 'all' || 
-                                                 (filterStatus === 'active' && {{ $year->is_active ? 'true' : 'false' }}) ||
-                                                 (filterStatus === 'inactive' && {{ !$year->is_active ? 'true' : 'false' }}))">
-                                        <td class="px-6 py-4 whitespace-nowrap text-sm font-semibold text-gray-900">{{ $year->tahun_ajaran }}</td>
-                                        <td class="px-6 py-4 whitespace-nowrap text-sm">
+                                        x-show="searchQuery === '' || 
+                                                 {{ json_encode(strtolower($year->tahun_ajaran)) }}.includes(searchQuery.toLowerCase())">
+                                        <td class="px-6 py-2.5 whitespace-nowrap text-sm font-semibold text-gray-900">{{ $year->tahun_ajaran }}</td>
+                                        <td class="px-6 py-2.5 whitespace-nowrap text-sm">
                                             @if ($year->is_active)
                                                 <span class="inline-flex items-center gap-1.5 px-3 py-1 text-xs font-bold rounded-full bg-green-50 text-green-700 border border-green-200 shadow-sm">
                                                     <span class="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse"></span>
@@ -123,15 +108,15 @@
                                                         is_active: '{{ $year->is_active ? '1' : '0' }}'
                                                     };
                                                     editUrl = '{{ route('admin.manage.tahun_akademiks.update', $year->id) }}';
-                                                 " 
+                                                 "
                                                  class="text-blue-600 hover:text-blue-900 bg-blue-50 hover:bg-blue-100 px-3 py-1.5 rounded-lg text-xs font-bold transition-all duration-150 cursor-pointer select-none">
                                                     Edit
                                                 </button>
-                                                
+
                                                 <form action="{{ route('admin.manage.tahun_akademiks.destroy', $year->id) }}" method="POST" onsubmit="return confirm('Apakah Anda yakin ingin menghapus tahun akademik ini?');" class="inline">
                                                     @csrf
                                                     @method('DELETE')
-                                                    <button type="submit" 
+                                                    <button type="submit"
                                                             class="text-red-600 hover:text-red-900 bg-red-50 hover:bg-red-100 px-3 py-1.5 rounded-lg text-xs font-bold transition-all duration-150 cursor-pointer">
                                                         Hapus
                                                     </button>
@@ -152,7 +137,7 @@
                             </div>
                             <h4 class="text-lg font-bold text-gray-800 mb-1">Belum Ada Tahun Akademik</h4>
                             <p class="text-sm text-gray-400 max-w-sm mb-6">Data tahun akademik yang Anda tambahkan untuk keperluan akademik sekolah akan muncul di sini.</p>
-                            <button @click="showCreateModal = true" 
+                            <button @click="showCreateModal = true"
                                     class="inline-flex items-center gap-2 bg-[#0c2b4d] hover:bg-[#07192d] text-white px-4 py-2.5 rounded-xl text-sm font-semibold transition-colors shadow-sm cursor-pointer select-none">
                                 + Tambah Tahun Akademik
                             </button>

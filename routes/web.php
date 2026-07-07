@@ -25,6 +25,15 @@ Route::get('/dashboard', function () {
         $data['total_murid'] = \App\Models\Murid::count();
         $data['total_kelas'] = \App\Models\Classroom::where('is_active', true)->count();
         $data['total_modul'] = \App\Models\LearningModule::count();
+
+        // Data tambahan untuk dashboard admin yang lebih informatif
+        $data['active_semester'] = \App\Models\Semester::where('is_active', true)->with('tahunAkademik')->first();
+        $data['classrooms'] = \App\Models\Classroom::with(['jurusan', 'tahunAkademik'])
+            ->withCount('murids')
+            ->orderBy('created_at', 'desc')
+            ->limit(5)
+            ->get();
+        $data['recent_gurus'] = \App\Models\Guru::orderBy('created_at', 'desc')->limit(5)->get();
     } elseif ($user->role === 'guru') {
         $guru = $user->guru;
         $moduleIds = $guru ? \App\Models\LearningModule::where('guru_id', $guru->id)->pluck('id') : collect();

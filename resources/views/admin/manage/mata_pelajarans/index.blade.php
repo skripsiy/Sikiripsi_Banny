@@ -28,13 +28,12 @@
             this.showCreateModal = true;
         },
         searchQuery: '',
-        filterJurusan: 'all',
-        filterStatus: 'all'
+        filterJurusan: 'all'
     }">
         <!-- Header Actions -->
         <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 sm:gap-0 mb-6">
             <h3 class="text-base font-bold text-gray-800">Daftar Mata Pelajaran</h3>
-            <button @click="openCreateModal()" 
+            <button @click="openCreateModal()"
                     class="bg-[#0c2b4d] hover:bg-[#07192d] text-white px-4 py-2.5 rounded-lg text-sm font-semibold transition-colors shadow-sm cursor-pointer select-none">
                 + Tambah Mata Pelajaran
             </button>
@@ -63,15 +62,15 @@
         @endif
 
         <!-- Search & Filter Panel -->
-        <div class="bg-white rounded-2xl border border-gray-100 p-4 mb-6 shadow-sm flex flex-col md:flex-row items-center justify-between gap-4">
+        <div class="bg-white rounded-2xl border border-gray-100 p-4 mb-6 shadow-sm flex flex-col sm:flex-row items-center justify-between gap-4">
             <!-- Search Bar -->
-            <div class="relative w-full md:w-96">
+            <div class="relative w-full sm:w-80">
                 <span class="absolute inset-y-0 left-0 flex items-center pl-3.5 pointer-events-none">
                     <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
                     </svg>
                 </span>
-                <input type="text" x-model="searchQuery" placeholder="Cari..." 
+                <input type="text" x-model="searchQuery" placeholder="Cari..."
                        class="w-full pl-10 pr-10 py-2.5 bg-gray-50 border border-gray-100 rounded-xl text-xs text-gray-800 focus:outline-none focus:bg-white focus:border-[#0c2b4d] focus:ring-1 focus:ring-[#0c2b4d] transition-all placeholder-gray-400">
                 <button x-show="searchQuery !== ''" @click="searchQuery = ''" style="display: none;"
                         class="absolute inset-y-0 right-0 flex items-center pr-3 text-gray-400 hover:text-gray-600 transition-colors">
@@ -82,27 +81,16 @@
             </div>
 
             <!-- Filters -->
-            <div class="flex flex-wrap items-center gap-3 w-full md:w-auto">
-                <div class="flex items-center gap-2">
-                    <span class="text-xs font-bold text-gray-400 uppercase tracking-wider">Jurusan:</span>
-                    <select x-model="filterJurusan"
-                            class="px-4 py-2.5 bg-gray-50 border border-gray-150 rounded-xl text-xs text-gray-700 font-semibold focus:outline-none focus:bg-white focus:border-[#0c2b4d] transition-all shadow-sm cursor-pointer">
-                        <option value="all">Semua Jurusan</option>
-                        <option value="umum">Umum (Semua Jurusan)</option>
-                        @foreach ($jurusans as $jur)
-                            <option value="{{ $jur->id }}">{{ $jur->nama_jurusan }}</option>
-                        @endforeach
-                    </select>
-                </div>
-                <div class="flex items-center gap-2">
-                    <span class="text-xs font-bold text-gray-400 uppercase tracking-wider">Status:</span>
-                    <select x-model="filterStatus"
-                            class="px-4 py-2.5 bg-gray-50 border border-gray-150 rounded-xl text-xs text-gray-700 font-semibold focus:outline-none focus:bg-white focus:border-[#0c2b4d] transition-all shadow-sm cursor-pointer">
-                        <option value="all">Semua Status</option>
-                        <option value="active">Aktif</option>
-                        <option value="inactive">Tidak Aktif</option>
-                    </select>
-                </div>
+            <div class="flex items-center gap-2.5 w-full sm:w-auto justify-end">
+                <span class="text-xs font-bold text-gray-400 uppercase tracking-wider whitespace-nowrap">Jurusan:</span>
+                <select x-model="filterJurusan"
+                        class="w-full sm:w-48 truncate px-4 py-2.5 bg-gray-50 border border-gray-150 rounded-xl text-xs text-gray-700 font-semibold focus:outline-none focus:bg-white focus:border-[#0c2b4d] transition-all shadow-sm cursor-pointer">
+                    <option value="all">Semua Jurusan</option>
+                    <option value="umum">Umum (Semua Jurusan)</option>
+                    @foreach ($jurusans as $jur)
+                        <option value="{{ $jur->id }}">{{ $jur->nama_jurusan }}</option>
+                    @endforeach
+                </select>
             </div>
         </div>
 
@@ -116,30 +104,27 @@
                         <table class="min-w-full divide-y divide-gray-100">
                             <thead class="bg-gray-50/75">
                                 <tr>
-                                    <th class="px-6 py-4 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">Kode</th>
-                                    <th class="px-6 py-4 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">Nama Mata Pelajaran</th>
-                                    <th class="px-6 py-4 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">Jurusan</th>
-                                    <th class="px-6 py-4 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">Status</th>
-                                    <th class="px-6 py-4 text-center text-xs font-bold text-gray-500 uppercase tracking-wider w-36">Aksi</th>
+                                    <th class="px-6 py-3 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">Kode</th>
+                                    <th class="px-6 py-3 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">Nama Mata Pelajaran</th>
+                                    <th class="px-6 py-3 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">Jurusan</th>
+                                    <th class="px-6 py-3 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">Status</th>
+                                    <th class="px-6 py-3 text-center text-xs font-bold text-gray-500 uppercase tracking-wider w-36">Aksi</th>
                                 </tr>
                             </thead>
                             <tbody class="bg-white divide-y divide-gray-100">
                                 @foreach ($mata_pelajarans as $subject)
                                     <tr class="hover:bg-gray-50/50 transition-all duration-150"
-                                        x-show="(searchQuery === '' || 
-                                                 {{ json_encode(strtolower($subject->kode_pelajaran)) }}.includes(searchQuery.toLowerCase()) || 
-                                                 {{ json_encode(strtolower($subject->nama_pelajaran)) }}.includes(searchQuery.toLowerCase()) || 
-                                                 {{ json_encode(strtolower($subject->jurusan->nama_jurusan ?? '')) }}.includes(searchQuery.toLowerCase()) || 
+                                        x-show="(searchQuery === '' ||
+                                                 {{ json_encode(strtolower($subject->kode_pelajaran)) }}.includes(searchQuery.toLowerCase()) ||
+                                                 {{ json_encode(strtolower($subject->nama_pelajaran)) }}.includes(searchQuery.toLowerCase()) ||
+                                                 {{ json_encode(strtolower($subject->jurusan->nama_jurusan ?? '')) }}.includes(searchQuery.toLowerCase()) ||
                                                  {{ json_encode(strtolower($subject->jurusan->kode_jurusan ?? '')) }}.includes(searchQuery.toLowerCase())) &&
-                                                (filterJurusan === 'all' || 
-                                                 (filterJurusan === 'umum' && {{ $subject->jurusan_id === null ? 'true' : 'false' }}) || 
-                                                 (filterJurusan === '{{ $subject->jurusan_id ?? '' }}')) &&
-                                                (filterStatus === 'all' || 
-                                                 (filterStatus === 'active' && {{ $subject->is_active ? 'true' : 'false' }}) ||
-                                                 (filterStatus === 'inactive' && {{ !$subject->is_active ? 'true' : 'false' }}))">
-                                        <td class="px-6 py-4 whitespace-nowrap text-sm font-semibold text-gray-900">{{ $subject->kode_pelajaran }}</td>
-                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700 font-medium">{{ $subject->nama_pelajaran }}</td>
-                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                                                (filterJurusan === 'all' ||
+                                                 (filterJurusan === 'umum' && {{ $subject->jurusan_id === null ? 'true' : 'false' }}) ||
+                                                 (filterJurusan === '{{ $subject->jurusan_id ?? '' }}'))">
+                                        <td class="px-6 py-2.5 whitespace-nowrap text-sm font-semibold text-gray-900">{{ $subject->kode_pelajaran }}</td>
+                                        <td class="px-6 py-2.5 whitespace-nowrap text-sm text-gray-700 font-medium">{{ $subject->nama_pelajaran }}</td>
+                                        <td class="px-6 py-2.5 whitespace-nowrap text-sm text-gray-500">
                                             @if($subject->jurusan)
                                                 <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-50 text-blue-800 border border-blue-100">
                                                     {{ $subject->jurusan->nama_jurusan }} ({{ $subject->jurusan->kode_jurusan }})
@@ -150,7 +135,7 @@
                                                 </span>
                                             @endif
                                         </td>
-                                        <td class="px-6 py-4 whitespace-nowrap text-sm">
+                                        <td class="px-6 py-2.5 whitespace-nowrap text-sm">
                                             @if ($subject->is_active)
                                                 <span class="inline-flex items-center gap-1.5 px-3 py-1 text-xs font-bold rounded-full bg-green-50 text-green-700 border border-green-200 shadow-sm">
                                                     <span class="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse"></span>
@@ -163,7 +148,7 @@
                                                 </span>
                                             @endif
                                         </td>
-                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-center font-medium">
+                                        <td class="px-6 py-2.5 whitespace-nowrap text-sm text-center font-medium">
                                             <div class="flex items-center justify-center gap-3">
                                                 <button @click="
                                                     showEditModal = true;
@@ -175,15 +160,15 @@
                                                         is_active: '{{ $subject->is_active ? '1' : '0' }}'
                                                     };
                                                     editUrl = '{{ route('admin.manage.mata_pelajarans.update', $subject->id) }}';
-                                                 " 
+                                                 "
                                                  class="text-blue-600 hover:text-blue-900 bg-blue-50 hover:bg-blue-100 px-3 py-1.5 rounded-lg text-xs font-bold transition-all duration-150 cursor-pointer select-none">
                                                     Edit
                                                 </button>
-                                                
+
                                                 <form action="{{ route('admin.manage.mata_pelajarans.destroy', $subject->id) }}" method="POST" onsubmit="return confirm('Apakah Anda yakin ingin menghapus mata pelajaran ini?');" class="inline">
                                                     @csrf
                                                     @method('DELETE')
-                                                    <button type="submit" 
+                                                    <button type="submit"
                                                             class="text-red-600 hover:text-red-900 bg-red-50 hover:bg-red-100 px-3 py-1.5 rounded-lg text-xs font-bold transition-all duration-150 cursor-pointer">
                                                         Hapus
                                                     </button>
@@ -204,7 +189,7 @@
                             </div>
                             <h4 class="text-lg font-bold text-gray-800 mb-1">Belum Ada Mata Pelajaran</h4>
                             <p class="text-sm text-gray-400 max-w-sm mb-6">Data mata pelajaran yang Anda tambahkan untuk keperluan akademik sekolah akan muncul di sini.</p>
-                            <button @click="openCreateModal()" 
+                            <button @click="openCreateModal()"
                                     class="inline-flex items-center gap-2 bg-[#0c2b4d] hover:bg-[#07192d] text-white px-4 py-2.5 rounded-xl text-sm font-semibold transition-colors shadow-sm cursor-pointer select-none">
                                 + Tambah Mata Pelajaran
                             </button>

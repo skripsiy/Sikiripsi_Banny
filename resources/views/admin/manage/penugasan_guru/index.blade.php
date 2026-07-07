@@ -12,8 +12,7 @@
             guru_id: '{{ old('guru_id') ?? '' }}'
         },
         editUrl: '{{ old('id') ? route('admin.manage.penugasan-guru.update', old('id')) : '' }}',
-        searchQuery: '',
-        filterGuru: 'all'
+        searchQuery: ''
     }">
         <!-- Header Actions -->
         <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 sm:gap-0 mb-6">
@@ -29,7 +28,7 @@
             <div x-data="{ show: true }" x-show="show" class="mb-6 p-4 bg-green-50 border border-green-200 text-green-700 rounded-xl text-sm font-medium shadow-sm flex items-center justify-between">
                 <span>{{ session('status') }}</span>
                 <button @click="show = false" class="text-green-600 hover:text-green-800 transition-colors p-1">
-                    <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                    <svg class="w-4.5 h-4.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"></path>
                     </svg>
                 </button>
@@ -47,9 +46,9 @@
         @endif
 
         <!-- Search & Filter Panel -->
-        <div class="bg-white rounded-2xl border border-gray-100 p-4 mb-6 shadow-sm flex flex-col md:flex-row items-center justify-between gap-4">
+        <div class="bg-white rounded-2xl border border-gray-100 p-4 mb-6 shadow-sm">
             <!-- Search Bar -->
-            <div class="relative w-full md:w-96">
+            <div class="relative w-full">
                 <span class="absolute inset-y-0 left-0 flex items-center pl-3.5 pointer-events-none">
                     <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
@@ -64,18 +63,6 @@
                     </svg>
                 </button>
             </div>
-
-            <!-- Guru Filter -->
-            <div class="flex items-center gap-2 w-full md:w-auto">
-                <span class="text-xs font-bold text-gray-400 uppercase tracking-wider whitespace-nowrap">Guru:</span>
-                <select x-model="filterGuru"
-                        class="px-4 py-2.5 bg-gray-50 border border-gray-150 rounded-xl text-xs text-gray-700 font-semibold focus:outline-none focus:bg-white focus:border-[#0c2b4d] transition-all shadow-sm cursor-pointer w-full md:w-auto">
-                    <option value="all">Semua Guru</option>
-                    @foreach ($gurus as $g)
-                        <option value="{{ $g->id }}">{{ $g->user->name ?? 'N/A' }}</option>
-                    @endforeach
-                </select>
-            </div>
         </div>
 
         <div class="bg-white shadow-lg rounded-2xl border border-gray-100 overflow-hidden">
@@ -88,81 +75,80 @@
                         <table class="min-w-full divide-y divide-gray-100">
                             <thead class="bg-gray-50/75">
                                 <tr>
-                                    <th class="px-6 py-4 text-left text-xs font-bold text-gray-500 uppercase tracking-wider w-12">No</th>
-                                    <th class="px-6 py-4 text-left text-xs font-bold text-gray-500 uppercase tracking-wider w-32">Kode</th>
-                                    <th class="px-6 py-4 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">Nama Mata Pelajaran</th>
-                                    <th class="px-6 py-4 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">Jurusan</th>
-                                    <th class="px-6 py-4 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">Guru Pengampu</th>
-                                    <th class="px-6 py-4 text-center text-xs font-bold text-gray-500 uppercase tracking-wider w-48">Aksi</th>
+                                    <th class="px-6 py-3 text-left text-xs font-bold text-gray-500 uppercase tracking-wider w-12">No</th>
+                                    <th class="px-6 py-3 text-left text-xs font-bold text-gray-500 uppercase tracking-wider w-32">Kode</th>
+                                    <th class="px-6 py-3 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">Nama Mata Pelajaran</th>
+                                    <th class="px-6 py-3 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">Jurusan</th>
+                                    <th class="px-6 py-3 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">Guru Pengampu</th>
+                                    <th class="px-6 py-3 text-center text-xs font-bold text-gray-500 uppercase tracking-wider w-48">Aksi</th>
                                 </tr>
                             </thead>
                             <tbody class="bg-white divide-y divide-gray-100">
                                 @foreach ($assignments as $index => $assignment)
                                     <tr class="hover:bg-gray-50/50 transition-all duration-150"
-                                        x-show="(searchQuery === '' || 
+                                        x-show="searchQuery === '' || 
                                                  {{ json_encode(strtolower($assignment->mataPelajaran?->kode_pelajaran ?? '')) }}.includes(searchQuery.toLowerCase()) || 
                                                  {{ json_encode(strtolower($assignment->mataPelajaran?->nama_pelajaran ?? '')) }}.includes(searchQuery.toLowerCase()) || 
-                                                 {{ json_encode(strtolower($assignment->mataPelajaran?->jurusan->nama_jurusan ?? '')) }}.includes(searchQuery.toLowerCase()) || 
-                                                 {{ json_encode(strtolower($assignment->guru->user->name ?? '')) }}.includes(searchQuery.toLowerCase()) || 
-                                                 {{ json_encode(strtolower($assignment->guru->nip ?? '')) }}.includes(searchQuery.toLowerCase())) &&
-                                                (filterGuru === 'all' || filterGuru === '{{ $assignment->guru_id ?? '' }}')">
-                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ $index + 1 }}</td>
-                                         <td class="px-6 py-4 whitespace-nowrap text-sm font-semibold text-gray-900">
-                                            {{ $assignment->mataPelajaran?->kode_pelajaran ?? '-' }}
-                                            @if($assignment->mataPelajaran?->trashed())
-                                                <span class="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-medium bg-red-50 text-red-700 border border-red-100 ml-1">
-                                                    Terhapus
-                                                </span>
-                                            @endif
-                                        </td>
-                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700 font-medium">{{ $assignment->mataPelajaran?->nama_pelajaran ?? '-' }}</td>
-                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                                            @if($assignment->mataPelajaran?->jurusan)
-                                                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-50 text-blue-800 border border-blue-100">
-                                                    {{ $assignment->mataPelajaran->jurusan->nama_jurusan }} ({{ $assignment->mataPelajaran->jurusan->kode_jurusan }})
-                                                </span>
-                                            @else
-                                                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-purple-50 text-purple-800 border border-purple-100">
-                                                    Umum
-                                                </span>
-                                            @endif
-                                        </td>
-                                        <td class="px-6 py-4 text-sm text-gray-900 font-semibold">
-                                            {{ $assignment->guru->user->name ?? 'N/A' }}
-                                            <span class="block text-[10px] text-gray-400 font-normal mt-0.5">NIP: {{ $assignment->guru->nip ?? '-' }}</span>
-                                        </td>
-                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-center font-medium">
-                                            <div class="flex items-center justify-center gap-2">
-                                                 @if($assignment->mataPelajaran?->trashed())
-                                                    <button disabled 
-                                                            title="Mata pelajaran telah dihapus, tidak dapat diubah" 
-                                                            class="text-gray-400 bg-gray-100 px-3.5 py-2 rounded-lg text-xs font-bold cursor-not-allowed select-none opacity-60">
-                                                        Edit
-                                                    </button>
-                                                @else
-                                                    <button @click="
-                                                        showEditModal = true;
-                                                        editData = {
-                                                            id: '{{ $assignment->id }}',
-                                                            mata_pelajaran_id: '{{ $assignment->mata_pelajaran_id }}',
-                                                            guru_id: '{{ $assignment->guru_id }}'
-                                                        };
-                                                        editUrl = '{{ route('admin.manage.penugasan-guru.update', $assignment->id) }}';
-                                                     " 
-                                                     class="text-blue-600 hover:text-blue-900 bg-blue-50 hover:bg-blue-100 px-3.5 py-2 rounded-lg text-xs font-bold transition-all duration-150 cursor-pointer select-none">
-                                                        Edit
-                                                    </button>
-                                                @endif
+                                                 {{ json_encode(strtolower($assignment->mataPelajaran?->jurusan?->nama_jurusan ?? '')) }}.includes(searchQuery.toLowerCase()) || 
+                                                 {{ json_encode(strtolower($assignment->guru?->user?->name ?? '')) }}.includes(searchQuery.toLowerCase()) || 
+                                                 {{ json_encode(strtolower($assignment->guru?->nip ?? '')) }}.includes(searchQuery.toLowerCase())">
+                                        <td class="px-6 py-2.5 whitespace-nowrap text-sm text-gray-500">{{ $index + 1 }}</td>
+                                         <td class="px-6 py-2.5 whitespace-nowrap text-sm font-semibold text-gray-900">
+                                             {{ $assignment->mataPelajaran?->kode_pelajaran ?? '-' }}
+                                             @if($assignment->mataPelajaran?->trashed())
+                                                 <span class="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-medium bg-red-50 text-red-700 border border-red-100 ml-1">
+                                                     Terhapus
+                                                 </span>
+                                             @endif
+                                         </td>
+                                         <td class="px-6 py-2.5 whitespace-nowrap text-sm text-gray-700 font-medium">{{ $assignment->mataPelajaran?->nama_pelajaran ?? '-' }}</td>
+                                         <td class="px-6 py-2.5 whitespace-nowrap text-sm text-gray-500">
+                                             @if($assignment->mataPelajaran?->jurusan)
+                                                 <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-50 text-blue-800 border border-blue-100">
+                                                     {{ $assignment->mataPelajaran->jurusan->nama_jurusan }} ({{ $assignment->mataPelajaran->jurusan->kode_jurusan }})
+                                                 </span>
+                                             @else
+                                                 <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-purple-50 text-purple-800 border border-purple-100">
+                                                     Umum
+                                                 </span>
+                                             @endif
+                                         </td>
+                                         <td class="px-6 py-2.5 text-sm text-gray-900 font-semibold">
+                                             {{ $assignment->guru?->user?->name ?? 'N/A' }}
+                                             <span class="block text-[10px] text-gray-400 font-normal mt-0.5">NIP: {{ $assignment->guru?->nip ?? '-' }}</span>
+                                         </td>
+                                         <td class="px-6 py-2.5 whitespace-nowrap text-sm text-center font-medium">
+                                             <div class="flex items-center justify-center gap-2">
+                                                  @if($assignment->mataPelajaran?->trashed())
+                                                     <button disabled 
+                                                             title="Mata pelajaran telah dihapus, tidak dapat diubah" 
+                                                             class="text-gray-400 bg-gray-100 px-3.5 py-1.5 rounded-lg text-xs font-bold cursor-not-allowed select-none opacity-60">
+                                                         Edit
+                                                     </button>
+                                                 @else
+                                                     <button @click="
+                                                         showEditModal = true;
+                                                         editData = {
+                                                             id: '{{ $assignment->id }}',
+                                                             mata_pelajaran_id: '{{ $assignment->mata_pelajaran_id }}',
+                                                             guru_id: '{{ $assignment->guru_id }}'
+                                                         };
+                                                         editUrl = '{{ route('admin.manage.penugasan-guru.update', $assignment->id) }}';
+                                                      " 
+                                                      class="text-blue-600 hover:text-blue-900 bg-blue-50 hover:bg-blue-100 px-3.5 py-1.5 rounded-lg text-xs font-bold transition-all duration-150 cursor-pointer select-none">
+                                                         Edit
+                                                     </button>
+                                                 @endif
 
-                                                <form action="{{ route('admin.manage.penugasan-guru.destroy', $assignment->id) }}" method="POST" onsubmit="return confirm('Hapus penugasan guru ini?');" class="inline">
-                                                    @csrf
-                                                    @method('DELETE')
-                                                    <button type="submit" class="text-red-600 hover:text-red-900 bg-red-50 hover:bg-red-100 px-3.5 py-2 rounded-lg text-xs font-bold transition-all duration-150 cursor-pointer select-none">
-                                                        Hapus
-                                                    </button>
-                                                </form>
-                                            </div>
-                                        </td>
+                                                 <form action="{{ route('admin.manage.penugasan-guru.destroy', $assignment->id) }}" method="POST" onsubmit="return confirm('Hapus penugasan guru ini?');" class="inline">
+                                                     @csrf
+                                                     @method('DELETE')
+                                                     <button type="submit" class="text-red-600 hover:text-red-900 bg-red-50 hover:bg-red-100 px-3.5 py-1.5 rounded-lg text-xs font-bold transition-all duration-150 cursor-pointer select-none">
+                                                         Hapus
+                                                     </button>
+                                                 </form>
+                                             </div>
+                                         </td>
                                     </tr>
                                 @endforeach
                             </tbody>

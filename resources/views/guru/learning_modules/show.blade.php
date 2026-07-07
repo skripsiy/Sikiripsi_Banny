@@ -242,7 +242,7 @@
                                     </div>
                                 </template>
                                 <a :href="activity.url" class="text-xs font-bold text-[#0c2b4d] hover:underline flex items-center gap-0.5 mt-1 sm:mt-0 select-none">
-                                    Kelola
+                                    <span x-text="activity.label"></span>
                                     <svg class="w-3 h-3" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"></path>
                                     </svg>

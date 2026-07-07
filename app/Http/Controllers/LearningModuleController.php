@@ -265,52 +265,56 @@ class LearningModuleController extends Controller
             'id' => $item->id,
             'title' => $item->title,
             'type' => 'materi',
+            'label' => 'Edit Materi',
             'description' => \Illuminate\Support\Str::limit(strip_tags($item->content), 80),
             'created_at' => $item->created_at,
             'created_at_formatted' => $item->created_at->translatedFormat('d F Y H:i'),
             'due_date_formatted' => null,
             'is_recent' => $item->created_at->diffInDays(now()) <= 7,
             'is_upcoming' => false,
-            'url' => route('guru.learning-modules.materis.index', $learningModule->id),
+            'url' => route('guru.learning-modules.materis.edit', [$learningModule->id, $item->id]),
         ]);
 
         $tugasMapped = $recentTugas->map(fn($item) => [
             'id' => $item->id,
             'title' => $item->title,
             'type' => 'tugas',
+            'label' => 'Lihat Pengumpulan',
             'description' => \Illuminate\Support\Str::limit(strip_tags($item->instructions), 80),
             'created_at' => $item->created_at,
             'created_at_formatted' => $item->created_at->translatedFormat('d F Y H:i'),
             'due_date_formatted' => $item->due_date ? $item->due_date->translatedFormat('d F Y H:i') : null,
             'is_recent' => $item->created_at->diffInDays(now()) <= 7,
             'is_upcoming' => $item->due_date ? $item->due_date->isFuture() : false,
-            'url' => route('guru.learning-modules.tugas.index', $learningModule->id),
+            'url' => route('guru.learning-modules.tugas.submissions', [$learningModule->id, $item->id]),
         ]);
 
         $quizzesMapped = $recentQuizzes->map(fn($item) => [
             'id' => $item->id,
             'title' => $item->title,
             'type' => 'kuis',
+            'label' => 'Lihat Hasil',
             'description' => \Illuminate\Support\Str::limit(strip_tags($item->instructions), 80),
             'created_at' => $item->created_at,
             'created_at_formatted' => $item->created_at->translatedFormat('d F Y H:i'),
             'due_date_formatted' => $item->due_date ? $item->due_date->translatedFormat('d F Y H:i') : null,
             'is_recent' => $item->created_at->diffInDays(now()) <= 7,
             'is_upcoming' => $item->due_date ? $item->due_date->isFuture() : false,
-            'url' => route('guru.learning-modules.quizzes.index', $learningModule->id),
+            'url' => route('guru.learning-modules.quizzes.results', [$learningModule->id, $item->id]),
         ]);
 
         $ujiansMapped = $recentUjians->map(fn($item) => [
             'id' => $item->id,
             'title' => $item->title,
             'type' => 'ujian',
+            'label' => 'Lihat Hasil',
             'description' => \Illuminate\Support\Str::limit(strip_tags($item->instructions), 80),
             'created_at' => $item->created_at,
             'created_at_formatted' => $item->created_at->translatedFormat('d F Y H:i'),
             'due_date_formatted' => $item->due_date ? $item->due_date->translatedFormat('d F Y H:i') : null,
             'is_recent' => $item->created_at->diffInDays(now()) <= 7,
             'is_upcoming' => $item->due_date ? $item->due_date->isFuture() : false,
-            'url' => route('guru.learning-modules.ujians.index', $learningModule->id),
+            'url' => route('guru.learning-modules.ujians.results', [$learningModule->id, $item->id]),
         ]);
 
         $activities = collect()

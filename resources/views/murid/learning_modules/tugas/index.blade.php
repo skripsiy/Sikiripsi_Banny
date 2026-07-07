@@ -150,7 +150,7 @@
 
                                 <div class="mt-2.5">
                                     <a href="{{ route('murid.learning-modules.tugas.show', [$learningModule->id, $tgs->id, 'semester_id' => $selectedSemester?->id]) }}"
-                                       class="inline-flex items-center gap-1.5 px-4.5 py-2 bg-[#0c2b4d] hover:bg-[#081d33] text-white text-xs font-bold rounded-xl transition-all shadow-sm cursor-pointer select-none">
+                                       class="inline-flex items-center gap-1.5 px-5 py-2.5 bg-[#0c2b4d] hover:bg-[#081d33] text-white text-xs font-bold rounded-xl transition-all shadow-sm cursor-pointer select-none">
                                         Detail & Kumpulkan
                                         <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
                                             <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />

@@ -3,7 +3,7 @@
         {{ __('Hasil Kuis: ' . $quiz->title) }}
     </x-slot>
 
-    <div class="max-w-4xl mx-auto font-sans">
+    <div class="max-w-full mx-auto font-sans px-4 sm:px-6 lg:px-8">
 
         <!-- Back Button -->
         <div class="mb-4">
@@ -17,27 +17,33 @@
         </div>
 
         <!-- Prominent Score Banner Card -->
-        <div class="bg-white rounded-3xl border border-gray-150 p-6 md:p-8 shadow-lg text-center flex flex-col items-center justify-center mb-6 relative overflow-hidden">
+        <div class="bg-white rounded-3xl border border-gray-150 p-6 md:p-8 shadow-lg flex flex-col md:flex-row justify-between items-start md:items-center gap-6 mb-6 relative overflow-hidden">
             <!-- Background Decoration -->
             <div class="absolute -right-10 -top-10 w-40 h-40 bg-blue-50 rounded-full opacity-50 select-none pointer-events-none"></div>
             
-            <span class="inline-flex px-3 py-1 bg-blue-50 text-[#0c2b4d] rounded-full text-[10px] font-bold border border-blue-100 uppercase tracking-widest mb-4">
-                {{ $learningModule->mataPelajaran->nama_pelajaran }}
-            </span>
-            
-            <h2 class="text-lg font-extrabold text-gray-800 mb-1">Hasil Ujian - {{ $quiz->title }}</h2>
-            <p class="text-xs text-gray-400 mb-6 max-w-md">Kuis Anda telah selesai dikerjakan dan dikirimkan.</p>
-
-            <div class="w-32 h-32 bg-gray-50 text-gray-850 rounded-full flex flex-col items-center justify-center border-4 border-double border-gray-250 shadow-inner mb-4 select-none">
-                <span class="text-3xl font-black {{ $attempt->skor >= 75 ? 'text-green-600' : 'text-red-500' }}">
-                    {{ number_format($attempt->skor ?? 0, 2) }}
+            <div class="space-y-3 text-left z-10">
+                <span class="inline-flex px-3 py-1 bg-blue-50 text-[#0c2b4d] rounded-full text-[10px] font-bold border border-blue-100 uppercase tracking-widest">
+                    {{ $learningModule->mataPelajaran->nama_pelajaran }}
                 </span>
-                <span class="text-[10px] text-gray-400 font-extrabold uppercase mt-0.5">Skor Akhir</span>
+                
+                <div>
+                    <h2 class="text-lg font-extrabold text-gray-800">Hasil Ujian - {{ $quiz->title }}</h2>
+                    <p class="text-xs text-gray-400 mt-1">Kuis Anda telah selesai dikerjakan dan dikirimkan.</p>
+                </div>
+
+                <div class="pt-1">
+                    <span class="inline-flex px-3 py-1 rounded-full text-[10px] font-bold border uppercase tracking-wider {{ $attempt->status === 'graded' ? 'bg-green-50 text-green-700 border-green-150' : 'bg-blue-50 text-blue-700 border-blue-150' }}">
+                        {{ $attempt->status === 'graded' ? 'Sudah Dinilai' : 'Menunggu Penilaian Essay' }}
+                    </span>
+                </div>
             </div>
 
-            <span class="inline-flex px-3 py-1 rounded-full text-xs font-bold border uppercase tracking-wider {{ $attempt->status === 'graded' ? 'bg-green-50 text-green-700 border-green-150' : 'bg-blue-50 text-blue-700 border-blue-150' }}">
-                {{ $attempt->status === 'graded' ? 'Sudah Dinilai' : 'Menunggu Penilaian Essay' }}
-            </span>
+            <div class="flex flex-col items-center md:items-end justify-center select-none z-10">
+                <span class="text-5xl font-black tracking-tight {{ $attempt->skor >= 75 ? 'text-green-600' : 'text-red-500' }}">
+                    {{ number_format($attempt->skor ?? 0, 2) }}
+                </span>
+                <span class="text-[10px] text-gray-400 font-extrabold uppercase tracking-widest mt-1">Skor Akhir</span>
+            </div>
         </div>
 
         <!-- Notification Status -->
@@ -87,7 +93,7 @@
                     </div>
 
                     <!-- Options (PG) or Answers Display -->
-                    <div class="p-4 bg-gray-50 border border-gray-100 rounded-xl space-y-3">
+                    <div class="mt-3 pl-1 space-y-3">
                         @if($soal->tipe === 'pg')
                             <div class="space-y-2">
                                 <div class="text-[10px] text-gray-400 font-bold uppercase tracking-wider">Opsi Jawaban:</div>

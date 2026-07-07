@@ -1,7 +1,7 @@
-<header class="h-16 bg-white/80 backdrop-blur-md border-b border-gray-100/50 flex items-center justify-between px-4 sm:px-6 sticky top-0 z-20">
+<header class="h-16 backdrop-blur-md border-b border-gray-100/50 flex items-center justify-between px-4 sm:px-6 sticky top-0 z-20">
     <!-- Left Side: Hamburger Menu (Mobile/Tablet only) -->
     <div class="flex items-center gap-3">
-        <button @click.stop="sidebarOpen = !sidebarOpen" 
+        <button @click.stop="sidebarOpen = !sidebarOpen"
                 class="lg:hidden inline-flex items-center justify-center p-2 rounded-xl text-gray-500 hover:text-gray-700 hover:bg-gray-100 focus:outline-none transition-all duration-150"
                 aria-label="Toggle sidebar">
             <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">

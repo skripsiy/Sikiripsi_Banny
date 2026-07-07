@@ -72,7 +72,7 @@
                         class="px-4 py-2.5 bg-gray-50 border border-gray-150 rounded-xl text-xs text-gray-700 font-semibold focus:outline-none focus:bg-white focus:border-[#0c2b4d] transition-all shadow-sm cursor-pointer w-full md:w-auto">
                     <option value="all">Semua Guru</option>
                     @foreach ($gurus as $g)
-                        <option value="{{ $g->guru->id ?? '' }}">{{ $g->guru->fullname ?? $g->name }}</option>
+                        <option value="{{ $g->id }}">{{ $g->user->name ?? 'N/A' }}</option>
                     @endforeach
                 </select>
             </div>

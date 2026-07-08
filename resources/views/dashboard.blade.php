@@ -184,7 +184,7 @@
                                 Semua &rarr;
                             </a>
                         </div>
-                        
+
                         @if(count($data['recent_gurus']) > 0)
                             <div class="space-y-3">
                                 @foreach($data['recent_gurus'] as $guru)
@@ -288,7 +288,7 @@
                                                 {{ $task->due_date ? $task->due_date->translatedFormat('d F Y, H:i') : 'Tanpa Batas Waktu' }}
                                             </span>
                                         </div>
-                                        <a href="{{ route('murid.learning-modules.tugas.show', [$task->learning_module_id, $task->id]) }}" 
+                                        <a href="{{ route('murid.learning-modules.tugas.show', [$task->learning_module_id, $task->id]) }}"
                                            class="bg-[#0c2b4d] hover:bg-[#07192d] text-white font-bold px-4 py-2 rounded-lg text-xs transition-colors cursor-pointer select-none whitespace-nowrap">
                                             Kerjakan
                                         </a>

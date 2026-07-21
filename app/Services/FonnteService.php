@@ -29,7 +29,8 @@ class FonnteService
         try {
             $response = Http::withHeaders([
                 'Authorization' => $token,
-            ])->post('https://api.fonnte.com/send', [
+            ])->withoutVerifying()
+            ->post('https://api.fonnte.com/send', [
                 'target' => $phone,
                 'message' => $message,
             ]);

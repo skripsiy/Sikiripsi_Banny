@@ -270,11 +270,20 @@ class LearningModuleController extends Controller
         $recentUjians = LearningModuleUjian::where('learning_module_id', $learningModule->id)
             ->where('semester_id', $selectedSemesterId)->latest()->limit(10)->get();
 
+        // Load Absensi Sessions aggregated by date
+        $absensiSessions = LearningModuleAbsensi::where('learning_module_id', $learningModule->id)
+            ->where('semester_id', $selectedSemesterId)
+            ->selectRaw('date, count(distinct murid_id) as total_recorded, sum(case when status = "hadir" then 1 else 0 end) as total_hadir')
+            ->groupBy('date')
+            ->orderBy('date', 'desc')
+            ->get();
+
         $muridsCount = Murid::where('classroom_id', $learningModule->classroom_id)->count();
 
-        // Map them to a unified activity feed
+        // Map them to unified activity feed
         $materisMapped = $recentMateris->map(fn($item) => [
-            'id' => $item->id,
+            'id' => 'materi-' . $item->id,
+            'item_id' => $item->id,
             'title' => $item->title,
             'type' => 'materi',
             'label' => 'Edit Materi',
@@ -288,7 +297,8 @@ class LearningModuleController extends Controller
         ]);
 
         $tugasMapped = $recentTugas->map(fn($item) => [
-            'id' => $item->id,
+            'id' => 'tugas-' . $item->id,
+            'item_id' => $item->id,
             'title' => $item->title,
             'type' => 'tugas',
             'label' => 'Lihat Pengumpulan',
@@ -302,7 +312,8 @@ class LearningModuleController extends Controller
         ]);
 
         $quizzesMapped = $recentQuizzes->map(fn($item) => [
-            'id' => $item->id,
+            'id' => 'kuis-' . $item->id,
+            'item_id' => $item->id,
             'title' => $item->title,
             'type' => 'kuis',
             'label' => 'Lihat Hasil',
@@ -316,7 +327,8 @@ class LearningModuleController extends Controller
         ]);
 
         $ujiansMapped = $recentUjians->map(fn($item) => [
-            'id' => $item->id,
+            'id' => 'ujian-' . $item->id,
+            'item_id' => $item->id,
             'title' => $item->title,
             'type' => 'ujian',
             'label' => 'Lihat Hasil',
@@ -329,19 +341,67 @@ class LearningModuleController extends Controller
             'url' => route('guru.learning-modules.ujians.results', [$learningModule->id, $item->id]),
         ]);
 
-        $activities = collect()
+        $absensisMapped = $absensiSessions->map(function($item) use ($learningModule, $selectedSemesterId, $muridsCount) {
+            $cDate = \Carbon\Carbon::parse($item->date);
+            return [
+                'id' => 'absensi-' . $item->date,
+                'item_id' => $item->date,
+                'title' => 'Sesi Presensi Harian',
+                'type' => 'absensi',
+                'label' => 'Kelola Presensi',
+                'description' => "Rekap Kehadiran: {$item->total_hadir}/{$muridsCount} murid hadir.",
+                'created_at' => $cDate,
+                'created_at_formatted' => $cDate->translatedFormat('d F Y'),
+                'due_date_formatted' => null,
+                'is_recent' => $cDate->diffInDays(now()) <= 7,
+                'is_upcoming' => false,
+                'url' => route('guru.learning-modules.absensi.index', [$learningModule->id, 'semester_id' => $selectedSemesterId]),
+            ];
+        });
+
+        $allActivities = collect()
             ->concat($materisMapped)
             ->concat($tugasMapped)
             ->concat($quizzesMapped)
             ->concat($ujiansMapped)
+            ->concat($absensisMapped);
+
+        $activities = $allActivities
             ->sortByDesc('created_at')
-            ->take(15) // Show top 15 overall
+            ->take(15)
             ->values();
+
+        // Group by Date for Meetings Timeline (chronological order)
+        $groupedByDate = $allActivities
+            ->groupBy(fn($item) => \Carbon\Carbon::parse($item['created_at'])->format('Y-m-d'))
+            ->sortKeys();
+
+        $meetingIndex = 1;
+        $meetingsTimeline = collect();
+
+        foreach ($groupedByDate as $dateStr => $items) {
+            $cDate = \Carbon\Carbon::parse($dateStr);
+            $status = 'past';
+            if ($cDate->isToday()) {
+                $status = 'today';
+            } elseif ($cDate->isFuture()) {
+                $status = 'future';
+            }
+
+            $meetingsTimeline->push([
+                'meeting_number' => $meetingIndex++,
+                'date' => $dateStr,
+                'date_formatted' => $cDate->translatedFormat('l, d F Y'),
+                'status' => $status,
+                'items' => $items->sortBy('created_at')->values()->all(),
+            ]);
+        }
 
         return view('guru.learning_modules.show', compact(
             'learningModule',
             'muridsCount',
             'activities',
+            'meetingsTimeline',
             'semesters',
             'selectedSemester'
         ));

@@ -148,16 +148,70 @@ class MuridLearningModuleController extends Controller
             'url' => route('murid.learning-modules.ujians.index', [$learningModule->id, 'semester_id' => $selectedSemesterId]),
         ]);
 
-        $activities = collect()
+        $murid = auth()->user()->murid;
+
+        $muridAbsensis = LearningModuleAbsensi::where('learning_module_id', $learningModule->id)
+            ->where('semester_id', $selectedSemesterId)
+            ->where('murid_id', $murid->id)
+            ->get();
+
+        $absensisMapped = $muridAbsensis->map(function($item) use ($learningModule, $selectedSemesterId) {
+            $cDate = \Carbon\Carbon::parse($item->date);
+            return [
+                'id' => 'absensi-' . $item->id,
+                'item_id' => $item->id,
+                'title' => 'Status Kehadiran',
+                'type' => 'absensi',
+                'label' => 'Lihat Presensi',
+                'description' => 'Status: ' . strtoupper($item->status) . ($item->notes ? ' (' . $item->notes . ')' : ''),
+                'created_at' => $cDate,
+                'created_at_formatted' => $cDate->translatedFormat('d F Y'),
+                'due_date_formatted' => null,
+                'is_recent' => $cDate->diffInDays(now()) <= 7,
+                'is_upcoming' => false,
+                'url' => route('murid.learning-modules.absensi.index', [$learningModule->id, 'semester_id' => $selectedSemesterId]),
+            ];
+        });
+
+        $allActivities = collect()
             ->concat($materisMapped)
             ->concat($tugasMapped)
             ->concat($quizzesMapped)
             ->concat($ujiansMapped)
+            ->concat($absensisMapped);
+
+        $activities = $allActivities
             ->sortByDesc('created_at')
             ->take(15)
             ->values();
 
-        return view('murid.learning_modules.show', compact('learningModule', 'activities', 'semesters', 'selectedSemester'));
+        // Group by Date for Meetings Timeline (chronological order)
+        $groupedByDate = $allActivities
+            ->groupBy(fn($item) => \Carbon\Carbon::parse($item['created_at'])->format('Y-m-d'))
+            ->sortKeys();
+
+        $meetingIndex = 1;
+        $meetingsTimeline = collect();
+
+        foreach ($groupedByDate as $dateStr => $items) {
+            $cDate = \Carbon\Carbon::parse($dateStr);
+            $status = 'past';
+            if ($cDate->isToday()) {
+                $status = 'today';
+            } elseif ($cDate->isFuture()) {
+                $status = 'future';
+            }
+
+            $meetingsTimeline->push([
+                'meeting_number' => $meetingIndex++,
+                'date' => $dateStr,
+                'date_formatted' => $cDate->translatedFormat('l, d F Y'),
+                'status' => $status,
+                'items' => $items->sortBy('created_at')->values()->all(),
+            ]);
+        }
+
+        return view('murid.learning_modules.show', compact('learningModule', 'activities', 'meetingsTimeline', 'semesters', 'selectedSemester'));
     }
 
     public function materis(LearningModule $learningModule)

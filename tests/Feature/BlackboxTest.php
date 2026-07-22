@@ -318,59 +318,65 @@ describe('Tahun Ajaran - Black Box Testing (EP, BVA, Decision Table)', function 
 
     // 4.1 Equivalence Partitioning (EP)
     describe('Equivalence Partitioning (EP)', function () {
-        it('accepts valid tahun ajaran format and sequence (2025/2026)', function () {
+        it('accepts valid tahun ajaran format and sequence (2026/2027)', function () {
             $response = $this->actingAs($this->admin)->post(route('admin.manage.tahun_akademiks.store'), [
-                'tahun_ajaran' => '2025/2026',
+                'tahun_awal' => 2026,
+                'tahun_akhir' => 2027,
             ]);
 
             $response->assertSessionHasNoErrors();
             $this->assertDatabaseHas('tahun_akademiks', [
-                'tahun_ajaran' => '2025/2026',
+                'tahun_ajaran' => '2026/2027',
                 'is_active' => true,
             ]);
         });
 
-        it('rejects invalid format (wrong separator, e.g., 2025-2026)', function () {
+        it('rejects invalid format (wrong separator or non-numeric)', function () {
             $response = $this->actingAs($this->admin)->post(route('admin.manage.tahun_akademiks.store'), [
-                'tahun_ajaran' => '2025-2026',
+                'tahun_awal' => 'abc',
+                'tahun_akhir' => 'def',
             ]);
 
-            $response->assertSessionHasErrors('tahun_ajaran');
+            $response->assertSessionHasErrors(['tahun_awal', 'tahun_akhir']);
         });
 
-        it('rejects invalid sequence (not +1 year, e.g., 2025/2027)', function () {
+        it('rejects invalid sequence (not +1 year, e.g., 2026/2028)', function () {
             $response = $this->actingAs($this->admin)->post(route('admin.manage.tahun_akademiks.store'), [
-                'tahun_ajaran' => '2025/2027',
+                'tahun_awal' => 2026,
+                'tahun_akhir' => 2028,
             ]);
 
-            $response->assertSessionHasErrors('tahun_ajaran');
+            $response->assertSessionHasErrors('tahun_akhir');
         });
     });
 
     // 4.2 Boundary Value Analysis (BVA)
     describe('Boundary Value Analysis (BVA)', function () {
-        it('rejects tahun ajaran with 8 characters (below boundary)', function () {
+        it('rejects tahun ajaran with 3 digits (below boundary)', function () {
             $response = $this->actingAs($this->admin)->post(route('admin.manage.tahun_akademiks.store'), [
-                'tahun_ajaran' => '2025/202', // 8 characters
+                'tahun_awal' => 202,
+                'tahun_akhir' => 2027,
             ]);
 
-            $response->assertSessionHasErrors('tahun_ajaran');
+            $response->assertSessionHasErrors('tahun_awal');
         });
 
-        it('accepts tahun ajaran with 9 characters (on boundary)', function () {
+        it('accepts tahun ajaran with 4 digits each (on boundary)', function () {
             $response = $this->actingAs($this->admin)->post(route('admin.manage.tahun_akademiks.store'), [
-                'tahun_ajaran' => '2025/2026', // 9 characters
+                'tahun_awal' => 2026,
+                'tahun_akhir' => 2027,
             ]);
 
             $response->assertSessionHasNoErrors();
         });
 
-        it('rejects tahun ajaran with 10 characters (above boundary)', function () {
+        it('rejects tahun ajaran with 5 digits (above boundary)', function () {
             $response = $this->actingAs($this->admin)->post(route('admin.manage.tahun_akademiks.store'), [
-                'tahun_ajaran' => '2025/20267', // 10 characters
+                'tahun_awal' => 20265,
+                'tahun_akhir' => 20266,
             ]);
 
-            $response->assertSessionHasErrors('tahun_ajaran');
+            $response->assertSessionHasErrors('tahun_awal');
         });
     });
 
@@ -379,13 +385,14 @@ describe('Tahun Ajaran - Black Box Testing (EP, BVA, Decision Table)', function 
         it('Rule 1: keeps existing active record active when new Year is added', function () {
             // Setup: create active record
             $activeTa = \App\Models\TahunAkademik::create([
-                'tahun_ajaran' => '2024/2025',
+                'tahun_ajaran' => '2026/2027',
                 'is_active' => true,
             ]);
 
             // Action: create new year
             $response = $this->actingAs($this->admin)->post(route('admin.manage.tahun_akademiks.store'), [
-                'tahun_ajaran' => '2025/2026',
+                'tahun_awal' => 2027,
+                'tahun_akhir' => 2028,
             ]);
 
             $response->assertSessionHasNoErrors();
@@ -471,6 +478,61 @@ describe('Tahun Ajaran - Black Box Testing (EP, BVA, Decision Table)', function 
 
             $response->assertSessionHasNoErrors();
             $this->assertDatabaseCount('semesters', 2);
+        });
+
+        it('validates split fields tahun_awal and tahun_akhir with future year rules', function () {
+            $currentYear = (int) date('Y');
+
+            // Historical year (past year) should fail
+            $resPast = $this->actingAs($this->admin)->post(route('admin.manage.tahun_akademiks.store'), [
+                'tahun_awal' => 2020,
+                'tahun_akhir' => 2021,
+            ]);
+            $resPast->assertSessionHasErrors('tahun_awal');
+
+            // Non-consecutive year (2026/2028) should fail
+            $resGap = $this->actingAs($this->admin)->post(route('admin.manage.tahun_akademiks.store'), [
+                'tahun_awal' => $currentYear,
+                'tahun_akhir' => $currentYear + 2,
+            ]);
+            $resGap->assertSessionHasErrors('tahun_akhir');
+
+            // Valid future year (e.g., currentYear / currentYear+1) should succeed
+            $resValid = $this->actingAs($this->admin)->post(route('admin.manage.tahun_akademiks.store'), [
+                'tahun_awal' => $currentYear,
+                'tahun_akhir' => $currentYear + 1,
+            ]);
+            $resValid->assertSessionHasNoErrors();
+            $this->assertDatabaseHas('tahun_akademiks', [
+                'tahun_ajaran' => $currentYear . '/' . ($currentYear + 1),
+            ]);
+        });
+
+        it('validates semester dates to match chosen academic year range', function () {
+            $ta = \App\Models\TahunAkademik::create([
+                'tahun_ajaran' => '2026/2027',
+                'is_active' => true,
+            ]);
+
+            // Date outside 2026-2027 (e.g. 2025) should fail
+            $resOut = $this->actingAs($this->admin)->post(route('admin.manage.semesters.store'), [
+                'tahun_akademik_id' => $ta->id,
+                'semester' => 'ganjil',
+                'start_date' => '2025-07-01',
+                'end_date' => '2025-12-31',
+                'is_active' => '1',
+            ]);
+            $resOut->assertSessionHasErrors(['start_date', 'end_date']);
+
+            // Date inside 2026-2027 range should pass
+            $resIn = $this->actingAs($this->admin)->post(route('admin.manage.semesters.store'), [
+                'tahun_akademik_id' => $ta->id,
+                'semester' => 'ganjil',
+                'start_date' => '2026-07-01',
+                'end_date' => '2026-12-31',
+                'is_active' => '1',
+            ]);
+            $resIn->assertSessionHasNoErrors();
         });
     });
 });

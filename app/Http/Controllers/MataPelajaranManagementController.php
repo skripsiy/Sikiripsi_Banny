@@ -7,6 +7,10 @@ use App\Models\Jurusan;
 use App\Models\Guru;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
+use PhpOffice\PhpSpreadsheet\Spreadsheet;
+use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
+use Maatwebsite\Excel\Facades\Excel;
+use App\Imports\MataPelajaransImport;
 
 class MataPelajaranManagementController extends Controller
 {
@@ -116,5 +120,63 @@ class MataPelajaranManagementController extends Controller
 
         return redirect()->route('admin.manage.mata_pelajarans.index')
             ->with('status', 'Mata pelajaran berhasil dihapus.');
+    }
+
+    public function downloadTemplate()
+    {
+        $spreadsheet = new Spreadsheet();
+        $sheet = $spreadsheet->getActiveSheet();
+
+        // Column Headings
+        $sheet->setCellValue('A1', 'kode_pelajaran');
+        $sheet->setCellValue('B1', 'nama_pelajaran');
+        $sheet->setCellValue('C1', 'kode_jurusan');
+
+        // Sample Data Row
+        $sheet->setCellValue('A2', 'BIN10');
+        $sheet->setCellValue('B2', 'Bahasa Indonesia');
+        $sheet->setCellValue('C2', 'RPL');
+
+        $writer = new Xlsx($spreadsheet);
+
+        return response()->streamDownload(function () use ($writer) {
+            $writer->save('php://output');
+        }, 'template_mata_pelajaran.xlsx', [
+            'Content-Type' => 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+        ]);
+    }
+
+    public function import(Request $request)
+    {
+        $request->validate([
+            'file' => ['required', 'file', 'mimes:xlsx,xls,csv', 'max:5120'],
+        ]);
+
+        try {
+            Excel::import(new MataPelajaransImport, $request->file('file'));
+        } catch (\Maatwebsite\Excel\Validators\ValidationException $e) {
+            $failures = $e->failures();
+            $errors = [];
+            foreach ($failures as $failure) {
+                $errors[] = 'Baris ' . $failure->row() . ': ' . implode(', ', $failure->errors());
+            }
+            return redirect()->route('admin.manage.mata_pelajarans.index')
+                ->with('import_errors', $errors);
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            $errors = [];
+            foreach ($e->errors() as $key => $messages) {
+                foreach ($messages as $msg) {
+                    $errors[] = $msg;
+                }
+            }
+            return redirect()->route('admin.manage.mata_pelajarans.index')
+                ->with('import_errors', $errors);
+        } catch (\Exception $e) {
+            return redirect()->route('admin.manage.mata_pelajarans.index')
+                ->with('error', 'Terjadi kesalahan saat mengimpor data: ' . $e->getMessage());
+        }
+
+        return redirect()->route('admin.manage.mata_pelajarans.index')
+            ->with('status', 'Data mata pelajaran berhasil diimpor.');
     }
 }

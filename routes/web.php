@@ -124,14 +124,29 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin/manage')->name('admin.m
     Route::resource('classrooms', ClassroomManagementController::class);
 
     // Mata Pelajaran
+    Route::get('mata-pelajarans/template', [MataPelajaranManagementController::class, 'downloadTemplate'])->name('mata_pelajarans.template');
+    Route::post('mata-pelajarans/import', [MataPelajaranManagementController::class, 'import'])->name('mata_pelajarans.import');
     Route::resource('mata-pelajarans', MataPelajaranManagementController::class)->names('mata_pelajarans');
+
+    // Penugasan Guru
+    Route::get('penugasan-guru/template', [PenugasanGuruController::class, 'downloadTemplate'])->name('penugasan-guru.template');
+    Route::post('penugasan-guru/import', [PenugasanGuruController::class, 'import'])->name('penugasan-guru.import');
     Route::resource('penugasan-guru', PenugasanGuruController::class)->except(['show']);
+
+    // Admin Learning Modules Monitoring, Creation & Absensi Siswa
+    Route::resource('learning-modules', \App\Http\Controllers\AdminLearningModuleController::class)->only(['index', 'store', 'destroy']);
+    Route::get('absensi', [\App\Http\Controllers\AdminAbsensiController::class, 'index'])->name('absensi.index');
+    Route::get('absensi/{classroom}', [\App\Http\Controllers\AdminAbsensiController::class, 'show'])->name('absensi.show');
 
     Route::resource('admins', AdminManagementController::class);
 });
 
 Route::middleware(['auth', 'role:guru'])->prefix('guru')->name('guru.')->group(function () {
     Route::resource('learning-modules', \App\Http\Controllers\LearningModuleController::class);
+    
+    // Guru Direct Absensi Menu
+    Route::get('absensi', [\App\Http\Controllers\GuruAbsensiController::class, 'index'])->name('absensi.index');
+    Route::get('absensi/{classroom}', [\App\Http\Controllers\GuruAbsensiController::class, 'show'])->name('absensi.show');
     Route::resource('learning-modules.materis', \App\Http\Controllers\MateriController::class)->except(['show']);
     Route::resource('learning-modules.tugas', \App\Http\Controllers\TugasController::class)->except(['show']);
     Route::get('learning-modules/{learning_module}/tugas/{tuga}/submissions', [\App\Http\Controllers\TugasController::class, 'submissions'])->name('learning-modules.tugas.submissions');

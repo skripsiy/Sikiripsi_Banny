@@ -32,4 +32,16 @@ class MataPelajaran extends Model
     {
         return $this->belongsToMany(Guru::class, 'guru_mata_pelajaran', 'mata_pelajaran_id', 'guru_id')->withTimestamps();
     }
+
+    public function classrooms()
+    {
+        return $this->hasManyThrough(
+            Classroom::class,
+            LearningModule::class,
+            'mata_pelajaran_id',
+            'id',
+            'id',
+            'classroom_id'
+        )->distinct();
+    }
 }

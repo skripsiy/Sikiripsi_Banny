@@ -8,7 +8,8 @@
         showEditModal: {{ $errors->any() && old('_method') === 'PUT' ? 'true' : 'false' }},
         editData: {
             id: '{{ old('id') ?? '' }}',
-            tahun_ajaran: {{ json_encode(old('tahun_ajaran') ?? '') }},
+            tahun_awal: {{ json_encode(old('tahun_awal') ?? '') }},
+            tahun_akhir: {{ json_encode(old('tahun_akhir') ?? '') }},
             is_active: '{{ old('is_active') !== null ? (old('is_active') ? '1' : '0') : '' }}'
         },
         editUrl: '{{ old('id') ? route('admin.manage.tahun_akademiks.update', old('id')) : '' }}',
@@ -102,9 +103,11 @@
                                             <div class="flex items-center justify-center gap-3">
                                                 <button @click="
                                                     showEditModal = true;
+                                                    let parts = ({{ json_encode($year->tahun_ajaran) }} || '').split('/');
                                                     editData = {
                                                         id: '{{ $year->id }}',
-                                                        tahun_ajaran: {{ json_encode($year->tahun_ajaran) }},
+                                                        tahun_awal: parts[0] || '',
+                                                        tahun_akhir: parts[1] || '',
                                                         is_active: '{{ $year->is_active ? '1' : '0' }}'
                                                     };
                                                     editUrl = '{{ route('admin.manage.tahun_akademiks.update', $year->id) }}';

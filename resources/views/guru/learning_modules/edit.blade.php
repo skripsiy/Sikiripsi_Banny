@@ -65,14 +65,7 @@
 
 
 
-    <div>
-        <label for="edit_description" class="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-1.5">Deskripsi Modul</label>
-        <textarea name="description" id="edit_description" rows="4" x-model="editData.description" required
-                  class="w-full px-4 py-2.5 bg-white border border-gray-200 rounded-xl focus:outline-none focus:border-[#0c2b4d] focus:ring-1 focus:ring-[#0c2b4d] text-sm text-gray-800 transition-all shadow-sm"></textarea>
-        @if(old('_method') === 'PUT')
-            @error('description') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
-        @endif
-    </div>
+
 
 
 

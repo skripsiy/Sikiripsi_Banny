@@ -34,8 +34,47 @@ class SemesterManagementController extends Controller
                     ->where('tahun_akademik_id', $request->tahun_akademik_id)
                     ->whereNull('deleted_at')
             ],
-            'start_date' => ['required', 'date'],
-            'end_date' => ['required', 'date', 'after_or_equal:start_date'],
+            'start_date' => [
+                'required',
+                'date',
+                function ($attribute, $value, $fail) use ($request) {
+                    if ($request->tahun_akademik_id) {
+                        $ay = TahunAkademik::find($request->tahun_akademik_id);
+                        if ($ay && $ay->tahun_ajaran) {
+                            $parts = explode('/', $ay->tahun_ajaran);
+                            if (count($parts) === 2) {
+                                $startYear = (int)$parts[0];
+                                $endYear = (int)$parts[1];
+                                $dateYear = (int) date('Y', strtotime($value));
+                                if ($dateYear < $startYear || $dateYear > $endYear) {
+                                    $fail("Tahun pada tanggal mulai ($dateYear) harus berada dalam rentang tahun akademik ($ay->tahun_ajaran).");
+                                }
+                            }
+                        }
+                    }
+                }
+            ],
+            'end_date' => [
+                'required',
+                'date',
+                'after_or_equal:start_date',
+                function ($attribute, $value, $fail) use ($request) {
+                    if ($request->tahun_akademik_id) {
+                        $ay = TahunAkademik::find($request->tahun_akademik_id);
+                        if ($ay && $ay->tahun_ajaran) {
+                            $parts = explode('/', $ay->tahun_ajaran);
+                            if (count($parts) === 2) {
+                                $startYear = (int)$parts[0];
+                                $endYear = (int)$parts[1];
+                                $dateYear = (int) date('Y', strtotime($value));
+                                if ($dateYear < $startYear || $dateYear > $endYear) {
+                                    $fail("Tahun pada tanggal selesai ($dateYear) harus berada dalam rentang tahun akademik ($ay->tahun_ajaran).");
+                                }
+                            }
+                        }
+                    }
+                }
+            ],
         ], [
             'semester.unique' => 'Semester ini sudah terdaftar pada tahun akademik yang dipilih.',
             'end_date.after_or_equal' => 'Tanggal selesai tidak boleh mendahului tanggal mulai.',
@@ -75,8 +114,47 @@ class SemesterManagementController extends Controller
                     ->whereNull('deleted_at')
                     ->ignore($semester->id)
             ],
-            'start_date' => ['required', 'date'],
-            'end_date' => ['required', 'date', 'after_or_equal:start_date'],
+            'start_date' => [
+                'required',
+                'date',
+                function ($attribute, $value, $fail) use ($request) {
+                    if ($request->tahun_akademik_id) {
+                        $ay = TahunAkademik::find($request->tahun_akademik_id);
+                        if ($ay && $ay->tahun_ajaran) {
+                            $parts = explode('/', $ay->tahun_ajaran);
+                            if (count($parts) === 2) {
+                                $startYear = (int)$parts[0];
+                                $endYear = (int)$parts[1];
+                                $dateYear = (int) date('Y', strtotime($value));
+                                if ($dateYear < $startYear || $dateYear > $endYear) {
+                                    $fail("Tahun pada tanggal mulai ($dateYear) harus berada dalam rentang tahun akademik ($ay->tahun_ajaran).");
+                                }
+                            }
+                        }
+                    }
+                }
+            ],
+            'end_date' => [
+                'required',
+                'date',
+                'after_or_equal:start_date',
+                function ($attribute, $value, $fail) use ($request) {
+                    if ($request->tahun_akademik_id) {
+                        $ay = TahunAkademik::find($request->tahun_akademik_id);
+                        if ($ay && $ay->tahun_ajaran) {
+                            $parts = explode('/', $ay->tahun_ajaran);
+                            if (count($parts) === 2) {
+                                $startYear = (int)$parts[0];
+                                $endYear = (int)$parts[1];
+                                $dateYear = (int) date('Y', strtotime($value));
+                                if ($dateYear < $startYear || $dateYear > $endYear) {
+                                    $fail("Tahun pada tanggal selesai ($dateYear) harus berada dalam rentang tahun akademik ($ay->tahun_ajaran).");
+                                }
+                            }
+                        }
+                    }
+                }
+            ],
             'is_active' => ['required', 'boolean'],
         ], [
             'semester.unique' => 'Semester ini sudah terdaftar pada tahun akademik yang dipilih.',

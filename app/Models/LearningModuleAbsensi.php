@@ -31,4 +31,28 @@ class LearningModuleAbsensi extends Model
     {
         return $this->belongsTo(Murid::class)->withTrashed();
     }
+
+    public function classroom()
+    {
+        return $this->hasOneThrough(
+            Classroom::class,
+            LearningModule::class,
+            'id',
+            'id',
+            'learning_module_id',
+            'classroom_id'
+        );
+    }
+
+    public function mataPelajaran()
+    {
+        return $this->hasOneThrough(
+            MataPelajaran::class,
+            LearningModule::class,
+            'id',
+            'id',
+            'learning_module_id',
+            'mata_pelajaran_id'
+        );
+    }
 }

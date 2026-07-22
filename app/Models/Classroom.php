@@ -36,6 +36,35 @@ class Classroom extends Model
         return $this->hasMany(Murid::class);
     }
 
+    public function learningModules()
+    {
+        return $this->hasMany(LearningModule::class);
+    }
+
+    public function mataPelajarans()
+    {
+        return $this->hasManyThrough(
+            MataPelajaran::class,
+            LearningModule::class,
+            'classroom_id',
+            'id',
+            'id',
+            'mata_pelajaran_id'
+        )->distinct();
+    }
+
+    public function absensis()
+    {
+        return $this->hasManyThrough(
+            LearningModuleAbsensi::class,
+            LearningModule::class,
+            'classroom_id',
+            'learning_module_id',
+            'id',
+            'id'
+        );
+    }
+
     protected static function booted()
     {
         static::creating(function ($classroom) {

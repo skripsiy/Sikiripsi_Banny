@@ -22,33 +22,57 @@ class TahunAkademikManagementController extends Controller
 
     public function store(Request $request)
     {
+        if ($request->filled('tahun_ajaran') && (!$request->filled('tahun_awal') || !$request->filled('tahun_akhir'))) {
+            $parts = explode('/', $request->tahun_ajaran);
+            if (count($parts) === 2) {
+                $request->merge([
+                    'tahun_awal' => $parts[0],
+                    'tahun_akhir' => $parts[1],
+                ]);
+            }
+        }
+
+        $currentYear = (int) date('Y');
+
         $request->validate([
-            'tahun_ajaran' => [
+            'tahun_awal' => [
                 'required',
-                'string',
-                'size:9',
-                'regex:/^\d{4}\/\d{4}$/',
-                function ($attribute, $value, $fail) {
-                    $parts = explode('/', $value);
-                    if (count($parts) === 2) {
-                        $year1 = (int) $parts[0];
-                        $year2 = (int) $parts[1];
-                        if ($year2 !== $year1 + 1) {
-                            $fail('Format tahun ajaran tidak valid. Tahun kedua harus tepat 1 tahun setelah tahun pertama (misal: 2025/2026).');
-                        }
+                'numeric',
+                'digits:4',
+                'gte:' . $currentYear,
+            ],
+            'tahun_akhir' => [
+                'required',
+                'numeric',
+                'digits:4',
+                function ($attribute, $value, $fail) use ($request) {
+                    if ((int)$value !== (int)$request->tahun_awal + 1) {
+                        $fail('Tahun akhir harus tepat 1 tahun setelah tahun awal (contoh: ' . $request->tahun_awal . '/' . ((int)$request->tahun_awal + 1) . ').');
                     }
                 },
-                Rule::unique('tahun_akademiks')->whereNull('deleted_at'),
             ],
         ], [
-            'tahun_ajaran.required' => 'Tahun ajaran wajib diisi.',
-            'tahun_ajaran.regex' => 'Format tahun ajaran harus YYYY/YYYY (contoh: 2025/2026).',
-            'tahun_ajaran.size' => 'Tahun ajaran harus tepat 9 karakter.',
-            'tahun_ajaran.unique' => 'Tahun Ajaran ini sudah terdaftar.',
+            'tahun_awal.required' => 'Tahun awal wajib diisi.',
+            'tahun_awal.numeric' => 'Tahun awal harus berupa angka.',
+            'tahun_awal.digits' => 'Tahun awal harus tepat 4 digit angka.',
+            'tahun_awal.gte' => 'Tahun awal tidak boleh di masa lalu (minimal tahun ' . $currentYear . ').',
+            'tahun_akhir.required' => 'Tahun akhir wajib diisi.',
+            'tahun_akhir.numeric' => 'Tahun akhir harus berupa angka.',
+            'tahun_akhir.digits' => 'Tahun akhir harus tepat 4 digit angka.',
         ]);
 
+        $tahunAjaran = $request->tahun_awal . '/' . $request->tahun_akhir;
+
+        $existsActive = TahunAkademik::where('tahun_ajaran', $tahunAjaran)
+            ->whereNull('deleted_at')
+            ->exists();
+
+        if ($existsActive) {
+            return back()->withErrors(['tahun_awal' => 'Tahun Ajaran ini sudah terdaftar.'])->withInput();
+        }
+
         $ay = TahunAkademik::withTrashed()
-            ->where('tahun_ajaran', $request->tahun_ajaran)
+            ->where('tahun_ajaran', $tahunAjaran)
             ->first();
 
         if ($ay) {
@@ -58,7 +82,7 @@ class TahunAkademikManagementController extends Controller
             $ay->update(['is_active' => true]);
         } else {
             $ay = TahunAkademik::create([
-                'tahun_ajaran' => $request->tahun_ajaran,
+                'tahun_ajaran' => $tahunAjaran,
                 'is_active' => true,
             ]);
         }
@@ -74,34 +98,59 @@ class TahunAkademikManagementController extends Controller
 
     public function update(Request $request, TahunAkademik $tahunAkademik)
     {
+        if ($request->filled('tahun_ajaran') && (!$request->filled('tahun_awal') || !$request->filled('tahun_akhir'))) {
+            $parts = explode('/', $request->tahun_ajaran);
+            if (count($parts) === 2) {
+                $request->merge([
+                    'tahun_awal' => $parts[0],
+                    'tahun_akhir' => $parts[1],
+                ]);
+            }
+        }
+
+        $currentYear = (int) date('Y');
+
         $request->validate([
-            'tahun_ajaran' => [
+            'tahun_awal' => [
                 'required',
-                'string',
-                'size:9',
-                'regex:/^\d{4}\/\d{4}$/',
-                function ($attribute, $value, $fail) {
-                    $parts = explode('/', $value);
-                    if (count($parts) === 2) {
-                        $year1 = (int) $parts[0];
-                        $year2 = (int) $parts[1];
-                        if ($year2 !== $year1 + 1) {
-                            $fail('Format tahun ajaran tidak valid. Tahun kedua harus tepat 1 tahun setelah tahun pertama (misal: 2025/2026).');
-                        }
+                'numeric',
+                'digits:4',
+                'gte:' . $currentYear,
+            ],
+            'tahun_akhir' => [
+                'required',
+                'numeric',
+                'digits:4',
+                function ($attribute, $value, $fail) use ($request) {
+                    if ((int)$value !== (int)$request->tahun_awal + 1) {
+                        $fail('Tahun akhir harus tepat 1 tahun setelah tahun awal (contoh: ' . $request->tahun_awal . '/' . ((int)$request->tahun_awal + 1) . ').');
                     }
                 },
-                Rule::unique('tahun_akademiks')->whereNull('deleted_at')->ignore($tahunAkademik->id),
             ],
             'is_active' => ['required', 'boolean'],
         ], [
-            'tahun_ajaran.required' => 'Tahun ajaran wajib diisi.',
-            'tahun_ajaran.regex' => 'Format tahun ajaran harus YYYY/YYYY (contoh: 2025/2026).',
-            'tahun_ajaran.size' => 'Tahun ajaran harus tepat 9 karakter.',
-            'tahun_ajaran.unique' => 'Tahun Ajaran ini sudah terdaftar.',
+            'tahun_awal.required' => 'Tahun awal wajib diisi.',
+            'tahun_awal.numeric' => 'Tahun awal harus berupa angka.',
+            'tahun_awal.digits' => 'Tahun awal harus tepat 4 digit angka.',
+            'tahun_awal.gte' => 'Tahun awal tidak boleh di masa lalu (minimal tahun ' . $currentYear . ').',
+            'tahun_akhir.required' => 'Tahun akhir wajib diisi.',
+            'tahun_akhir.numeric' => 'Tahun akhir harus berupa angka.',
+            'tahun_akhir.digits' => 'Tahun akhir harus tepat 4 digit angka.',
         ]);
 
+        $tahunAjaran = $request->tahun_awal . '/' . $request->tahun_akhir;
+
+        $existsOther = TahunAkademik::where('tahun_ajaran', $tahunAjaran)
+            ->where('id', '!=', $tahunAkademik->id)
+            ->whereNull('deleted_at')
+            ->exists();
+
+        if ($existsOther) {
+            return back()->withErrors(['tahun_awal' => 'Tahun Ajaran ini sudah terdaftar.'])->withInput();
+        }
+
         $tahunAkademik->update([
-            'tahun_ajaran' => $request->tahun_ajaran,
+            'tahun_ajaran' => $tahunAjaran,
             'is_active' => (bool)$request->is_active,
         ]);
 

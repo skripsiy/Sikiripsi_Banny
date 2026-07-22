@@ -90,7 +90,7 @@ class LearningModuleController extends Controller
             'mata_pelajaran_id' => ['required', 'exists:mata_pelajarans,id'],
             'tahun_akademik_id' => ['required', 'exists:tahun_akademiks,id'],
             'classroom_id' => ['required', 'exists:classrooms,id'],
-            'description' => ['required', 'string'],
+            'description' => ['nullable', 'string'],
         ], [
             'mata_pelajaran_id.required' => 'Mata pelajaran wajib dipilih.',
             'mata_pelajaran_id.exists' => 'Mata pelajaran tidak valid.',
@@ -98,7 +98,6 @@ class LearningModuleController extends Controller
             'tahun_akademik_id.exists' => 'Tahun ajaran tidak valid.',
             'classroom_id.required' => 'Kelas wajib dipilih.',
             'classroom_id.exists' => 'Kelas tidak valid.',
-            'description.required' => 'Deskripsi modul wajib diisi.',
         ]);
 
         // Authorize that the teacher is assigned to this subject
@@ -124,7 +123,7 @@ class LearningModuleController extends Controller
             'tahun_akademik_id' => $request->tahun_akademik_id,
             'classroom_id' => $request->classroom_id,
             'title' => $mataPelajaran->nama_pelajaran,
-            'description' => $request->description,
+            'description' => $request->description ?? '',
         ]);
 
         return redirect()->route('guru.learning-modules.index')
@@ -142,7 +141,7 @@ class LearningModuleController extends Controller
             'mata_pelajaran_id' => ['required', 'exists:mata_pelajarans,id'],
             'tahun_akademik_id' => ['required', 'exists:tahun_akademiks,id'],
             'classroom_id' => ['required', 'exists:classrooms,id'],
-            'description' => ['required', 'string'],
+            'description' => ['nullable', 'string'],
         ], [
             'mata_pelajaran_id.required' => 'Mata pelajaran wajib dipilih.',
             'mata_pelajaran_id.exists' => 'Mata pelajaran tidak valid.',
@@ -150,7 +149,6 @@ class LearningModuleController extends Controller
             'tahun_akademik_id.exists' => 'Tahun ajaran tidak valid.',
             'classroom_id.required' => 'Kelas wajib dipilih.',
             'classroom_id.exists' => 'Kelas tidak valid.',
-            'description.required' => 'Deskripsi modul wajib diisi.',
         ]);
 
         // Authorize that the teacher is assigned to this subject
@@ -175,7 +173,7 @@ class LearningModuleController extends Controller
             'tahun_akademik_id' => $request->tahun_akademik_id,
             'classroom_id' => $request->classroom_id,
             'title' => $mataPelajaran->nama_pelajaran,
-            'description' => $request->description,
+            'description' => $request->description ?? '',
         ];
 
         $learningModule->update($data);

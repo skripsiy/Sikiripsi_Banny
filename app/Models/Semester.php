@@ -30,6 +30,31 @@ class Semester extends Model
         return $this->belongsTo(TahunAkademik::class, 'tahun_akademik_id')->withTrashed();
     }
 
+    public function materis()
+    {
+        return $this->hasMany(LearningModuleMateri::class);
+    }
+
+    public function tugas()
+    {
+        return $this->hasMany(LearningModuleTugas::class);
+    }
+
+    public function quizzes()
+    {
+        return $this->hasMany(LearningModuleQuiz::class);
+    }
+
+    public function ujians()
+    {
+        return $this->hasMany(LearningModuleUjian::class);
+    }
+
+    public function absensis()
+    {
+        return $this->hasMany(LearningModuleAbsensi::class);
+    }
+
     protected static function booted()
     {
 

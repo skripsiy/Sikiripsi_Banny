@@ -7,6 +7,10 @@ use App\Models\MataPelajaran;
 use App\Models\Guru;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
+use PhpOffice\PhpSpreadsheet\Spreadsheet;
+use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
+use Maatwebsite\Excel\Facades\Excel;
+use App\Imports\PenugasanGuruImport;
 
 class PenugasanGuruController extends Controller
 {
@@ -94,5 +98,61 @@ class PenugasanGuruController extends Controller
 
         return redirect()->route('admin.manage.penugasan-guru.index')
             ->with('status', 'Penugasan guru berhasil dihapus.');
+    }
+
+    public function downloadTemplate()
+    {
+        $spreadsheet = new Spreadsheet();
+        $sheet = $spreadsheet->getActiveSheet();
+
+        // Column Headings
+        $sheet->setCellValue('A1', 'nip');
+        $sheet->setCellValue('B1', 'kode_pelajaran');
+
+        // Sample Data Row
+        $sheet->setCellValue('A2', '198501012010011002');
+        $sheet->setCellValue('B2', 'BIN10');
+
+        $writer = new Xlsx($spreadsheet);
+
+        return response()->streamDownload(function () use ($writer) {
+            $writer->save('php://output');
+        }, 'template_penugasan_guru.xlsx', [
+            'Content-Type' => 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+        ]);
+    }
+
+    public function import(Request $request)
+    {
+        $request->validate([
+            'file' => ['required', 'file', 'mimes:xlsx,xls,csv', 'max:5120'],
+        ]);
+
+        try {
+            Excel::import(new PenugasanGuruImport, $request->file('file'));
+        } catch (\Maatwebsite\Excel\Validators\ValidationException $e) {
+            $failures = $e->failures();
+            $errors = [];
+            foreach ($failures as $failure) {
+                $errors[] = 'Baris ' . $failure->row() . ': ' . implode(', ', $failure->errors());
+            }
+            return redirect()->route('admin.manage.penugasan-guru.index')
+                ->with('import_errors', $errors);
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            $errors = [];
+            foreach ($e->errors() as $key => $messages) {
+                foreach ($messages as $msg) {
+                    $errors[] = $msg;
+                }
+            }
+            return redirect()->route('admin.manage.penugasan-guru.index')
+                ->with('import_errors', $errors);
+        } catch (\Exception $e) {
+            return redirect()->route('admin.manage.penugasan-guru.index')
+                ->with('error', 'Terjadi kesalahan saat mengimpor data: ' . $e->getMessage());
+        }
+
+        return redirect()->route('admin.manage.penugasan-guru.index')
+            ->with('status', 'Data penugasan guru berhasil diimpor.');
     }
 }

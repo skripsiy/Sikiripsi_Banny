@@ -6,7 +6,7 @@
     </div>
     <div>
         <h3 class="text-lg font-bold text-gray-800">Tambah Modul Pembelajaran</h3>
-        <p class="text-xs text-gray-400 mt-0.5">Lengkapi form di bawah untuk membagikan materi pelajaran.</p>
+        <p class="text-xs text-gray-400 mt-0.5">Buat modul pembelajaran baru untuk guru dan kelas terpilih.</p>
     </div>
 </div>
 
@@ -31,8 +31,23 @@
         }
     }
 }">
-    <form method="POST" action="{{ route('guru.learning-modules.store') }}" class="space-y-4">
+    <form method="POST" action="{{ route('admin.manage.learning-modules.store') }}" class="space-y-4">
         @csrf
+
+        <!-- Guru Pengampu -->
+        <div>
+            <label for="create_guru_id" class="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-1.5">Guru Pengampu <span class="text-red-500">*</span></label>
+            <select name="guru_id" id="create_guru_id" required
+                    class="w-full px-4 py-2.5 bg-white border border-gray-200 rounded-xl focus:outline-none focus:border-[#0c2b4d] focus:ring-1 focus:ring-[#0c2b4d] text-sm text-gray-800 transition-all shadow-sm cursor-pointer">
+                <option value="" disabled {{ !old('guru_id') ? 'selected' : '' }}>-- Pilih Guru --</option>
+                @foreach ($gurus as $gr)
+                    <option value="{{ $gr->id }}" {{ old('guru_id') == $gr->id ? 'selected' : '' }}>
+                        {{ $gr->user->name ?? 'N/A' }} (NIP: {{ $gr->nip ?? '-' }})
+                    </option>
+                @endforeach
+            </select>
+            @error('guru_id') <p class="text-red-500 text-xs mt-1 font-semibold">{{ $message }}</p> @enderror
+        </div>
 
         <!-- Mata Pelajaran -->
         <div>
@@ -40,35 +55,31 @@
             <select name="mata_pelajaran_id" id="create_mata_pelajaran_id" required
                     class="w-full px-4 py-2.5 bg-white border border-gray-200 rounded-xl focus:outline-none focus:border-[#0c2b4d] focus:ring-1 focus:ring-[#0c2b4d] text-sm text-gray-800 transition-all shadow-sm cursor-pointer">
                 <option value="" disabled {{ !old('mata_pelajaran_id') ? 'selected' : '' }}>-- Pilih Mata Pelajaran --</option>
-                @foreach ($mata_pelajarans as $subject)
-                    <option value="{{ $subject->id }}" {{ (!old('_method') && old('mata_pelajaran_id') == $subject->id) ? 'selected' : '' }}>
-                        {{ $subject->nama_pelajaran }} ({{ $subject->kode_pelajaran }})
+                @foreach ($mataPelajarans as $mapel)
+                    <option value="{{ $mapel->id }}" {{ old('mata_pelajaran_id') == $mapel->id ? 'selected' : '' }}>
+                        {{ $mapel->nama_pelajaran }} ({{ $mapel->kode_pelajaran }})
                     </option>
                 @endforeach
             </select>
-            @if(!old('_method'))
-                @error('mata_pelajaran_id') <p class="text-red-500 text-xs mt-1 font-semibold">{{ $message }}</p> @enderror
-            @endif
+            @error('mata_pelajaran_id') <p class="text-red-500 text-xs mt-1 font-semibold">{{ $message }}</p> @enderror
         </div>
 
-        <!-- Tahun Ajaran -->
+        <!-- Tahun Akademik -->
         <div>
-            <label for="create_tahun_akademik_id" class="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-1.5">Tahun Ajaran <span class="text-red-500">*</span></label>
+            <label for="create_tahun_akademik_id" class="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-1.5">Tahun Akademik <span class="text-red-500">*</span></label>
             <select name="tahun_akademik_id" id="create_tahun_akademik_id" x-model="selectedTaId" @change="onTaChange()" required
                     class="w-full px-4 py-2.5 bg-white border border-gray-200 rounded-xl focus:outline-none focus:border-[#0c2b4d] focus:ring-1 focus:ring-[#0c2b4d] text-sm text-gray-800 transition-all shadow-sm cursor-pointer">
-                <option value="" disabled>-- Pilih Tahun Ajaran --</option>
-                @foreach ($semesters as $ta)
+                <option value="" disabled>-- Pilih Tahun Akademik --</option>
+                @foreach ($academicYears as $ta)
                     <option value="{{ $ta->id }}">
                         {{ $ta->tahun_ajaran }}
                     </option>
                 @endforeach
             </select>
-            @if(!old('_method'))
-                @error('tahun_akademik_id') <p class="text-red-500 text-xs mt-1 font-semibold">{{ $message }}</p> @enderror
-            @endif
+            @error('tahun_akademik_id') <p class="text-red-500 text-xs mt-1 font-semibold">{{ $message }}</p> @enderror
         </div>
 
-        <!-- Kelas (Filtered dynamically by Tahun Ajaran) -->
+        <!-- Kelas (Filtered dynamically by Tahun Akademik) -->
         <div>
             <label for="create_classroom_id" class="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-1.5">Kelas <span class="text-red-500">*</span></label>
             <select name="classroom_id" id="create_classroom_id" x-model="selectedClassId" required
@@ -79,11 +90,9 @@
                 </template>
             </select>
             <p x-show="selectedTaId && availableClassrooms.length === 0" class="text-amber-600 text-xs mt-1 font-medium">
-                Tidak ada kelas yang terdaftar pada Tahun Ajaran ini.
+                Tidak ada kelas yang terdaftar pada Tahun Akademik ini.
             </p>
-            @if(!old('_method'))
-                @error('classroom_id') <p class="text-red-500 text-xs mt-1 font-semibold">{{ $message }}</p> @enderror
-            @endif
+            @error('classroom_id') <p class="text-red-500 text-xs mt-1 font-semibold">{{ $message }}</p> @enderror
         </div>
 
         <div class="mt-8 flex justify-end gap-3 pt-4 border-t border-gray-100">

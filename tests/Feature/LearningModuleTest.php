@@ -70,6 +70,9 @@ describe('Learning Module Management', function () {
         
         // Assign subject2 to guru2
         $this->mataPelajaran2->gurus()->sync([$this->guru2->id]);
+
+        // Assign subjects to classroom in Kurikulum Kelas
+        $this->classroom->mataPelajarans()->sync([$this->mataPelajaran1->id, $this->mataPelajaran2->id]);
     });
 
     it('denies access to guests', function () {

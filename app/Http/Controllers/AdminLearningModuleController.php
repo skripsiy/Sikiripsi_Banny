@@ -104,6 +104,12 @@ class AdminLearningModuleController extends Controller
                 ->withInput();
         }
 
+        if ($classroom && !$classroom->mataPelajarans()->where('mata_pelajarans.id', $request->mata_pelajaran_id)->exists()) {
+            return redirect()->back()
+                ->withErrors(['classroom_id' => 'Mata pelajaran ini belum di-assign ke kelas tersebut dalam Kurikulum Kelas.'])
+                ->withInput();
+        }
+
         $mataPelajaran = MataPelajaran::findOrFail($request->mata_pelajaran_id);
 
         LearningModule::create([

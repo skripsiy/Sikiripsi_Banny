@@ -205,6 +205,17 @@
                     <span x-show="isMobile || sidebarOpen" class="whitespace-nowrap">Mata Pelajaran</span>
                 </a>
 
+                <!-- 5.5 Kurikulum Kelas (Assign Mapel ke Kelas) -->
+                <a href="{{ route('admin.manage.kurikulum-kelas.index') }}"
+                   @click.prevent="navigateTo('{{ route('admin.manage.kurikulum-kelas.index') }}')"
+                   class="flex items-center rounded-xl text-sm font-semibold transition-all duration-300 {{ request()->routeIs('admin.manage.kurikulum-kelas.*') ? 'bg-[#0c2b4d] text-white shadow-inner font-bold' : 'text-white/80 hover:bg-white/10 hover:text-white' }}"
+                   :class="isMobile || sidebarOpen ? 'px-4 py-3 justify-start gap-3' : 'px-0 py-3 justify-center gap-0 w-12 mx-auto'">
+                    <svg class="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"></path>
+                    </svg>
+                    <span x-show="isMobile || sidebarOpen" class="whitespace-nowrap">Kurikulum Kelas</span>
+                </a>
+
                 <!-- 6. Penugasan Guru -->
                 <a href="{{ route('admin.manage.penugasan-guru.index') }}"
                    @click.prevent="navigateTo('{{ route('admin.manage.penugasan-guru.index') }}')"

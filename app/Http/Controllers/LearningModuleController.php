@@ -115,6 +115,13 @@ class LearningModuleController extends Controller
                 ->withInput();
         }
 
+        // Validate that subject is assigned to this classroom in Kurikulum Kelas
+        if ($classroom && !$classroom->mataPelajarans()->where('mata_pelajarans.id', $request->mata_pelajaran_id)->exists()) {
+            return redirect()->back()
+                ->withErrors(['classroom_id' => 'Mata pelajaran ini belum di-assign ke kelas tersebut dalam Kurikulum Kelas.'])
+                ->withInput();
+        }
+
         $mataPelajaran = MataPelajaran::findOrFail($request->mata_pelajaran_id);
 
         LearningModule::create([
@@ -163,6 +170,13 @@ class LearningModuleController extends Controller
         if ($classroom && $classroom->tahun_akademik_id != $request->tahun_akademik_id) {
             return redirect()->back()
                 ->withErrors(['classroom_id' => 'Kelas yang dipilih tidak sesuai dengan Tahun Ajaran yang dipilih.'])
+                ->withInput();
+        }
+
+        // Validate that subject is assigned to this classroom in Kurikulum Kelas
+        if ($classroom && !$classroom->mataPelajarans()->where('mata_pelajarans.id', $request->mata_pelajaran_id)->exists()) {
+            return redirect()->back()
+                ->withErrors(['classroom_id' => 'Mata pelajaran ini belum di-assign ke kelas tersebut dalam Kurikulum Kelas.'])
                 ->withInput();
         }
 

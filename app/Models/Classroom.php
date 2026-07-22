@@ -43,14 +43,7 @@ class Classroom extends Model
 
     public function mataPelajarans()
     {
-        return $this->hasManyThrough(
-            MataPelajaran::class,
-            LearningModule::class,
-            'classroom_id',
-            'id',
-            'id',
-            'mata_pelajaran_id'
-        )->distinct();
+        return $this->belongsToMany(MataPelajaran::class, 'classroom_mata_pelajaran', 'classroom_id', 'mata_pelajaran_id')->withTimestamps();
     }
 
     public function absensis()

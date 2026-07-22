@@ -133,6 +133,11 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin/manage')->name('admin.m
     Route::post('penugasan-guru/import', [PenugasanGuruController::class, 'import'])->name('penugasan-guru.import');
     Route::resource('penugasan-guru', PenugasanGuruController::class)->except(['show']);
 
+    // Kurikulum Kelas (Assign Mapel ke Kelas)
+    Route::get('kurikulum-kelas/template', [\App\Http\Controllers\ClassroomMataPelajaranController::class, 'downloadTemplate'])->name('kurikulum-kelas.template');
+    Route::post('kurikulum-kelas/import', [\App\Http\Controllers\ClassroomMataPelajaranController::class, 'import'])->name('kurikulum-kelas.import');
+    Route::resource('kurikulum-kelas', \App\Http\Controllers\ClassroomMataPelajaranController::class)->except(['show', 'create', 'edit'])->names('kurikulum-kelas');
+
     // Admin Learning Modules Monitoring, Creation & Absensi Siswa
     Route::resource('learning-modules', \App\Http\Controllers\AdminLearningModuleController::class)->only(['index', 'store', 'destroy']);
     Route::get('absensi', [\App\Http\Controllers\AdminAbsensiController::class, 'index'])->name('absensi.index');

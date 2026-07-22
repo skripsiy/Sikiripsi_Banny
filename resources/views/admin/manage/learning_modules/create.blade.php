@@ -12,20 +12,24 @@
 
 <div x-data="{
     selectedTaId: '{{ old('tahun_akademik_id', '') }}',
+    selectedSubjectId: '{{ old('mata_pelajaran_id', '') }}',
     selectedClassId: '{{ old('classroom_id', '') }}',
     allClassrooms: {{ json_encode($classrooms->map(function($cls) {
         return [
             'id' => (string)$cls->id,
             'nama_kelas' => $cls->nama_kelas,
             'tahun_akademik_id' => (string)$cls->tahun_akademik_id,
-            'tahun_ajaran' => $cls->tahunAkademik->tahun_ajaran ?? '-'
+            'assigned_subject_ids' => $cls->mataPelajarans->pluck('id')->map(fn($id) => (string)$id)->values()->toArray()
         ];
     })) }},
     get availableClassrooms() {
-        if (!this.selectedTaId) return this.allClassrooms;
-        return this.allClassrooms.filter(c => c.tahun_akademik_id === String(this.selectedTaId));
+        return this.allClassrooms.filter(c => {
+            const matchesTa = !this.selectedTaId || c.tahun_akademik_id === String(this.selectedTaId);
+            const matchesSubject = !this.selectedSubjectId || c.assigned_subject_ids.includes(String(this.selectedSubjectId));
+            return matchesTa && matchesSubject;
+        });
     },
-    onTaChange() {
+    onFilterChange() {
         if (this.selectedClassId && !this.availableClassrooms.some(c => c.id === String(this.selectedClassId))) {
             this.selectedClassId = '';
         }
@@ -52,11 +56,11 @@
         <!-- Mata Pelajaran -->
         <div>
             <label for="create_mata_pelajaran_id" class="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-1.5">Mata Pelajaran <span class="text-red-500">*</span></label>
-            <select name="mata_pelajaran_id" id="create_mata_pelajaran_id" required
+            <select name="mata_pelajaran_id" id="create_mata_pelajaran_id" x-model="selectedSubjectId" @change="onFilterChange()" required
                     class="w-full px-4 py-2.5 bg-white border border-gray-200 rounded-xl focus:outline-none focus:border-[#0c2b4d] focus:ring-1 focus:ring-[#0c2b4d] text-sm text-gray-800 transition-all shadow-sm cursor-pointer">
-                <option value="" disabled {{ !old('mata_pelajaran_id') ? 'selected' : '' }}>-- Pilih Mata Pelajaran --</option>
+                <option value="" disabled>-- Pilih Mata Pelajaran --</option>
                 @foreach ($mataPelajarans as $mapel)
-                    <option value="{{ $mapel->id }}" {{ old('mata_pelajaran_id') == $mapel->id ? 'selected' : '' }}>
+                    <option value="{{ $mapel->id }}">
                         {{ $mapel->nama_pelajaran }} ({{ $mapel->kode_pelajaran }})
                     </option>
                 @endforeach
@@ -67,7 +71,7 @@
         <!-- Tahun Akademik -->
         <div>
             <label for="create_tahun_akademik_id" class="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-1.5">Tahun Akademik <span class="text-red-500">*</span></label>
-            <select name="tahun_akademik_id" id="create_tahun_akademik_id" x-model="selectedTaId" @change="onTaChange()" required
+            <select name="tahun_akademik_id" id="create_tahun_akademik_id" x-model="selectedTaId" @change="onFilterChange()" required
                     class="w-full px-4 py-2.5 bg-white border border-gray-200 rounded-xl focus:outline-none focus:border-[#0c2b4d] focus:ring-1 focus:ring-[#0c2b4d] text-sm text-gray-800 transition-all shadow-sm cursor-pointer">
                 <option value="" disabled>-- Pilih Tahun Akademik --</option>
                 @foreach ($academicYears as $ta)
@@ -79,7 +83,7 @@
             @error('tahun_akademik_id') <p class="text-red-500 text-xs mt-1 font-semibold">{{ $message }}</p> @enderror
         </div>
 
-        <!-- Kelas (Filtered dynamically by Tahun Akademik) -->
+        <!-- Kelas (Filtered dynamically by Mata Pelajaran & Tahun Akademik) -->
         <div>
             <label for="create_classroom_id" class="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-1.5">Kelas <span class="text-red-500">*</span></label>
             <select name="classroom_id" id="create_classroom_id" x-model="selectedClassId" required
@@ -89,8 +93,8 @@
                     <option :value="cls.id" x-text="cls.nama_kelas"></option>
                 </template>
             </select>
-            <p x-show="selectedTaId && availableClassrooms.length === 0" class="text-amber-600 text-xs mt-1 font-medium">
-                Tidak ada kelas yang terdaftar pada Tahun Akademik ini.
+            <p x-show="(selectedSubjectId || selectedTaId) && availableClassrooms.length === 0" class="text-amber-600 text-xs mt-1 font-medium">
+                Tidak ada kelas yang di-assign mata pelajaran ini dalam Kurikulum Kelas pada Tahun Akademik terpilih.
             </p>
             @error('classroom_id') <p class="text-red-500 text-xs mt-1 font-semibold">{{ $message }}</p> @enderror
         </div>

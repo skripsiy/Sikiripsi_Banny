@@ -35,13 +35,6 @@ class MataPelajaran extends Model
 
     public function classrooms()
     {
-        return $this->hasManyThrough(
-            Classroom::class,
-            LearningModule::class,
-            'mata_pelajaran_id',
-            'id',
-            'id',
-            'classroom_id'
-        )->distinct();
+        return $this->belongsToMany(Classroom::class, 'classroom_mata_pelajaran', 'mata_pelajaran_id', 'classroom_id')->withTimestamps();
     }
 }

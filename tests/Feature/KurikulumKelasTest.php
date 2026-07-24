@@ -60,10 +60,11 @@ class KurikulumKelasTest extends TestCase
             'is_active' => true,
         ]);
 
-        // Penugasan Guru (Guru -> Mapel)
+        // Penugasan Guru (Guru -> Mapel & Kelas)
         GuruMataPelajaran::create([
             'guru_id' => $this->guru->id,
             'mata_pelajaran_id' => $this->mataPelajaran->id,
+            'classroom_id' => $this->classroom->id,
         ]);
     }
 

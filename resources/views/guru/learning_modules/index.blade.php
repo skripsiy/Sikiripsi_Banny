@@ -23,15 +23,13 @@
                 <h3 class="text-base font-bold text-gray-800">Daftar Modul Pembelajaran Anda</h3>
                 <p class="text-xs text-gray-400 mt-0.5">Kelola seluruh materi, tugas, kuis, ujian, dan absensi modul Anda.</p>
             </div>
-            @if ($mata_pelajarans->isNotEmpty())
-                <button @click="showCreateModal = true" 
-                        class="bg-[#0c2b4d] hover:bg-[#07192d] text-white px-4 py-2.5 rounded-xl text-xs font-bold transition-all shadow-sm flex items-center justify-center gap-1.5 cursor-pointer select-none w-full sm:w-auto">
-                    <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4"></path>
-                    </svg>
-                    Tambah Modul
-                </button>
-            @endif
+            <button @click="showCreateModal = true" 
+                    class="bg-[#0c2b4d] hover:bg-[#07192d] text-white px-4 py-2.5 rounded-xl text-xs font-bold transition-all shadow-sm flex items-center justify-center gap-1.5 cursor-pointer select-none w-full sm:w-auto">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4"></path>
+                </svg>
+                Tambah Modul
+            </button>
         </div>
 
         <!-- Search & Filter Panel -->

@@ -20,6 +20,18 @@ describe('Subject CRUD Management', function () {
             'nama_jurusan' => 'Rekayasa Perangkat Lunak',
             'is_active' => true,
         ]);
+
+        $this->academicYear = \App\Models\TahunAkademik::create([
+            'tahun_ajaran' => '2025/2026',
+            'is_active' => true,
+        ]);
+
+        $this->classroom = \App\Models\Classroom::create([
+            'nama_kelas' => 'XII RPL 1',
+            'jurusan_id' => $this->jurusan->id,
+            'tahun_akademik_id' => $this->academicYear->id,
+            'is_active' => true,
+        ]);
     });
 
     it('denies access to non-admin users', function () {
@@ -318,6 +330,7 @@ describe('Subject CRUD Management', function () {
         $assignment = GuruMataPelajaran::create([
             'mata_pelajaran_id' => $subject->id,
             'guru_id' => $guru->id,
+            'classroom_id' => $this->classroom->id,
         ]);
 
         $response = $this->actingAs($this->admin)->delete(route('admin.manage.penugasan-guru.destroy', $assignment->id));

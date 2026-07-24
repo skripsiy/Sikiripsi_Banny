@@ -11,9 +11,25 @@
 </div>
 
 <div x-data="{
+    selectedGuruId: '{{ old('guru_id', '') }}',
     selectedTaId: '{{ old('tahun_akademik_id', '') }}',
     selectedSubjectId: '{{ old('mata_pelajaran_id', '') }}',
     selectedClassId: '{{ old('classroom_id', '') }}',
+    allGurus: {{ json_encode($gurus->map(function($g) {
+        return [
+            'id' => (string)$g->id,
+            'name' => $g->user?->name ?? 'N/A',
+            'nip' => $g->nip ?? '-',
+            'assigned_subject_ids' => $g->mataPelajarans->pluck('id')->map(fn($id) => (string)$id)->values()->toArray()
+        ];
+    })) }},
+    allSubjects: {{ json_encode($mataPelajarans->map(function($mp) {
+        return [
+            'id' => (string)$mp->id,
+            'nama_pelajaran' => $mp->nama_pelajaran,
+            'kode_pelajaran' => $mp->kode_pelajaran,
+        ];
+    })) }},
     allClassrooms: {{ json_encode($classrooms->map(function($cls) {
         return [
             'id' => (string)$cls->id,
@@ -22,12 +38,24 @@
             'assigned_subject_ids' => $cls->mataPelajarans->pluck('id')->map(fn($id) => (string)$id)->values()->toArray()
         ];
     })) }},
+    get availableSubjects() {
+        if (!this.selectedGuruId) return this.allSubjects;
+        const guru = this.allGurus.find(g => g.id === String(this.selectedGuruId));
+        if (!guru || !guru.assigned_subject_ids) return this.allSubjects;
+        return this.allSubjects.filter(s => guru.assigned_subject_ids.includes(s.id));
+    },
     get availableClassrooms() {
         return this.allClassrooms.filter(c => {
             const matchesTa = !this.selectedTaId || c.tahun_akademik_id === String(this.selectedTaId);
             const matchesSubject = !this.selectedSubjectId || c.assigned_subject_ids.includes(String(this.selectedSubjectId));
             return matchesTa && matchesSubject;
         });
+    },
+    onGuruChange() {
+        if (this.selectedSubjectId && !this.availableSubjects.some(s => s.id === String(this.selectedSubjectId))) {
+            this.selectedSubjectId = '';
+        }
+        this.onFilterChange();
     },
     onFilterChange() {
         if (this.selectedClassId && !this.availableClassrooms.some(c => c.id === String(this.selectedClassId))) {
@@ -41,11 +69,11 @@
         <!-- Guru Pengampu -->
         <div>
             <label for="create_guru_id" class="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-1.5">Guru Pengampu <span class="text-red-500">*</span></label>
-            <select name="guru_id" id="create_guru_id" required
+            <select name="guru_id" id="create_guru_id" x-model="selectedGuruId" @change="onGuruChange()" required
                     class="w-full px-4 py-2.5 bg-white border border-gray-200 rounded-xl focus:outline-none focus:border-[#0c2b4d] focus:ring-1 focus:ring-[#0c2b4d] text-sm text-gray-800 transition-all shadow-sm cursor-pointer">
                 <option value="" disabled {{ !old('guru_id') ? 'selected' : '' }}>-- Pilih Guru --</option>
                 @foreach ($gurus as $gr)
-                    <option value="{{ $gr->id }}" {{ old('guru_id') == $gr->id ? 'selected' : '' }}>
+                    <option value="{{ $gr->id }}">
                         {{ $gr->user->name ?? 'N/A' }} (NIP: {{ $gr->nip ?? '-' }})
                     </option>
                 @endforeach
@@ -53,18 +81,19 @@
             @error('guru_id') <p class="text-red-500 text-xs mt-1 font-semibold">{{ $message }}</p> @enderror
         </div>
 
-        <!-- Mata Pelajaran -->
+        <!-- Mata Pelajaran (Filtered dynamically by selected Guru) -->
         <div>
             <label for="create_mata_pelajaran_id" class="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-1.5">Mata Pelajaran <span class="text-red-500">*</span></label>
             <select name="mata_pelajaran_id" id="create_mata_pelajaran_id" x-model="selectedSubjectId" @change="onFilterChange()" required
                     class="w-full px-4 py-2.5 bg-white border border-gray-200 rounded-xl focus:outline-none focus:border-[#0c2b4d] focus:ring-1 focus:ring-[#0c2b4d] text-sm text-gray-800 transition-all shadow-sm cursor-pointer">
                 <option value="" disabled>-- Pilih Mata Pelajaran --</option>
-                @foreach ($mataPelajarans as $mapel)
-                    <option value="{{ $mapel->id }}">
-                        {{ $mapel->nama_pelajaran }} ({{ $mapel->kode_pelajaran }})
-                    </option>
-                @endforeach
+                <template x-for="mp in availableSubjects" :key="mp.id">
+                    <option :value="mp.id" x-text="mp.nama_pelajaran + ' (' + mp.kode_pelajaran + ')'"></option>
+                </template>
             </select>
+            <p x-show="selectedGuruId && availableSubjects.length === 0" class="text-amber-600 text-xs mt-1 font-medium">
+                Guru ini belum ditugaskan mengampu mata pelajaran apa pun dalam Penugasan Guru.
+            </p>
             @error('mata_pelajaran_id') <p class="text-red-500 text-xs mt-1 font-semibold">{{ $message }}</p> @enderror
         </div>
 

@@ -16,7 +16,7 @@ class AdminLearningModuleController extends Controller
     {
         $classrooms = Classroom::orderBy('nama_kelas')->get();
         $mataPelajarans = MataPelajaran::where('is_active', true)->orderBy('nama_pelajaran')->get();
-        $gurus = Guru::with('user')->get()->sortBy(fn($g) => $g->user?->name ?? '')->values();
+        $gurus = Guru::with(['user', 'mataPelajarans', 'guruMataPelajarans'])->get()->sortBy(fn($g) => $g->user?->name ?? '')->values();
         $academicYears = TahunAkademik::orderBy('tahun_ajaran', 'desc')->get();
 
         $selectedClassroomId = $request->query('classroom_id');
@@ -110,6 +110,13 @@ class AdminLearningModuleController extends Controller
                 ->withInput();
         }
 
+        $guru = Guru::find($request->guru_id);
+        if ($guru && !$guru->mataPelajarans()->where('mata_pelajarans.id', $request->mata_pelajaran_id)->exists()) {
+            return redirect()->back()
+                ->withErrors(['guru_id' => 'Guru yang dipilih belum ditugaskan mengampu mata pelajaran ini dalam Penugasan Guru.'])
+                ->withInput();
+        }
+
         $mataPelajaran = MataPelajaran::findOrFail($request->mata_pelajaran_id);
 
         LearningModule::create([
@@ -119,6 +126,7 @@ class AdminLearningModuleController extends Controller
             'classroom_id' => $request->classroom_id,
             'title' => $mataPelajaran->nama_pelajaran,
             'description' => $request->description ?? '',
+            'is_created_by_guru' => false,
         ]);
 
         return redirect()->route('admin.manage.learning-modules.index')

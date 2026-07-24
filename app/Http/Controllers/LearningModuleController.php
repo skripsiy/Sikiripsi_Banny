@@ -34,15 +34,24 @@ class LearningModuleController extends Controller
         $selectedAcademicYearId = request('tahun_akademik_id', 'all');
         $selectedSemester = 'all';
 
-        // Get modules owned by this teacher
+        // Get modules created by this teacher
         $learningModules = LearningModule::where('guru_id', $guru->id)
+            ->where('is_created_by_guru', true)
             ->when($selectedAcademicYearId && $selectedAcademicYearId !== 'all', function($q) use ($selectedAcademicYearId) {
                 return $q->where('tahun_akademik_id', $selectedAcademicYearId);
             })
-            ->with(['mataPelajaran', 'tahunAkademik'])
+            ->with(['mataPelajaran', 'tahunAkademik', 'classroom'])
             ->withCount(['materis', 'tugas', 'quizzes', 'ujians', 'absensis'])
             ->latest()
             ->get();
+
+        // Get modules assigned by Admin in /admin/manage/learning-modules not yet created by teacher
+        $adminAssignedModules = LearningModule::where('guru_id', $guru->id)
+            ->where('is_created_by_guru', false)
+            ->with(['mataPelajaran', 'classroom', 'tahunAkademik'])
+            ->get();
+
+        $guruAssignments = $guru->guruMataPelajarans()->with(['mataPelajaran'])->get();
 
         // Get only mata_pelajarans assigned to this teacher
         $mata_pelajarans = $guru->mataPelajarans()
@@ -54,7 +63,7 @@ class LearningModuleController extends Controller
         $selectedTahunAkademikId = $activeAcademicYear?->id;
         $classrooms = Classroom::where('is_active', true)->orderBy('nama_kelas')->get();
 
-        return view('guru.learning_modules.index', compact('learningModules', 'mata_pelajarans', 'semesters', 'academicYears', 'selectedAcademicYearId', 'selectedSemester', 'selectedTahunAkademikId', 'classrooms'));
+        return view('guru.learning_modules.index', compact('learningModules', 'adminAssignedModules', 'mata_pelajarans', 'semesters', 'academicYears', 'selectedAcademicYearId', 'selectedSemester', 'selectedTahunAkademikId', 'classrooms', 'guruAssignments'));
     }
 
     public function create()
@@ -67,6 +76,13 @@ class LearningModuleController extends Controller
         $academicYears = TahunAkademik::orderBy('tahun_ajaran', 'desc')->get();
         $activeAcademicYear = TahunAkademik::where('is_active', true)->first();
 
+        $adminAssignedModules = LearningModule::where('guru_id', $guru->id)
+            ->where('is_created_by_guru', false)
+            ->with(['mataPelajaran', 'classroom', 'tahunAkademik'])
+            ->get();
+
+        $guruAssignments = $guru->guruMataPelajarans()->with(['mataPelajaran'])->get();
+
         $mata_pelajarans = $guru->mataPelajarans()
             ->where('is_active', true)
             ->orderBy('nama_pelajaran')
@@ -76,7 +92,7 @@ class LearningModuleController extends Controller
         $selectedTahunAkademikId = $activeAcademicYear?->id;
         $classrooms = Classroom::where('is_active', true)->orderBy('nama_kelas')->get();
 
-        return view('guru.learning_modules.create', compact('mata_pelajarans', 'semesters', 'selectedTahunAkademikId', 'classrooms'));
+        return view('guru.learning_modules.create', compact('adminAssignedModules', 'mata_pelajarans', 'semesters', 'selectedTahunAkademikId', 'classrooms', 'guruAssignments'));
     }
 
     public function store(Request $request)
@@ -100,7 +116,7 @@ class LearningModuleController extends Controller
             'classroom_id.exists' => 'Kelas tidak valid.',
         ]);
 
-        // Authorize that the teacher is assigned to this subject
+        // Authorize that the teacher is assigned to this subject in Penugasan Guru
         if (!$guru->mataPelajarans()->where('mata_pelajarans.id', $request->mata_pelajaran_id)->exists()) {
             return redirect()->back()
                 ->withErrors(['mata_pelajaran_id' => 'Mata pelajaran yang dipilih tidak ditugaskan kepada Anda.'])
@@ -122,16 +138,29 @@ class LearningModuleController extends Controller
                 ->withInput();
         }
 
-        $mataPelajaran = MataPelajaran::findOrFail($request->mata_pelajaran_id);
+        $existingModule = LearningModule::where('guru_id', $guru->id)
+            ->where('mata_pelajaran_id', $request->mata_pelajaran_id)
+            ->where('tahun_akademik_id', $request->tahun_akademik_id)
+            ->where('classroom_id', $request->classroom_id)
+            ->first();
 
-        LearningModule::create([
-            'guru_id' => $guru->id,
-            'mata_pelajaran_id' => $request->mata_pelajaran_id,
-            'tahun_akademik_id' => $request->tahun_akademik_id,
-            'classroom_id' => $request->classroom_id,
-            'title' => $mataPelajaran->nama_pelajaran,
-            'description' => $request->description ?? '',
-        ]);
+        if ($existingModule) {
+            $existingModule->update([
+                'is_created_by_guru' => true,
+                'description' => $request->description ?? $existingModule->description,
+            ]);
+        } else {
+            $mataPelajaran = MataPelajaran::findOrFail($request->mata_pelajaran_id);
+            LearningModule::create([
+                'guru_id' => $guru->id,
+                'mata_pelajaran_id' => $request->mata_pelajaran_id,
+                'tahun_akademik_id' => $request->tahun_akademik_id,
+                'classroom_id' => $request->classroom_id,
+                'title' => $mataPelajaran->nama_pelajaran,
+                'description' => $request->description ?? '',
+                'is_created_by_guru' => true,
+            ]);
+        }
 
         return redirect()->route('guru.learning-modules.index')
             ->with('status', 'Modul pembelajaran berhasil ditambahkan.');
@@ -158,7 +187,7 @@ class LearningModuleController extends Controller
             'classroom_id.exists' => 'Kelas tidak valid.',
         ]);
 
-        // Authorize that the teacher is assigned to this subject
+        // Authorize that the teacher is assigned to this subject in Penugasan Guru
         if (!$guru->mataPelajarans()->where('mata_pelajarans.id', $request->mata_pelajaran_id)->exists()) {
             return redirect()->back()
                 ->withErrors(['mata_pelajaran_id' => 'Mata pelajaran yang dipilih tidak ditugaskan kepada Anda.'])
@@ -204,6 +233,7 @@ class LearningModuleController extends Controller
         }
 
         $academicYears = TahunAkademik::orderBy('tahun_ajaran', 'desc')->get();
+        $guruAssignments = $guru->guruMataPelajarans()->with(['mataPelajaran'])->get();
 
         $mata_pelajarans = $guru->mataPelajarans()
             ->where('is_active', true)
@@ -213,7 +243,7 @@ class LearningModuleController extends Controller
         $semesters = $academicYears;
         $classrooms = Classroom::where('is_active', true)->orderBy('nama_kelas')->get();
 
-        return view('guru.learning_modules.edit', compact('learningModule', 'mata_pelajarans', 'semesters', 'classrooms'));
+        return view('guru.learning_modules.edit', compact('learningModule', 'mata_pelajarans', 'semesters', 'classrooms', 'guruAssignments'));
     }
 
     public function destroy(LearningModule $learningModule)

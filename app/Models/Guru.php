@@ -53,6 +53,11 @@ class Guru extends Model
         return $this->belongsToMany(MataPelajaran::class, 'guru_mata_pelajaran', 'guru_id', 'mata_pelajaran_id')->withTimestamps();
     }
 
+    public function guruMataPelajarans()
+    {
+        return $this->hasMany(GuruMataPelajaran::class, 'guru_id');
+    }
+
     public function bankSoals()
     {
         return $this->hasMany(BankSoal::class);

@@ -7,10 +7,14 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
-#[Fillable(['guru_id', 'mata_pelajaran_id', 'tahun_akademik_id', 'classroom_id', 'title', 'description'])]
+#[Fillable(['guru_id', 'mata_pelajaran_id', 'tahun_akademik_id', 'classroom_id', 'title', 'description', 'is_created_by_guru'])]
 class LearningModule extends Model
 {
     use HasFactory, SoftDeletes;
+
+    protected $casts = [
+        'is_created_by_guru' => 'boolean',
+    ];
 
     public function classroom()
     {

@@ -9,8 +9,8 @@
         <!-- Header Section -->
         <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 mb-6">
             <div>
-                <h3 class="text-base font-bold text-gray-800">Daftar Modul Pembelajaran</h3>
-                <p class="text-xs text-gray-400 mt-1">Gunakan panel filter di bawah untuk menyaring data modul berdasarkan kebutuhan akademik.</p>
+                <h3 class="text-base font-bold text-gray-800">Daftar Modul Pembelajaran Guru</h3>
+                <p class="text-xs text-gray-400 mt-1">Daftar modul pembelajaran yang dibuat berdasarkan Penugasan Guru & Plotting Kurikulum Kelas.</p>
             </div>
             <button @click="showCreateModal = true"
                     class="bg-[#0c2b4d] hover:bg-[#07192d] text-white px-4 py-2.5 rounded-xl text-xs font-bold transition-all duration-150 shadow-sm cursor-pointer select-none">
@@ -99,11 +99,11 @@
                     </select>
                 </div>
             </div>
-            
+
             <!-- Clear Filters Link -->
             @if($selectedClassroomId || $selectedSemesterId || $selectedMataPelajaranId || $selectedGuruId)
                 <div class="mt-4 flex justify-end">
-                    <a href="{{ route('admin.manage.learning-modules.index') }}" 
+                    <a href="{{ route('admin.manage.learning-modules.index') }}"
                        class="text-xs text-red-600 hover:text-red-800 font-semibold flex items-center gap-1 transition-all">
                         <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
@@ -129,11 +129,6 @@
                                     <th class="px-6 py-3 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">Mata Pelajaran</th>
                                     <th class="px-6 py-3 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">Kelas & TA</th>
                                     <th class="px-6 py-3 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">Guru Pengampu</th>
-                                    <th class="px-6 py-3 text-center text-xs font-bold text-gray-500 uppercase tracking-wider">Materi</th>
-                                    <th class="px-6 py-3 text-center text-xs font-bold text-gray-500 uppercase tracking-wider">Tugas</th>
-                                    <th class="px-6 py-3 text-center text-xs font-bold text-gray-500 uppercase tracking-wider">Kuis</th>
-                                    <th class="px-6 py-3 text-center text-xs font-bold text-gray-500 uppercase tracking-wider">Ujian</th>
-                                    <th class="px-6 py-3 text-center text-xs font-bold text-gray-500 uppercase tracking-wider">Absensi</th>
                                     <th class="px-6 py-3 text-center text-xs font-bold text-gray-500 uppercase tracking-wider">Aksi</th>
                                 </tr>
                             </thead>
@@ -154,21 +149,6 @@
                                         <td class="px-6 py-4 whitespace-nowrap">
                                             <span class="block text-sm font-semibold text-gray-900">{{ $module->guru->user->name ?? 'N/A' }}</span>
                                             <span class="block text-[10px] text-gray-400 font-normal mt-0.5">NIP: {{ $module->guru->nip ?? '-' }}</span>
-                                        </td>
-                                        <td class="px-6 py-4 whitespace-nowrap text-center text-sm font-bold text-gray-700">
-                                            <span class="px-2.5 py-1 bg-gray-100 rounded-lg">{{ $module->materis_count }}</span>
-                                        </td>
-                                        <td class="px-6 py-4 whitespace-nowrap text-center text-sm font-bold text-gray-700">
-                                            <span class="px-2.5 py-1 bg-gray-100 rounded-lg">{{ $module->tugas_count }}</span>
-                                        </td>
-                                        <td class="px-6 py-4 whitespace-nowrap text-center text-sm font-bold text-gray-700">
-                                            <span class="px-2.5 py-1 bg-gray-100 rounded-lg">{{ $module->quizzes_count }}</span>
-                                        </td>
-                                        <td class="px-6 py-4 whitespace-nowrap text-center text-sm font-bold text-gray-700">
-                                            <span class="px-2.5 py-1 bg-gray-100 rounded-lg">{{ $module->ujians_count }}</span>
-                                        </td>
-                                        <td class="px-6 py-4 whitespace-nowrap text-center text-sm font-bold text-gray-700">
-                                            <span class="px-2.5 py-1 bg-indigo-50 text-indigo-700 border border-indigo-100 rounded-lg">{{ $module->absensis_count }}</span>
                                         </td>
                                         <td class="px-6 py-4 whitespace-nowrap text-center text-sm font-medium">
                                             <form action="{{ route('admin.manage.learning-modules.destroy', $module->id) }}" method="POST" onsubmit="return confirm('Apakah Anda yakin ingin menghapus modul pembelajaran ini?');" class="inline">
@@ -191,10 +171,9 @@
                                     <path stroke-linecap="round" stroke-linejoin="round" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path>
                                 </svg>
                             </div>
-                            <h4 class="text-lg font-bold text-gray-800 mb-1">Tidak Ada Modul Pembelajaran</h4>
-                            <p class="text-sm text-gray-400 max-w-sm mb-6">Belum ada modul yang cocok dengan kriteria filter yang Anda pilih.</p>
-                            <button @click="showCreateModal = true" 
-                                    class="inline-flex items-center gap-2 bg-[#0c2b4d] hover:bg-[#07192d] text-white px-4 py-2.5 rounded-xl text-sm font-semibold transition-colors shadow-sm cursor-pointer select-none">
+                            <h4 class="text-lg font-bold text-gray-800 mb-4">Belum Ada Modul Pembelajaran</h4>
+                            <button @click="showCreateModal = true"
+                                    class="inline-flex items-center gap-2 bg-[#0c2b4d] hover:bg-[#07192d] text-white px-4 py-2.5 rounded-xl text-xs font-bold transition-all shadow-sm cursor-pointer select-none">
                                 + Tambah Modul Pembelajaran
                             </button>
                         </div>
